@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.demo.ProjectsController"
+      prefWidth="1440" prefHeight="1024">
+
+    <!-- SIDEBAR -->
+    <VBox prefWidth="280" prefHeight="1024"
+          style="-fx-background-color: #191919; -fx-padding: 48 28 48 28; -fx-min-width: 280; -fx-max-width: 280;">
+
+        <Label text="Mony"
+               style="-fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: 800; -fx-font-family: 'Inter';"/>
+
+        <VBox spacing="4" style="-fx-padding: 40 0 0 0;">
+            <HBox spacing="12" alignment="CENTER_LEFT"
+                  style="-fx-background-color: #299D91; -fx-padding: 12 16 12 16; -fx-background-radius: 4;">
+                <Label text="Projects"
+                       style="-fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: 600;"/>
+            </HBox>
+            <HBox spacing="12" alignment="CENTER_LEFT"
+                  onMouseClicked="#handleGoToTransactions"
+                  style="-fx-padding: 12 16 12 16; -fx-background-radius: 4;">
+                <Label text="Transactions"
+                       style="-fx-text-fill: #aaaaaa; -fx-font-size: 15px;"/>
+            </HBox>
+        </VBox>
+
+        <Region VBox.vgrow="ALWAYS"/>
+
+        <HBox spacing="12" alignment="CENTER_LEFT"
+              onMouseClicked="#handleViewProfile"
+              style="-fx-border-color: #333333; -fx-border-width: 1 0 0 0; -fx-padding: 20 0 0 0; -fx-cursor: hand;">
+            <VBox spacing="2">
+                <Label fx:id="sidebarUsername" text="User"
+                       style="-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: 600;"/>
+                <Label text="View profile"
+                       style="-fx-text-fill: #666666; -fx-font-size: 12px;"/>
+            </VBox>
+        </HBox>
+    </VBox>
+
+    <!-- MAIN CONTENT -->
+    <VBox prefWidth="1160" prefHeight="1024" style="-fx-background-color: #f8f8f6;">
+
+        <!-- TOP BAR -->
+        <HBox alignment="CENTER_LEFT" prefHeight="70"
+              style="-fx-background-color: white; -fx-padding: 0 32 0 32; -fx-border-color: #eeeeee; -fx-border-width: 0 0 1 0;">
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label text="Hello"
+                       style="-fx-font-size: 20px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
+                <Label fx:id="usernameLabel" text=""
+                       style="-fx-font-size: 20px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
+            </HBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <HBox spacing="16" alignment="CENTER">
+                <Label text="Bell" style="-fx-font-size: 18px; -fx-text-fill: #555555;"/>
+                <TextField promptText="Search here..." prefWidth="200" prefHeight="34"
+                           style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0; -fx-font-size: 13px; -fx-padding: 0 10 0 10;"/>
+            </HBox>
+        </HBox>
+
+        <!-- PAGE CONTENT -->
+        <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+            <VBox spacing="24" style="-fx-padding: 32;">
+
+                <!-- STATS ROW -->
+                <HBox spacing="20">
+                    <VBox spacing="6" prefWidth="280"
+                          style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20 24 20 24;">
+                        <Label text="Total Balance"
+                               style="-fx-font-size: 13px; -fx-text-fill: #888888;"/>
+                        <Label fx:id="totalBalanceLabel" text="0"
+                               style="-fx-font-size: 26px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
+                        <HBox>
+                            <Label text="Edit"
+                                   onMouseClicked="#handleEditBalance"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #299D91; -fx-cursor: hand;"/>
+                            <Label text=" >"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #299D91;"/>
+                        </HBox>
+                    </VBox>
+                    <VBox spacing="6" prefWidth="280"
+                          style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20 24 20 24;">
+                        <Label text="Total Spent"
+                               style="-fx-font-size: 13px; -fx-text-fill: #888888;"/>
+                        <Label fx:id="totalSpentLabel" text="0"
+                               style="-fx-font-size: 26px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
+                    </VBox>
+                    <VBox spacing="6" prefWidth="280"
+                          style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20 24 20 24;">
+                        <Label text="Remaining Balance"
+                               style="-fx-font-size: 13px; -fx-text-fill: #888888;"/>
+                        <Label fx:id="remainingBalanceLabel" text="0"
+                               style="-fx-font-size: 26px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
+                    </VBox>
+                </HBox>
+
+                <!-- PROJECTS SECTION -->
+                <VBox spacing="16">
+                    <Label text="Projects"
+                           style="-fx-font-size: 20px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
+
+                    <Button fx:id="createProjectBtn" text="+ Create Project"
+                            onAction="#handleCreateProject"
+                            style="-fx-background-color: #299D91; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: 600; -fx-padding: 10 20 10 20; -fx-background-radius: 8;"/>
+
+                    <!-- PROJECT CARDS GRID -->
+                    <FlowPane fx:id="projectsGrid" hgap="16" vgap="16" prefWrapLength="1060"/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </VBox>
+</HBox>
