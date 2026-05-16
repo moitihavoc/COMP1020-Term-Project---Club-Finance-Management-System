@@ -80,7 +80,7 @@
                     <VBox spacing="4">
                         <Label text="Password"
                                style="-fx-font-size: 13px; -fx-text-fill: #888888;"/>
-                        <Label text="••••••••"
+                        <Label text="********"
                                style="-fx-font-size: 16px; -fx-font-weight: 600; -fx-text-fill: #191919;"/>
                     </VBox>
 
