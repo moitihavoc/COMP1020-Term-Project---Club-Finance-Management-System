@@ -1,4 +1,4 @@
-package oop.mony.mony.controllers;
+package oop.mony.controllers;
 
 public class RegisterController {
 }

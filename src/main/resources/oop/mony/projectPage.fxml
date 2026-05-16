@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 
 <HBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="oop.mony.mony.controllers.ProjectPageController"
+      fx:controller="oop.mony.controllers.ProjectPageController"
       prefWidth="1440" prefHeight="1024">
 
     <!-- SIDEBAR -->

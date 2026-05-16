@@ -1,4 +1,4 @@
-package oop.mony.mony;
+package oop.mony;
 
 public class Launcher {
     public static void main(String[] args) {

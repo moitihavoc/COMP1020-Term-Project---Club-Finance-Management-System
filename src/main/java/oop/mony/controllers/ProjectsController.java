@@ -1,4 +1,4 @@
-package oop.mony.mony.controllers;
+package oop.mony.controllers;
 
 import javafx.fxml.FXML;
 

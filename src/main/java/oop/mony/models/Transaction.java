@@ -1,4 +1,4 @@
-package oop.mony.mony.models;
+package oop.mony.models;
 
 public class Transaction {
 }
