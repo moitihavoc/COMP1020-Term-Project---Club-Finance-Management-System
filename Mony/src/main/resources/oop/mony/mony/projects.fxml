@@ -4,7 +4,7 @@
 <?import javafx.scene.text.*?>
 
 <HBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.demo.ProjectsController"
+      fx:controller="oop.mony.mony.controllers.ProjectsController"
       prefWidth="1440" prefHeight="1024">
 
     <!-- SIDEBAR -->

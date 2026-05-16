@@ -6,7 +6,7 @@
 
 <HBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.demo.TransactionPageController"
+      fx:controller="oop.mony.mony.controllers.TransactionPageController"
       prefWidth="1440" prefHeight="1024">
 
     <!-- SIDEBAR -->
