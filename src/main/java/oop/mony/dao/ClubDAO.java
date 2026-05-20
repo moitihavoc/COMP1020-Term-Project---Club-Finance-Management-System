@@ -29,13 +29,34 @@ public class ClubDAO {
         return findByUserId(userId);
     }
 
-    public static void updateTotalBalance(int userId, double totalBalance) throws SQLException {
+    public static boolean updateTotalBalance(int userId, double totalBalance) throws SQLException {
+        double safeTotalBalance = Math.max(0.0, totalBalance);
+        if (safeTotalBalance < ProjectDAO.getTotalAllocatedForUser(userId)) {
+            return false;
+        }
+
         String sql = "UPDATE clubs SET total_balance = ? WHERE user_id = ?";
         try (Connection connection = Database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setDouble(1, Math.max(0.0, totalBalance));
+            statement.setDouble(1, safeTotalBalance);
             statement.setInt(2, userId);
-            statement.executeUpdate();
+            return statement.executeUpdate() == 1;
+        }
+    }
+
+    public static double getTotalBalanceForUser(int userId) throws SQLException {
+        String sql = "SELECT total_balance FROM clubs WHERE user_id = ?";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, userId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (!resultSet.next()) {
+                    return 0.0;
+                }
+
+                return resultSet.getDouble("total_balance");
+            }
         }
     }
 

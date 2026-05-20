@@ -21,6 +21,10 @@ public class ProjectDAO {
             return null;
         }
 
+        if (!canAllocateProjectAmount(userId, project.getAllocatedAmount())) {
+            return null;
+        }
+
         String sql = "INSERT INTO projects (user_id, name, allocated_amount) VALUES (?, ?, ?)";
         try (Connection connection = Database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -70,6 +74,10 @@ public class ProjectDAO {
     }
 
     public static void deleteProject(int projectId, int userId) throws SQLException {
+        if (!projectBelongsToUser(projectId, userId)) {
+            return;
+        }
+
         PotDAO.deletePotsForProject(projectId);
 
         String sql = "DELETE FROM projects WHERE id = ? AND user_id = ?";
@@ -78,6 +86,22 @@ public class ProjectDAO {
             statement.setInt(1, projectId);
             statement.setInt(2, userId);
             statement.executeUpdate();
+        }
+    }
+
+    public static double getProjectAllocatedAmount(int projectId) throws SQLException {
+        String sql = "SELECT allocated_amount FROM projects WHERE id = ?";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, projectId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (!resultSet.next()) {
+                    return 0.0;
+                }
+
+                return resultSet.getDouble("allocated_amount");
+            }
         }
     }
 
@@ -120,6 +144,25 @@ public class ProjectDAO {
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 return resultSet.getDouble("total_allocated");
+            }
+        }
+    }
+
+    private static boolean canAllocateProjectAmount(int userId, double newAllocatedAmount) throws SQLException {
+        double totalBalance = ClubDAO.getTotalBalanceForUser(userId);
+        double currentAllocated = getTotalAllocatedForUser(userId);
+        return currentAllocated + newAllocatedAmount <= totalBalance;
+    }
+
+    private static boolean projectBelongsToUser(int projectId, int userId) throws SQLException {
+        String sql = "SELECT 1 FROM projects WHERE id = ? AND user_id = ?";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, projectId);
+            statement.setInt(2, userId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
             }
         }
     }

@@ -17,6 +17,10 @@ public class PotDAO {
             return null;
         }
 
+        if (!canAllocatePotAmount(projectId, pot.getAllocatedAmount())) {
+            return null;
+        }
+
         String sql = "INSERT INTO pots (project_id, name, allocated_amount) VALUES (?, ?, ?)";
         try (Connection connection = Database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -60,6 +64,10 @@ public class PotDAO {
     }
 
     public static void deletePot(int potId, int projectId) throws SQLException {
+        if (!potBelongsToProject(potId, projectId)) {
+            return;
+        }
+
         TransactionDAO.deleteTransactionsForPot(potId);
 
         String sql = "DELETE FROM pots WHERE id = ? AND project_id = ?";
@@ -86,6 +94,25 @@ public class PotDAO {
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 return resultSet.getDouble("total_allocated");
+            }
+        }
+    }
+
+    private static boolean canAllocatePotAmount(int projectId, double newAllocatedAmount) throws SQLException {
+        double projectAllocatedAmount = ProjectDAO.getProjectAllocatedAmount(projectId);
+        double currentPotAllocatedAmount = getTotalAllocatedForProject(projectId);
+        return currentPotAllocatedAmount + newAllocatedAmount <= projectAllocatedAmount;
+    }
+
+    private static boolean potBelongsToProject(int potId, int projectId) throws SQLException {
+        String sql = "SELECT 1 FROM pots WHERE id = ? AND project_id = ?";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, potId);
+            statement.setInt(2, projectId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
             }
         }
     }
