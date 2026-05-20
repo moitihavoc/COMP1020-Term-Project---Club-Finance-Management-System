@@ -27,18 +27,30 @@ public class UserDAO {
     }
 
     public static boolean login(String username, String password) throws SQLException {
+        return findByUsernameAndPassword(username, password) != null;
+    }
+
+    public static User findByUsernameAndPassword(String username, String password) throws SQLException {
         if (!hasUserInput(username, password)) {
-            return false;
+            return null;
         }
 
-        String sql = "SELECT 1 FROM users WHERE username = ? AND password = ?";
+        String sql = "SELECT id, username, password FROM users WHERE username = ? AND password = ?";
         try (Connection connection = Database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, username.trim());
             statement.setString(2, password);
 
             try (ResultSet resultSet = statement.executeQuery()) {
-                return resultSet.next();
+                if (!resultSet.next()) {
+                    return null;
+                }
+
+                return new User(
+                        resultSet.getInt("id"),
+                        resultSet.getString("username"),
+                        resultSet.getString("password")
+                );
             }
         }
     }
