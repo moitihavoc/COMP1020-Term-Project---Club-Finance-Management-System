@@ -2,12 +2,12 @@ package oop.mony.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -29,14 +29,14 @@ public class LoginController {
         User user = new User(username, password);
 
         if (username.isEmpty() || password.isEmpty()) {
-            errorLabel.setText("Please fill in all fields");
+            errorLabel.setText("Please fill in all fields.");
             return;
         }
 
         try {
             if (user.login()) {
                 // change to project scene
-                FXMLLoader projectLoader = new FXMLLoader(getClass().getResource("projects.fxml"));
+                FXMLLoader projectLoader = new FXMLLoader(getClass().getResource("/oop/mony/projects.fxml"));
                 HBox projectRoot = projectLoader.load();
                 ProjectsController controller = projectLoader.getController();
                 controller.setUsername(username);
@@ -44,7 +44,11 @@ public class LoginController {
                 Stage stage = (Stage) loginButton.getScene().getWindow();
                 stage.getScene().setRoot(projectRoot);
                 
-            }            
+            } 
+            else {
+                errorLabel.setText("User does not exist! Create new user?");
+                return;
+            }        
         } catch (IOException e) {
             // handle exception when projects.fxml file cant be loaded
             errorLabel.setText("Failed to load scene, check console.");
@@ -55,7 +59,16 @@ public class LoginController {
 
     @FXML
     private void handleRegister() throws IOException {
-        String username =  usernameField.getText();
-        String password =  passwordField.getText();
+        // move scene to Register 
+        try {
+            FXMLLoader registrationLoader = new FXMLLoader(getClass().getResource("/oop/mony/register.fxml"));
+            StackPane registerRoot = registrationLoader.load();
+
+            Stage stage = (Stage) loginButton.getScene().getWindow();
+            stage.getScene().setRoot(registerRoot);
+        }catch (IOException e){
+            errorLabel.setText("Failed to load register.fxml");
+            e.printStackTrace();
+        }
     }
 }

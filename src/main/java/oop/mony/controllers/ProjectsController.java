@@ -37,4 +37,14 @@ public class ProjectsController {
     @FXML
     private void handleViewProfile(){
     }
+
+    @FXML
+    private void handleEditBalance() {
+        // stub: show edit balance UI (not implemented yet)
+    }
+
+    @FXML
+    private void handleCreateProject() {
+        // stub: open create project dialog (not implemented yet)
+    }
 }
