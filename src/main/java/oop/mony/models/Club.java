@@ -5,21 +5,24 @@ public class Club {
     private final int userId;
     private final String clubName;
     private final double totalBalance;
+    private final double totalAllocated;
     private final double totalSpent;
 
     public Club(String clubName) {
-        this(0, 0, clubName, 0.0, 0.0);
+        this(0, 0, clubName, 0.0, 0.0, 0.0);
     }
 
     public Club(int userId, String clubName, double totalBalance) {
-        this(0, userId, clubName, totalBalance, 0.0);
+        this(0, userId, clubName, totalBalance, 0.0, 0.0);
     }
 
-    public Club(int clubId, int userId, String clubName, double totalBalance, double totalSpent) {
+    public Club(int clubId, int userId, String clubName, double totalBalance,
+                double totalAllocated, double totalSpent) {
         this.clubId = clubId;
         this.userId = userId;
         this.clubName = clubName == null ? "" : clubName.trim();
         this.totalBalance = Math.max(0.0, totalBalance);
+        this.totalAllocated = Math.max(0.0, totalAllocated);
         this.totalSpent = Math.max(0.0, totalSpent);
     }
 
@@ -37,6 +40,10 @@ public class Club {
 
     public double getTotalBalance() {
         return totalBalance;
+    }
+
+    public double getTotalAllocated() {
+        return totalAllocated;
     }
 
     public double getTotalSpent() {

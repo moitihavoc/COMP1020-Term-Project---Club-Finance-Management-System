@@ -2,6 +2,7 @@ package oop.mony.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -38,14 +39,52 @@ public final class Database {
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "user_id INTEGER NOT NULL,"
                 + "name TEXT NOT NULL,"
+                + "allocated_amount REAL NOT NULL DEFAULT 0,"
                 + "created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,"
                 + "FOREIGN KEY(user_id) REFERENCES users(id)"
+                + ")";
+
+        String potsSql = "CREATE TABLE IF NOT EXISTS pots ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "project_id INTEGER NOT NULL,"
+                + "name TEXT NOT NULL,"
+                + "allocated_amount REAL NOT NULL DEFAULT 0,"
+                + "created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,"
+                + "FOREIGN KEY(project_id) REFERENCES projects(id)"
                 + ")";
 
         try (Statement statement = connection.createStatement()) {
             statement.execute(usersSql);
             statement.execute(clubsSql);
             statement.execute(projectsSql);
+            statement.execute(potsSql);
         }
+
+        addColumnIfMissing(connection, "projects", "allocated_amount",
+                "allocated_amount REAL NOT NULL DEFAULT 0");
+    }
+
+    private static void addColumnIfMissing(Connection connection, String tableName,
+                                           String columnName, String columnDefinition) throws SQLException {
+        if (hasColumn(connection, tableName, columnName)) {
+            return;
+        }
+
+        try (Statement statement = connection.createStatement()) {
+            statement.execute("ALTER TABLE " + tableName + " ADD COLUMN " + columnDefinition);
+        }
+    }
+
+    private static boolean hasColumn(Connection connection, String tableName, String columnName) throws SQLException {
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("PRAGMA table_info(" + tableName + ")")) {
+            while (resultSet.next()) {
+                if (columnName.equals(resultSet.getString("name"))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

@@ -55,6 +55,7 @@ public class ClubDAO {
                         resultSet.getInt("user_id"),
                         resultSet.getString("name"),
                         resultSet.getDouble("total_balance"),
+                        ProjectDAO.getTotalAllocatedForUser(userId),
                         ProjectDAO.getTotalSpentForUser(userId)
                 );
             }
