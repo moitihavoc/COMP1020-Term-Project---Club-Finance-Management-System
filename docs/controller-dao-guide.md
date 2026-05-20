@@ -2,30 +2,6 @@
 
 This guide explains which DAO methods controllers should call. Controllers should collect UI input, call DAO methods, and update the screen. Controllers should not write SQL directly.
 
-## Current User
-
-Use `Session.getCurrentUser()` to get the logged-in user.
-
-The logged-in user's ID is:
-
-```java
-Session.getCurrentUser().getUserId()
-```
-
-Controllers should check that a user exists before loading pages that need login.
-
-## Logout
-
-Use:
-
-```java
-Session.clear();
-```
-
-After clearing the session, navigate back to `login.fxml`.
-
-Controllers should not leave the user on a protected page after logout.
-
 ## Login
 
 Use:
@@ -56,6 +32,30 @@ Returns:
 - `false`: invalid input or duplicate username.
 
 After successful registration, controllers can call `UserDAO.findByUsernameAndPassword(...)` to load the saved user and put it into `Session`.
+
+## Logout
+
+Use:
+
+```java
+Session.clear();
+```
+
+After clearing the session, navigate back to `login.fxml`.
+
+Controllers should not leave the user on a protected page after logout.
+
+## Current User
+
+Use `Session.getCurrentUser()` to get the logged-in user.
+
+The logged-in user's ID is:
+
+```java
+Session.getCurrentUser().getUserId()
+```
+
+Controllers should check that a user exists before loading pages that need login.
 
 ## Load Club Home Summary
 
