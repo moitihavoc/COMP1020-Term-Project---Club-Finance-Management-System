@@ -415,17 +415,6 @@ note
 
 Extra details about the transaction.
 
-## User Input
-
-These values should be directly entered by the user:
-
-```text
-Club total balance
-Project allocated amount
-Pot allocated amount
-Transaction amount
-```
-
 ## DAO Responsibility
 
 DAO classes handle database work.
@@ -473,30 +462,6 @@ TransactionDAO
 - calculate spent amount
 - save/delete proof images
 ```
-
-## Delete Behavior
-
-Manual cascade delete is used.
-
-When deleting a pot:
-
-```text
-1. Delete all transactions under the pot
-2. Delete the pot
-3. Delete proof image files for those transactions
-```
-
-When deleting a project:
-
-```text
-1. Find all pots under the project
-2. Delete transactions under each pot
-3. Delete each pot
-4. Delete the project
-5. Delete proof image files for deleted transactions
-```
-
-This is done manually in Java instead of relying on database cascade rules.
 
 ## Transaction Search
 
@@ -558,28 +523,29 @@ The controller should load project choices using:
 ProjectDAO.findProjectsForUser(userId)
 ```
 
-The dropdown should include:
+## Delete Behavior
+
+Manual cascade delete is used.
+
+When deleting a pot:
 
 ```text
-All Projects
-Project 1
-Project 2
-Project 3
+1. Delete all transactions under the pot
+2. Delete the pot
+3. Delete proof image files for those transactions
 ```
 
-If the user chooses `All Projects`, pass `null` as the project filter.
-
-If the user chooses a specific project, pass that project's `projectId`.
-
-The note column should be displayed in truncated form to keep the table clean.
-
-Use:
+When deleting a project:
 
 ```text
-TransactionRecord.getShortNote()
+1. Find all pots under the project
+2. Delete transactions under each pot
+3. Delete each pot
+4. Delete the project
+5. Delete proof image files for deleted transactions
 ```
 
-for the default shortened note.
+This is done manually in Java instead of relying on database cascade rules.
 
 ## Current Scope
 
