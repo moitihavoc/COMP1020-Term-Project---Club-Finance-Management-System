@@ -1,0 +1,17 @@
+[33mcommit a719e7765c8a08e81b01f0d1e5c3921dc4ffef27[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: Minh Hien <hienmnguyen06@gmail.com>
+Date:   Sat May 16 14:39:04 2026 +0700
+
+    rename Application file and add LoginController
+
+[33mcommit dcd00a3b45835b30ea9f7123d800d07d2d30342c[m[33m ([m[1;31morigin/main[m[33m)[m
+Author: Minh Hien <hienmnguyen06@gmail.com>
+Date:   Fri May 15 19:04:01 2026 +0700
+
+    create project and relocate resource files
+
+[33mcommit c4ea79ef88f1398f87c3b2f981c9046af7064056[m
+Author: Minh Hien <hienmnguyen06@gmail.com>
+Date:   Fri May 15 18:03:08 2026 +0700
+
+    add .fxml files
