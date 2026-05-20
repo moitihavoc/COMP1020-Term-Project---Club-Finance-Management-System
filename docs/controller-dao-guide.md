@@ -14,6 +14,18 @@ Session.getCurrentUser().getUserId()
 
 Controllers should check that a user exists before loading pages that need login.
 
+## Logout
+
+Use:
+
+```java
+Session.clear();
+```
+
+After clearing the session, navigate back to `login.fxml`.
+
+Controllers should not leave the user on a protected page after logout.
+
 ## Login
 
 Use:

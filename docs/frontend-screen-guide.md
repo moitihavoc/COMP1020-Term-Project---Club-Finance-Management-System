@@ -61,8 +61,11 @@ Home page navigation should include:
 - `Projects`
 - `Transactions`
 - `View profile`
+- `Logout`
 
 The `Transactions` sidebar tab should open the all-transactions page.
+
+The `Logout` option can be placed in the sidebar footer near `View profile`, or on the profile page as a clear button.
 
 ## Project Page
 

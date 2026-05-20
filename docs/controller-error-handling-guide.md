@@ -27,6 +27,22 @@ If result is `null`, show:
 Invalid username or password.
 ```
 
+## Logout Errors
+
+Logout should be simple:
+
+```java
+Session.clear();
+```
+
+Then navigate back to the login page.
+
+If navigation fails, show:
+
+```text
+Could not log out.
+```
+
 ## Register Errors
 
 DAO call:
