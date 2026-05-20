@@ -498,6 +498,89 @@ When deleting a project:
 
 This is done manually in Java instead of relying on database cascade rules.
 
+## Transaction Search
+
+The all-transactions page should show transactions across all projects and pots owned by the current user.
+
+The backend support for this uses:
+
+```text
+TransactionDAO.searchTransactionsForUser(...)
+```
+
+This method returns `TransactionRecord` objects instead of plain `Transaction` objects.
+
+`TransactionRecord` includes the transaction data plus the project and pot names needed for the table:
+
+```text
+transactionName
+projectName
+potName
+amount
+paidBy
+transactionDate
+proofPath
+note
+```
+
+The search box should search across:
+
+```text
+transaction name
+note
+paid by
+```
+
+Example:
+
+```text
+Searching "john" can match paidBy.
+Searching "pizza" can match transactionName.
+Searching "welcome" can match note.
+```
+
+The filters supported by the backend are:
+
+```text
+keyword
+start date
+end date
+minimum amount
+maximum amount
+project
+```
+
+The project filter should be shown as a dropdown/list in the UI.
+
+The controller should load project choices using:
+
+```text
+ProjectDAO.findProjectsForUser(userId)
+```
+
+The dropdown should include:
+
+```text
+All Projects
+Project 1
+Project 2
+Project 3
+```
+
+If the user chooses `All Projects`, pass `null` as the project filter.
+
+If the user chooses a specific project, pass that project's `projectId`.
+
+The note column should be displayed in truncated form to keep the table clean.
+
+Use:
+
+```text
+TransactionRecord.getShortNote()
+```
+
+for the default shortened note.
+
 ## Current Scope
 
 The backend model is ready for controller work, but the UI is not fully connected yet.
