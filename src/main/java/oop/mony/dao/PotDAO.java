@@ -50,7 +50,7 @@ public class PotDAO {
                             resultSet.getInt("project_id"),
                             resultSet.getString("name"),
                             resultSet.getDouble("allocated_amount"),
-                            0.0
+                            TransactionDAO.getTotalSpentForPot(resultSet.getInt("id"))
                     ));
                 }
             }
@@ -60,12 +60,21 @@ public class PotDAO {
     }
 
     public static void deletePot(int potId, int projectId) throws SQLException {
+        TransactionDAO.deleteTransactionsForPot(potId);
+
         String sql = "DELETE FROM pots WHERE id = ? AND project_id = ?";
         try (Connection connection = Database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, potId);
             statement.setInt(2, projectId);
             statement.executeUpdate();
+        }
+    }
+
+    public static void deletePotsForProject(int projectId) throws SQLException {
+        List<Pot> pots = findPotsForProject(projectId);
+        for (Pot pot : pots) {
+            deletePot(pot.getPotId(), projectId);
         }
     }
 

@@ -53,11 +53,25 @@ public final class Database {
                 + "FOREIGN KEY(project_id) REFERENCES projects(id)"
                 + ")";
 
+        String transactionsSql = "CREATE TABLE IF NOT EXISTS transactions ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "pot_id INTEGER NOT NULL,"
+                + "name TEXT NOT NULL,"
+                + "amount REAL NOT NULL,"
+                + "paid_by TEXT NOT NULL,"
+                + "transaction_date TEXT NOT NULL,"
+                + "proof_path TEXT,"
+                + "note TEXT,"
+                + "created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,"
+                + "FOREIGN KEY(pot_id) REFERENCES pots(id)"
+                + ")";
+
         try (Statement statement = connection.createStatement()) {
             statement.execute(usersSql);
             statement.execute(clubsSql);
             statement.execute(projectsSql);
             statement.execute(potsSql);
+            statement.execute(transactionsSql);
         }
 
         addColumnIfMissing(connection, "projects", "allocated_amount",

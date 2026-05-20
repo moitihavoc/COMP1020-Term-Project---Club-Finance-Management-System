@@ -60,7 +60,7 @@ public class ProjectDAO {
                             resultSet.getInt("user_id"),
                             resultSet.getString("name"),
                             resultSet.getDouble("allocated_amount"),
-                            0.0
+                            getTotalSpentForProject(resultSet.getInt("id"))
                     ));
                 }
             }
@@ -70,6 +70,8 @@ public class ProjectDAO {
     }
 
     public static void deleteProject(int projectId, int userId) throws SQLException {
+        PotDAO.deletePotsForProject(projectId);
+
         String sql = "DELETE FROM projects WHERE id = ? AND user_id = ?";
         try (Connection connection = Database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -79,8 +81,35 @@ public class ProjectDAO {
         }
     }
 
-    public static double getTotalSpentForUser(int userId) {
-        return 0.0;
+    public static double getTotalSpentForProject(int projectId) throws SQLException {
+        String sql = "SELECT COALESCE(SUM(t.amount), 0) AS total_spent "
+                + "FROM transactions t "
+                + "JOIN pots p ON t.pot_id = p.id "
+                + "WHERE p.project_id = ?";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, projectId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.getDouble("total_spent");
+            }
+        }
+    }
+
+    public static double getTotalSpentForUser(int userId) throws SQLException {
+        String sql = "SELECT COALESCE(SUM(t.amount), 0) AS total_spent "
+                + "FROM transactions t "
+                + "JOIN pots p ON t.pot_id = p.id "
+                + "JOIN projects pr ON p.project_id = pr.id "
+                + "WHERE pr.user_id = ?";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, userId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.getDouble("total_spent");
+            }
+        }
     }
 
     public static double getTotalAllocatedForUser(int userId) throws SQLException {

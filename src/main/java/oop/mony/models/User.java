@@ -5,7 +5,7 @@ import oop.mony.dao.UserDAO;
 import java.sql.SQLException;
 
 public class User {
-    private final int id;
+    private final int userId;
     private final String username;
     private final String password;
 
@@ -13,14 +13,14 @@ public class User {
         this(0, username, password);
     }
 
-    public User(int id, String username, String password) {
-        this.id = id;
+    public User(int userId, String username, String password) {
+        this.userId = userId;
         this.username = username == null ? "" : username.trim();
         this.password = password == null ? "" : password;
     }
 
-    public int getId() {
-        return id;
+    public int getUserId() {
+        return userId;
     }
 
     public String getUsername() {
