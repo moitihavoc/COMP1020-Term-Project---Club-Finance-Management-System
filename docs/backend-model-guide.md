@@ -8,15 +8,84 @@ The app is for tracking club money by event.
 
 A club may create a project for each event. Each project can have smaller budget pots for specific purposes, such as food, equipment, decoration, or operations. Transactions are the actual money spent from those pots.
 
-The important idea is:
+The main money concept is:
 
 ```text
-Allocated = planned or approved money
-Spent = actual money used through transactions
-Remaining = allocated - spent
+Planned / Allocated
+Spent
+Remaining
 ```
 
-Avoid thinking of "allocated" as money already spent. It is only the amount the club allowed for that project or pot.
+These three words should guide how the team thinks about the app.
+
+```text
+Planned / Allocated
+```
+
+This is money the club has set aside or approved for something. It is not money that has already been used.
+
+Example:
+
+```text
+The treasurer gives the Welcome Party a planned allocation of $1,000.
+```
+
+This means the event is allowed to use up to $1,000.
+
+```text
+Spent
+```
+
+This is the real money that has actually been used.
+
+Example:
+
+```text
+A member buys snacks for $120 and submits the receipt.
+```
+
+That $120 is spent money.
+
+```text
+Remaining
+```
+
+This is how much planned money is still available.
+
+Example:
+
+```text
+Planned / Allocated: $1,000
+Spent: $120
+Remaining: $880
+```
+
+For pots, the same idea applies:
+
+```text
+Food Pot
+Planned / Allocated: $500
+Spent: $220
+Remaining: $280
+```
+
+The easiest way to understand the system is:
+
+```text
+Planning creates allocations.
+Transactions create spending.
+Remaining shows what is left.
+```
+
+The UI should prefer simple words:
+
+```text
+Allocated
+Spent
+Remaining
+```
+
+Avoid thinking of "allocated" as money already spent. It is only the amount the club allowed for a project or pot.
 
 ## Object Relationship
 
@@ -346,61 +415,9 @@ note
 
 Extra details about the transaction.
 
-## Planned, Spent, Remaining
+## User Input
 
-This is the most important concept in the backend.
-
-Use these three values everywhere possible:
-
-```text
-Allocated
-Spent
-Remaining
-```
-
-For projects and pots:
-
-```java
-remainingAmount = allocatedAmount - spentAmount;
-```
-
-For the club:
-
-```java
-totalRemaining = totalBalance - totalSpent;
-```
-
-Example:
-
-```text
-Club Balance: 5000
-
-Project: Welcome Party
-Allocated: 1000
-Spent: 350
-Remaining: 650
-
-Pot: Food
-Allocated: 500
-Spent: 220
-Remaining: 280
-```
-
-## What Should Be Calculated
-
-These should be calculated by DAO/model logic:
-
-```text
-Project spent amount
-Project remaining amount
-Pot spent amount
-Pot remaining amount
-Club total allocated
-Club total spent
-Club total remaining
-```
-
-These should be directly entered by the user:
+These values should be directly entered by the user:
 
 ```text
 Club total balance
