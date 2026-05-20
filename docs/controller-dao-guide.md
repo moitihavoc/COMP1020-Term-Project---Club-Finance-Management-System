@@ -1,71 +1,173 @@
-# Controller DAO Guide
+# Controller DAO and Error Handling Guide
 
-This guide explains which DAO methods controllers should call. Controllers should collect UI input, call DAO methods, and update the screen. Controllers should not write SQL directly.
+This guide explains how controllers should connect UI actions to DAO methods, and how each result should be handled.
+
+Controllers should not write SQL directly. The controller's job is to read UI input, validate simple mistakes, call a DAO method, and update the screen.
+
+## General Controller Flow
+
+Use this flow for most button actions:
+
+1. Read values from FXML fields.
+2. Trim text input where appropriate.
+3. Convert numbers and dates.
+4. Validate simple UI mistakes.
+5. Get the current user or selected object ID.
+6. Call the DAO method.
+7. Handle `null`, `false`, or thrown exceptions.
+8. Reload the affected data on success.
+
+Example pattern:
+
+```java
+try {
+    // read input
+    // validate input
+    // call DAO
+    // reload UI
+} catch (NumberFormatException e) {
+    // show invalid number message
+} catch (SQLException e) {
+    // show database error message
+}
+```
+
+Do not show raw SQL errors to the user.
+
+## Current User
+
+Before loading pages that require login, check:
+
+```java
+Session.hasCurrentUser()
+```
+
+To get the current user:
+
+```java
+User user = Session.getCurrentUser();
+int userId = user.getUserId();
+```
+
+If there is no current user, navigate back to `login.fxml`.
 
 ## Login
 
-Use:
+Steps:
+
+1. Read `usernameField`.
+2. Read `passwordField`.
+3. Check that both are not empty.
+4. Call the DAO.
+
+DAO call:
 
 ```java
-UserDAO.findByUsernameAndPassword(username, password)
+User user = UserDAO.findByUsernameAndPassword(username, password);
 ```
 
-If it returns `null`, login failed.
-
-If it returns a `User`, save it:
+Success:
 
 ```java
 Session.setCurrentUser(user);
 ```
 
-## Register
+Then navigate to the home page.
 
-Use:
+Failure:
 
-```java
-UserDAO.createAccount(new User(username, password))
+If `user == null`, show:
+
+```text
+Invalid username or password.
 ```
 
-Returns:
+If `SQLException` happens, show:
 
-- `true`: account created.
-- `false`: invalid input or duplicate username.
+```text
+Could not log in.
+```
 
-After successful registration, controllers can call `UserDAO.findByUsernameAndPassword(...)` to load the saved user and put it into `Session`.
+## Register
+
+Steps:
+
+1. Read username.
+2. Read password.
+3. Read confirm password.
+4. Check that username is not empty.
+5. Check that password is not empty.
+6. Check that password and confirm password match.
+7. Call the DAO.
+
+DAO call:
+
+```java
+boolean created = UserDAO.createAccount(new User(username, password));
+```
+
+Success:
+
+Load the saved user:
+
+```java
+User user = UserDAO.findByUsernameAndPassword(username, password);
+Session.setCurrentUser(user);
+```
+
+Then navigate to the home page.
+
+Failure:
+
+If `created == false`, show:
+
+```text
+Username already exists or input is invalid.
+```
+
+If `SQLException` happens, show:
+
+```text
+Could not create account.
+```
 
 ## Logout
 
-Use:
+Steps:
+
+1. Call `Session.clear()`.
+2. Navigate back to `login.fxml`.
+
+Code:
 
 ```java
 Session.clear();
 ```
 
-After clearing the session, navigate back to `login.fxml`.
+If navigation fails, show:
 
-Controllers should not leave the user on a protected page after logout.
-
-## Current User
-
-Use `Session.getCurrentUser()` to get the logged-in user.
-
-The logged-in user's ID is:
-
-```java
-Session.getCurrentUser().getUserId()
+```text
+Could not log out.
 ```
 
-Controllers should check that a user exists before loading pages that need login.
+Do not leave the user on a protected page after logout.
 
-## Load Club Home Summary
+## Load Home Page
 
-Use:
+Steps:
+
+1. Get current user from `Session`.
+2. Call `ClubDAO.getOrCreateClubForUser(...)`.
+3. Call `ProjectDAO.findProjectsForUser(...)`.
+4. Display club totals.
+5. Display project cards.
+
+DAO calls:
 
 ```java
-ClubDAO.getOrCreateClubForUser(userId, username)
+Club club = ClubDAO.getOrCreateClubForUser(userId, username);
+List<Project> projects = ProjectDAO.findProjectsForUser(userId);
 ```
-
-This returns the club summary for the current user.
 
 Display:
 
@@ -74,126 +176,256 @@ Display:
 - `club.getTotalSpent()`
 - `club.getTotalRemaining()`
 
-## Edit Club Balance
+If `SQLException` happens, show:
 
-Use:
-
-```java
-ClubDAO.updateTotalBalance(userId, totalBalance)
+```text
+Could not load home page.
 ```
 
-Returns:
+If project list is empty, show:
 
-- `true`: balance updated.
-- `false`: balance is lower than the user's already allocated project total.
+```text
+No projects yet.
+```
+
+## Edit Club Balance
+
+Steps:
+
+1. Read balance input.
+2. Convert it to `double`.
+3. Call the DAO.
+4. Reload home summary on success.
+
+DAO call:
+
+```java
+boolean updated = ClubDAO.updateTotalBalance(userId, totalBalance);
+```
+
+Success:
+
+If `updated == true`, reload the club summary.
+
+Failure:
+
+If `updated == false`, show:
+
+```text
+Total balance cannot be lower than allocated project money.
+```
+
+If amount is not a number, show:
+
+```text
+Please enter a valid amount.
+```
+
+If `SQLException` happens, show:
+
+```text
+Could not update balance.
+```
 
 ## Create Project
 
-Use:
+Steps:
+
+1. Read project name.
+2. Read allocated amount.
+3. Convert allocated amount to `double`.
+4. Call the DAO.
+5. Reload project list on success.
+
+DAO call:
 
 ```java
-ProjectDAO.createProject(userId, projectName, allocatedAmount)
+Project project = ProjectDAO.createProject(userId, projectName, allocatedAmount);
 ```
 
-Returns:
+Success:
 
-- `Project`: project created.
-- `null`: project name is empty or allocation exceeds club balance.
-
-After creating, reload:
+If `project != null`, reload:
 
 ```java
-ProjectDAO.findProjectsForUser(userId)
+ProjectDAO.findProjectsForUser(userId);
 ```
 
-## Load Projects
+Failure:
 
-Use:
+If `project == null`, possible reasons are:
 
-```java
-ProjectDAO.findProjectsForUser(userId)
+- project name is empty
+- allocated amount exceeds the club balance
+
+Show:
+
+```text
+Project could not be created. Check the name and allocated amount.
 ```
 
-Each `Project` includes:
+If amount is not a number, show:
 
-- `projectName`
-- `allocatedAmount`
-- `spentAmount`
-- `remainingAmount`
+```text
+Please enter a valid allocated amount.
+```
+
+If `SQLException` happens, show:
+
+```text
+Could not create project.
+```
 
 ## Delete Project
 
-Use:
+Steps:
+
+1. Get selected `projectId`.
+2. Get current `userId`.
+3. Call the DAO.
+4. Reload project list.
+
+DAO call:
 
 ```java
-ProjectDAO.deleteProject(projectId, userId)
+ProjectDAO.deleteProject(projectId, userId);
 ```
 
-This performs manual cascade delete:
+This manually deletes:
 
-- deletes transactions under the project's pots
-- deletes pots
-- deletes the project
-- deletes proof image files for those transactions
+- transactions under the project's pots
+- proof image files for those transactions
+- pots under the project
+- the project
 
-After deleting, reload the project list.
+If `SQLException` happens, show:
+
+```text
+Could not delete project.
+```
+
+## Load Project Page
+
+Steps:
+
+1. Get selected `projectId`.
+2. Load pots for that project.
+3. Display project information passed from the previous page or loaded from a selected `Project`.
+4. Display pot cards.
+
+DAO call:
+
+```java
+List<Pot> pots = PotDAO.findPotsForProject(projectId);
+```
+
+If the pot list is empty, show:
+
+```text
+No pots yet.
+```
+
+If `SQLException` happens, show:
+
+```text
+Could not load project.
+```
 
 ## Create Pot
 
-Use:
+Steps:
+
+1. Read pot name.
+2. Read allocated amount.
+3. Convert allocated amount to `double`.
+4. Call the DAO.
+5. Reload pot list on success.
+
+DAO call:
 
 ```java
-PotDAO.createPot(projectId, potName, allocatedAmount)
+Pot pot = PotDAO.createPot(projectId, potName, allocatedAmount);
 ```
 
-Returns:
+Success:
 
-- `Pot`: pot created.
-- `null`: pot name is empty or total pot allocation exceeds the project's allocated amount.
-
-After creating, reload:
+If `pot != null`, reload:
 
 ```java
-PotDAO.findPotsForProject(projectId)
+PotDAO.findPotsForProject(projectId);
 ```
 
-## Load Pots
+Failure:
 
-Use:
+If `pot == null`, possible reasons are:
 
-```java
-PotDAO.findPotsForProject(projectId)
+- pot name is empty
+- total pot allocation would exceed the project allocation
+
+Show:
+
+```text
+Pot could not be created. Check the name and allocated amount.
 ```
 
-Each `Pot` includes:
+If amount is not a number, show:
 
-- `potName`
-- `allocatedAmount`
-- `spentAmount`
-- `remainingAmount`
+```text
+Please enter a valid allocated amount.
+```
+
+If `SQLException` happens, show:
+
+```text
+Could not create pot.
+```
 
 ## Delete Pot
 
-Use:
+Steps:
+
+1. Get selected `potId`.
+2. Get current `projectId`.
+3. Call the DAO.
+4. Reload pot list.
+
+DAO call:
 
 ```java
-PotDAO.deletePot(potId, projectId)
+PotDAO.deletePot(potId, projectId);
 ```
 
-This deletes:
+This manually deletes:
 
 - transactions under the pot
 - proof image files for those transactions
 - the pot
 
-After deleting, reload the pot list.
+If `SQLException` happens, show:
+
+```text
+Could not delete pot.
+```
 
 ## Create Transaction
 
-Use:
+Steps:
+
+1. Select the pot the transaction belongs to.
+2. Read transaction name.
+3. Read amount.
+4. Read paid by. This can be empty.
+5. Read transaction date as `LocalDate`.
+6. Read note.
+7. Let the user choose a proof image file if available.
+8. Pass the selected proof image as a `Path`, or pass `null`.
+9. Call the DAO.
+10. Reload transactions and affected spent/remaining totals.
+
+DAO call:
 
 ```java
-TransactionDAO.createTransaction(
+Transaction transaction = TransactionDAO.createTransaction(
     potId,
     transactionName,
     amount,
@@ -201,36 +433,77 @@ TransactionDAO.createTransaction(
     transactionDate,
     proofImagePath,
     note
-)
+);
 ```
 
-`transactionDate` should be a `LocalDate`.
+Success:
 
-`proofImagePath` should be a `Path` from the selected proof image. Pass `null` if no proof image is selected.
+If `transaction != null`, reload transaction rows and related pot/project totals.
 
-Returns:
+Failure:
 
-- `Transaction`: transaction created.
-- `null`: transaction name is empty.
+If `transaction == null`, show:
 
-The DAO copies the proof image into `data/proofs/` and stores the saved path.
+```text
+Transaction name is required.
+```
+
+If amount is not a number, show:
+
+```text
+Please enter a valid amount.
+```
+
+If image saving fails, catch `IOException` and show:
+
+```text
+Could not save proof image.
+```
+
+If database saving fails, catch `SQLException` and show:
+
+```text
+Could not save transaction.
+```
 
 ## Load Transactions For One Pot
 
-Use:
+Steps:
+
+1. Get selected `potId`.
+2. Call DAO.
+3. Render each transaction row.
+
+DAO call:
 
 ```java
-TransactionDAO.findTransactionsForPot(potId)
+List<Transaction> transactions = TransactionDAO.findTransactionsForPot(potId);
 ```
 
-This is useful on a project detail screen if showing transactions under a selected pot.
+If the list is empty, show:
+
+```text
+No transactions found.
+```
 
 ## Search All Transactions
 
-Use:
+Steps:
+
+1. Get current `userId`.
+2. Read keyword from search field.
+3. Read start date and end date.
+4. Read minimum and maximum amount.
+5. Read selected project from dropdown.
+6. Validate date and amount filters.
+7. Call DAO.
+8. Clear current table rows.
+9. Add one row per `TransactionRecord`.
+
+DAO call:
 
 ```java
-TransactionDAO.searchTransactionsForUser(
+List<TransactionRecord> results = TransactionDAO.searchTransactionsForUser(
     userId,
     keyword,
     startDate,
@@ -238,9 +511,70 @@ TransactionDAO.searchTransactionsForUser(
     minAmount,
     maxAmount,
     projectId
-)
+);
 ```
 
-This returns `List<TransactionRecord>`.
+Filter rules:
 
-Use this for the all-transactions page.
+- Empty keyword can be passed as `null` or empty string.
+- No start date means pass `null`.
+- No end date means pass `null`.
+- No min amount means pass `null`.
+- No max amount means pass `null`.
+- `All Projects` means pass `null` for `projectId`.
+- A selected project means pass that project's `projectId`.
+
+Validation errors:
+
+If amount fields are not valid numbers, show:
+
+```text
+Please enter valid amount filters.
+```
+
+If start date is after end date, show:
+
+```text
+Start date cannot be after end date.
+```
+
+If `SQLException` happens, show:
+
+```text
+Could not load transactions.
+```
+
+If results are empty, show:
+
+```text
+No transactions found.
+```
+
+## Proof Images
+
+The DAO stores proof images by copying selected files into:
+
+```text
+data/proofs/
+```
+
+The database stores only the saved path.
+
+Controllers should display this as a user-facing action like:
+
+```text
+View Proof
+```
+
+Do not show raw file paths unless debugging.
+
+## Final Reminder
+
+Controllers should stay focused on UI flow.
+
+Business rules belong in the DAO/model layer. For example:
+
+- project allocation cannot exceed club balance
+- pot allocation cannot exceed project allocation
+- manual cascade delete
+- proof image cleanup
