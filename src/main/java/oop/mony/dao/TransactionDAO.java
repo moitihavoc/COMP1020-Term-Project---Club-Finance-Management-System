@@ -35,33 +35,39 @@ public class TransactionDAO {
                 + "(pot_id, name, amount, paid_by, transaction_date, proof_path, note) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection connection = Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setInt(1, transaction.getPotId());
-            statement.setString(2, transaction.getTransactionName());
-            statement.setDouble(3, transaction.getAmount());
-            statement.setString(4, transaction.getPaidBy());
-            statement.setString(5, transaction.getTransactionDate().toString());
-            statement.setString(6, transaction.getProofPath());
-            statement.setString(7, transaction.getNote());
-            statement.executeUpdate();
+        try {
+            try (Connection connection = Database.getConnection();
+                 PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                statement.setInt(1, transaction.getPotId());
+                statement.setString(2, transaction.getTransactionName());
+                statement.setDouble(3, transaction.getAmount());
+                statement.setString(4, transaction.getPaidBy());
+                statement.setString(5, transaction.getTransactionDate().toString());
+                statement.setString(6, transaction.getProofPath());
+                statement.setString(7, transaction.getNote());
+                statement.executeUpdate();
 
-            try (ResultSet keys = statement.getGeneratedKeys()) {
-                if (keys.next()) {
-                    return new Transaction(
-                            keys.getInt(1),
-                            transaction.getPotId(),
-                            transaction.getTransactionName(),
-                            transaction.getAmount(),
-                            transaction.getPaidBy(),
-                            transaction.getTransactionDate(),
-                            transaction.getProofPath(),
-                            transaction.getNote()
-                    );
+                try (ResultSet keys = statement.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        return new Transaction(
+                                keys.getInt(1),
+                                transaction.getPotId(),
+                                transaction.getTransactionName(),
+                                transaction.getAmount(),
+                                transaction.getPaidBy(),
+                                transaction.getTransactionDate(),
+                                transaction.getProofPath(),
+                                transaction.getNote()
+                        );
+                    }
                 }
             }
+        } catch (SQLException e) {
+            deleteProofImage(proofPath);
+            throw e;
         }
 
+        deleteProofImage(proofPath);
         return transaction;
     }
 
@@ -94,6 +100,7 @@ public class TransactionDAO {
     }
 
     public static void deleteTransaction(int transactionId, int potId) throws SQLException {
+        List<String> proofPaths = findProofPathsForTransaction(transactionId, potId);
         String sql = "DELETE FROM transactions WHERE id = ? AND pot_id = ?";
         try (Connection connection = Database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -101,15 +108,18 @@ public class TransactionDAO {
             statement.setInt(2, potId);
             statement.executeUpdate();
         }
+        deleteProofImages(proofPaths);
     }
 
     public static void deleteTransactionsForPot(int potId) throws SQLException {
+        List<String> proofPaths = findProofPathsForPot(potId);
         String sql = "DELETE FROM transactions WHERE pot_id = ?";
         try (Connection connection = Database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, potId);
             statement.executeUpdate();
         }
+        deleteProofImages(proofPaths);
     }
 
     public static double getTotalSpentForPot(int potId) throws SQLException {
@@ -135,5 +145,56 @@ public class TransactionDAO {
         Path savedPath = PROOF_FOLDER.resolve(savedFileName);
         Files.copy(proofImage, savedPath, StandardCopyOption.REPLACE_EXISTING);
         return savedPath.toString();
+    }
+
+    private static List<String> findProofPathsForTransaction(int transactionId, int potId) throws SQLException {
+        List<String> proofPaths = new ArrayList<>();
+        String sql = "SELECT proof_path FROM transactions WHERE id = ? AND pot_id = ?";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, transactionId);
+            statement.setInt(2, potId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    proofPaths.add(resultSet.getString("proof_path"));
+                }
+            }
+        }
+        return proofPaths;
+    }
+
+    private static List<String> findProofPathsForPot(int potId) throws SQLException {
+        List<String> proofPaths = new ArrayList<>();
+        String sql = "SELECT proof_path FROM transactions WHERE pot_id = ?";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, potId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    proofPaths.add(resultSet.getString("proof_path"));
+                }
+            }
+        }
+        return proofPaths;
+    }
+
+    private static void deleteProofImages(List<String> proofPaths) {
+        for (String proofPath : proofPaths) {
+            deleteProofImage(proofPath);
+        }
+    }
+
+    private static void deleteProofImage(String proofPath) {
+        if (proofPath == null || proofPath.trim().isEmpty()) {
+            return;
+        }
+
+        try {
+            Files.deleteIfExists(Paths.get(proofPath));
+        } catch (IOException e) {
+            System.err.println("Could not delete proof image: " + proofPath);
+        }
     }
 }
