@@ -5,17 +5,30 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public final class Database {
-    private static final String DATABASE_URL = "jdbc:sqlite:data/mony.db";
+    private static final Path APP_DATA_FOLDER = Paths.get("app-data");
+    private static final String DATABASE_URL = "jdbc:sqlite:app-data/mony.db";
 
     private Database() {
     }
 
     public static Connection getConnection() throws SQLException {
+        createAppDataFolder();
         Connection connection = DriverManager.getConnection(DATABASE_URL);
         initialize(connection);
         return connection;
+    }
+
+    private static void createAppDataFolder() throws SQLException {
+        try {
+            Files.createDirectories(APP_DATA_FOLDER);
+        } catch (java.io.IOException e) {
+            throw new SQLException("Could not create app data folder.", e);
+        }
     }
 
     private static void initialize(Connection connection) throws SQLException {

@@ -123,7 +123,7 @@ Using `User` is easier because `User.login()` and `User.createAccount()` already
 The SQLite database file is:
 
 ```text
-data/mony.db
+app-data/mony.db
 ```
 
 The current `users` table stores:

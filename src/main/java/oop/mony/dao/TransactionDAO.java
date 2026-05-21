@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionDAO {
-    private static final Path PROOF_FOLDER = Paths.get("data", "proofs");
+    private static final Path PROOF_FOLDER = Paths.get("app-data", "proofs");
 
     public static Transaction createTransaction(int potId, String name, double amount,
                                                 String paidBy, LocalDate transactionDate,

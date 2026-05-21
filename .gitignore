@@ -47,6 +47,10 @@ build/
 # VS Code
 .vscode/
 
+# App runtime data
+app-data/*
+!app-data/.gitkeep
+
 # OS files
 .DS_Store
 Thumbs.db

@@ -404,7 +404,7 @@ The saved file path of the uploaded proof image.
 The image itself is copied into:
 
 ```text
-data/proofs/
+app-data/proofs/
 ```
 
 The database stores only the path.

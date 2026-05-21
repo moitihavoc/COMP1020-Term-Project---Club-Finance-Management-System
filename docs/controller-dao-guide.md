@@ -555,7 +555,7 @@ No transactions found.
 The DAO stores proof images by copying selected files into:
 
 ```text
-data/proofs/
+app-data/proofs/
 ```
 
 The database stores only the saved path.
