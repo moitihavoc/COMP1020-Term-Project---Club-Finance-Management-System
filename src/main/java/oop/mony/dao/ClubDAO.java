@@ -31,10 +31,6 @@ public class ClubDAO {
 
     public static boolean updateTotalBalance(int userId, double totalBalance) throws SQLException {
         double safeTotalBalance = Math.max(0.0, totalBalance);
-        if (safeTotalBalance < ProjectDAO.getTotalAllocatedForUser(userId)) {
-            return false;
-        }
-
         String sql = "UPDATE clubs SET total_balance = ? WHERE user_id = ?";
         try (Connection connection = Database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -60,7 +56,7 @@ public class ClubDAO {
         }
     }
 
-    private static Club findByUserId(int userId) throws SQLException {
+    public static Club findByUserId(int userId) throws SQLException {
         String sql = "SELECT id, user_id, name, total_balance FROM clubs WHERE user_id = ?";
         try (Connection connection = Database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -75,9 +71,7 @@ public class ClubDAO {
                         resultSet.getInt("id"),
                         resultSet.getInt("user_id"),
                         resultSet.getString("name"),
-                        resultSet.getDouble("total_balance"),
-                        ProjectDAO.getTotalAllocatedForUser(userId),
-                        ProjectDAO.getTotalSpentForUser(userId)
+                        resultSet.getDouble("total_balance")
                 );
             }
         }

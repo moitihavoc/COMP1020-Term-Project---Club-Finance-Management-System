@@ -87,4 +87,37 @@ public class TransactionRecord {
 
         return note.substring(0, maxLength) + "...";
     }
+
+    public boolean matchesKeyword(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return true;
+        }
+
+        String search = keyword.trim().toLowerCase();
+        return transactionName.toLowerCase().contains(search)
+                || projectName.toLowerCase().contains(search)
+                || potName.toLowerCase().contains(search)
+                || paidBy.toLowerCase().contains(search)
+                || note.toLowerCase().contains(search);
+    }
+
+    public boolean isAfterOrOn(LocalDate startDate) {
+        return startDate == null || !transactionDate.isBefore(startDate);
+    }
+
+    public boolean isBeforeOrOn(LocalDate endDate) {
+        return endDate == null || !transactionDate.isAfter(endDate);
+    }
+
+    public boolean isAtLeast(Double minAmount) {
+        return minAmount == null || amount >= Math.max(0.0, minAmount);
+    }
+
+    public boolean isAtMost(Double maxAmount) {
+        return maxAmount == null || amount <= Math.max(0.0, maxAmount);
+    }
+
+    public boolean belongsToProject(Integer selectedProjectId) {
+        return selectedProjectId == null || projectId == selectedProjectId;
+    }
 }

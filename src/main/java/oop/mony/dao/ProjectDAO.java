@@ -21,10 +21,6 @@ public class ProjectDAO {
             return null;
         }
 
-        if (!canAllocateProjectAmount(userId, project.getAllocatedAmount())) {
-            return null;
-        }
-
         String sql = "INSERT INTO projects (user_id, name, allocated_amount) VALUES (?, ?, ?)";
         try (Connection connection = Database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -64,7 +60,7 @@ public class ProjectDAO {
                             resultSet.getInt("user_id"),
                             resultSet.getString("name"),
                             resultSet.getDouble("allocated_amount"),
-                            getTotalSpentForProject(resultSet.getInt("id"))
+                            0.0
                     ));
                 }
             }
@@ -103,55 +99,6 @@ public class ProjectDAO {
                 return resultSet.getDouble("allocated_amount");
             }
         }
-    }
-
-    public static double getTotalSpentForProject(int projectId) throws SQLException {
-        String sql = "SELECT COALESCE(SUM(t.amount), 0) AS total_spent "
-                + "FROM transactions t "
-                + "JOIN pots p ON t.pot_id = p.id "
-                + "WHERE p.project_id = ?";
-        try (Connection connection = Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, projectId);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                return resultSet.getDouble("total_spent");
-            }
-        }
-    }
-
-    public static double getTotalSpentForUser(int userId) throws SQLException {
-        String sql = "SELECT COALESCE(SUM(t.amount), 0) AS total_spent "
-                + "FROM transactions t "
-                + "JOIN pots p ON t.pot_id = p.id "
-                + "JOIN projects pr ON p.project_id = pr.id "
-                + "WHERE pr.user_id = ?";
-        try (Connection connection = Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, userId);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                return resultSet.getDouble("total_spent");
-            }
-        }
-    }
-
-    public static double getTotalAllocatedForUser(int userId) throws SQLException {
-        String sql = "SELECT COALESCE(SUM(allocated_amount), 0) AS total_allocated FROM projects WHERE user_id = ?";
-        try (Connection connection = Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, userId);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                return resultSet.getDouble("total_allocated");
-            }
-        }
-    }
-
-    private static boolean canAllocateProjectAmount(int userId, double newAllocatedAmount) throws SQLException {
-        double totalBalance = ClubDAO.getTotalBalanceForUser(userId);
-        double currentAllocated = getTotalAllocatedForUser(userId);
-        return currentAllocated + newAllocatedAmount <= totalBalance;
     }
 
     private static boolean projectBelongsToUser(int projectId, int userId) throws SQLException {

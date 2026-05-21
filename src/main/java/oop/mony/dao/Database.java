@@ -2,7 +2,6 @@ package oop.mony.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.nio.file.Files;
@@ -86,32 +85,5 @@ public final class Database {
             statement.execute(potsSql);
             statement.execute(transactionsSql);
         }
-
-        addColumnIfMissing(connection, "projects", "allocated_amount",
-                "allocated_amount REAL NOT NULL DEFAULT 0");
-    }
-
-    private static void addColumnIfMissing(Connection connection, String tableName,
-                                           String columnName, String columnDefinition) throws SQLException {
-        if (hasColumn(connection, tableName, columnName)) {
-            return;
-        }
-
-        try (Statement statement = connection.createStatement()) {
-            statement.execute("ALTER TABLE " + tableName + " ADD COLUMN " + columnDefinition);
-        }
-    }
-
-    private static boolean hasColumn(Connection connection, String tableName, String columnName) throws SQLException {
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery("PRAGMA table_info(" + tableName + ")")) {
-            while (resultSet.next()) {
-                if (columnName.equals(resultSet.getString("name"))) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 }

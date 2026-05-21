@@ -17,10 +17,6 @@ public class PotDAO {
             return null;
         }
 
-        if (!canAllocatePotAmount(projectId, pot.getAllocatedAmount())) {
-            return null;
-        }
-
         String sql = "INSERT INTO pots (project_id, name, allocated_amount) VALUES (?, ?, ?)";
         try (Connection connection = Database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -54,7 +50,7 @@ public class PotDAO {
                             resultSet.getInt("project_id"),
                             resultSet.getString("name"),
                             resultSet.getDouble("allocated_amount"),
-                            TransactionDAO.getTotalSpentForPot(resultSet.getInt("id"))
+                            0.0
                     ));
                 }
             }
@@ -84,24 +80,6 @@ public class PotDAO {
         for (Pot pot : pots) {
             deletePot(pot.getPotId(), projectId);
         }
-    }
-
-    public static double getTotalAllocatedForProject(int projectId) throws SQLException {
-        String sql = "SELECT COALESCE(SUM(allocated_amount), 0) AS total_allocated FROM pots WHERE project_id = ?";
-        try (Connection connection = Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, projectId);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                return resultSet.getDouble("total_allocated");
-            }
-        }
-    }
-
-    private static boolean canAllocatePotAmount(int projectId, double newAllocatedAmount) throws SQLException {
-        double projectAllocatedAmount = ProjectDAO.getProjectAllocatedAmount(projectId);
-        double currentPotAllocatedAmount = getTotalAllocatedForProject(projectId);
-        return currentPotAllocatedAmount + newAllocatedAmount <= projectAllocatedAmount;
     }
 
     private static boolean potBelongsToProject(int potId, int projectId) throws SQLException {

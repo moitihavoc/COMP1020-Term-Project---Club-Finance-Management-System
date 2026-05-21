@@ -1,7 +1,6 @@
 package oop.mony.dao;
 
 import oop.mony.models.Transaction;
-import oop.mony.models.TransactionRecord;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -100,93 +99,6 @@ public class TransactionDAO {
         return transactions;
     }
 
-    public static List<TransactionRecord> searchTransactionsForUser(
-            int userId,
-            String keyword,
-            LocalDate startDate,
-            LocalDate endDate,
-            Double minAmount,
-            Double maxAmount,
-            Integer projectId) throws SQLException {
-
-        List<TransactionRecord> transactions = new ArrayList<>();
-        List<Object> parameters = new ArrayList<>();
-
-        StringBuilder sql = new StringBuilder();
-        sql.append("SELECT t.id, t.pot_id, t.name, t.amount, t.paid_by, ");
-        sql.append("t.transaction_date, t.proof_path, t.note, ");
-        sql.append("p.id AS project_id, p.name AS project_name, po.name AS pot_name ");
-        sql.append("FROM transactions t ");
-        sql.append("JOIN pots po ON t.pot_id = po.id ");
-        sql.append("JOIN projects p ON po.project_id = p.id ");
-        sql.append("WHERE p.user_id = ? ");
-        parameters.add(userId);
-
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            String searchKeyword = "%" + keyword.trim().toLowerCase() + "%";
-            sql.append("AND (LOWER(t.name) LIKE ? ");
-            sql.append("OR LOWER(COALESCE(t.note, '')) LIKE ? ");
-            sql.append("OR LOWER(t.paid_by) LIKE ?) ");
-            parameters.add(searchKeyword);
-            parameters.add(searchKeyword);
-            parameters.add(searchKeyword);
-        }
-
-        if (startDate != null) {
-            sql.append("AND t.transaction_date >= ? ");
-            parameters.add(startDate.toString());
-        }
-
-        if (endDate != null) {
-            sql.append("AND t.transaction_date <= ? ");
-            parameters.add(endDate.toString());
-        }
-
-        if (minAmount != null) {
-            sql.append("AND t.amount >= ? ");
-            parameters.add(Math.max(0.0, minAmount));
-        }
-
-        if (maxAmount != null) {
-            sql.append("AND t.amount <= ? ");
-            parameters.add(Math.max(0.0, maxAmount));
-        }
-
-        if (projectId != null) {
-            sql.append("AND p.id = ? ");
-            parameters.add(projectId);
-        }
-
-        sql.append("ORDER BY t.transaction_date DESC, t.id DESC");
-
-        try (Connection connection = Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql.toString())) {
-            for (int i = 0; i < parameters.size(); i++) {
-                statement.setObject(i + 1, parameters.get(i));
-            }
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    transactions.add(new TransactionRecord(
-                            resultSet.getInt("id"),
-                            resultSet.getInt("project_id"),
-                            resultSet.getInt("pot_id"),
-                            resultSet.getString("name"),
-                            resultSet.getString("project_name"),
-                            resultSet.getString("pot_name"),
-                            resultSet.getDouble("amount"),
-                            resultSet.getString("paid_by"),
-                            LocalDate.parse(resultSet.getString("transaction_date")),
-                            resultSet.getString("proof_path"),
-                            resultSet.getString("note")
-                    ));
-                }
-            }
-        }
-
-        return transactions;
-    }
-
     public static void deleteTransaction(int transactionId, int potId) throws SQLException {
         List<String> proofPaths = findProofPathsForTransaction(transactionId, potId);
         String sql = "DELETE FROM transactions WHERE id = ? AND pot_id = ?";
@@ -208,18 +120,6 @@ public class TransactionDAO {
             statement.executeUpdate();
         }
         deleteProofImages(proofPaths);
-    }
-
-    public static double getTotalSpentForPot(int potId) throws SQLException {
-        String sql = "SELECT COALESCE(SUM(amount), 0) AS total_spent FROM transactions WHERE pot_id = ?";
-        try (Connection connection = Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, potId);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                return resultSet.getDouble("total_spent");
-            }
-        }
     }
 
     private static String saveProofImage(Path proofImage) throws IOException {
