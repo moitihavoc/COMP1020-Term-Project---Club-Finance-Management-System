@@ -26,12 +26,23 @@ public class LoginController {
         */
         String username =  usernameField.getText();
         String password =  passwordField.getText();
-        User user = new User(username, password);
 
-        if (username.isEmpty() || password.isEmpty()) {
+        if (username.isEmpty() && password.isEmpty()) {
             errorLabel.setText("Please fill in all fields.");
             return;
         }
+
+        if (username.isEmpty()) {
+            errorLabel.setText("Please enter your username.");
+            return;
+        }
+
+        if (password.isEmpty()) {
+            errorLabel.setText("Please enter your password.");
+            return;
+        }
+
+        User user = new User(username, password);
 
         try {
             if (user.login()) {
@@ -46,7 +57,7 @@ public class LoginController {
                 
             } 
             else {
-                errorLabel.setText("User does not exist! Create new user?");
+                errorLabel.setText("Incorrect username or password.");
                 return;
             }        
         } catch (IOException e) {
