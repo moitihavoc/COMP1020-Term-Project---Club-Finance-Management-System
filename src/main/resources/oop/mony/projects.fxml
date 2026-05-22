@@ -12,7 +12,7 @@
           style="-fx-background-color: #191919; -fx-padding: 48 28 48 28; -fx-min-width: 280; -fx-max-width: 280;">
 
         <Label text="Mony"
-               style="-fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: 800; -fx-font-family: 'Inter';"/>
+               style="-fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: 800;"/>
 
         <VBox spacing="4" style="-fx-padding: 40 0 0 0;">
             <HBox spacing="12" alignment="CENTER_LEFT"
@@ -22,7 +22,7 @@
             </HBox>
             <HBox spacing="12" alignment="CENTER_LEFT"
                   onMouseClicked="#handleGoToTransactions"
-                  style="-fx-padding: 12 16 12 16; -fx-background-radius: 4;">
+                  style="-fx-padding: 12 16 12 16; -fx-background-radius: 4; -fx-cursor: hand;">
                 <Label text="Transactions"
                        style="-fx-text-fill: #aaaaaa; -fx-font-size: 15px;"/>
             </HBox>
@@ -30,15 +30,24 @@
 
         <Region VBox.vgrow="ALWAYS"/>
 
+        <!-- VIEW PROFILE -->
         <HBox spacing="12" alignment="CENTER_LEFT"
               onMouseClicked="#handleViewProfile"
-              style="-fx-border-color: #333333; -fx-border-width: 1 0 0 0; -fx-padding: 20 0 0 0; -fx-cursor: hand;">
+              style="-fx-border-color: #333333; -fx-border-width: 1 0 0 0; -fx-padding: 20 0 12 0; -fx-cursor: hand;">
             <VBox spacing="2">
                 <Label fx:id="sidebarUsername" text="User"
                        style="-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: 600;"/>
                 <Label text="View profile"
                        style="-fx-text-fill: #666666; -fx-font-size: 12px;"/>
             </VBox>
+        </HBox>
+
+        <!-- LOGOUT -->
+        <HBox spacing="12" alignment="CENTER_LEFT"
+              onMouseClicked="#handleLogout"
+              style="-fx-padding: 12 0 0 0; -fx-cursor: hand;">
+            <Label fx:id="logoutButton" text="Logout"
+                   style="-fx-text-fill: #e53935; -fx-font-size: 14px; -fx-font-weight: 600;"/>
         </HBox>
     </VBox>
 
@@ -55,41 +64,43 @@
                        style="-fx-font-size: 20px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
             </HBox>
             <Region HBox.hgrow="ALWAYS"/>
-            <HBox spacing="16" alignment="CENTER">
-                <Label text="Bell" style="-fx-font-size: 18px; -fx-text-fill: #555555;"/>
-                <TextField promptText="Search here..." prefWidth="200" prefHeight="34"
-                           style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0; -fx-font-size: 13px; -fx-padding: 0 10 0 10;"/>
-            </HBox>
+            <TextField fx:id="projectSearchField"
+                       promptText="Search projects..."
+                       prefWidth="220" prefHeight="34"
+                       style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0; -fx-font-size: 13px; -fx-padding: 0 10 0 10;"/>
         </HBox>
 
         <!-- PAGE CONTENT -->
-        <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                    style="-fx-background: transparent; -fx-background-color: transparent;">
             <VBox spacing="24" style="-fx-padding: 32;">
 
                 <!-- STATS ROW -->
-                <HBox spacing="20">
-                    <VBox spacing="6" prefWidth="280"
+                <HBox spacing="16">
+                    <VBox spacing="6" prefWidth="256"
                           style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20 24 20 24;">
                         <Label text="Total Balance"
                                style="-fx-font-size: 13px; -fx-text-fill: #888888;"/>
                         <Label fx:id="totalBalanceLabel" text="0"
                                style="-fx-font-size: 26px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
-                        <HBox>
-                            <Label text="Edit"
-                                   onMouseClicked="#handleEditBalance"
-                                   style="-fx-font-size: 13px; -fx-text-fill: #299D91; -fx-cursor: hand;"/>
-                            <Label text=" >"
-                                   style="-fx-font-size: 13px; -fx-text-fill: #299D91;"/>
-                        </HBox>
+                        <Label text="Edit ›" onMouseClicked="#handleEditBalance"
+                               style="-fx-font-size: 13px; -fx-text-fill: #299D91; -fx-cursor: hand;"/>
                     </VBox>
-                    <VBox spacing="6" prefWidth="280"
+                    <VBox spacing="6" prefWidth="256"
+                          style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20 24 20 24;">
+                        <Label text="Total Allocated"
+                               style="-fx-font-size: 13px; -fx-text-fill: #888888;"/>
+                        <Label fx:id="totalAllocatedLabel" text="0"
+                               style="-fx-font-size: 26px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
+                    </VBox>
+                    <VBox spacing="6" prefWidth="256"
                           style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20 24 20 24;">
                         <Label text="Total Spent"
                                style="-fx-font-size: 13px; -fx-text-fill: #888888;"/>
                         <Label fx:id="totalSpentLabel" text="0"
                                style="-fx-font-size: 26px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
                     </VBox>
-                    <VBox spacing="6" prefWidth="280"
+                    <VBox spacing="6" prefWidth="256"
                           style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20 24 20 24;">
                         <Label text="Remaining Balance"
                                style="-fx-font-size: 13px; -fx-text-fill: #888888;"/>
@@ -100,12 +111,40 @@
 
                 <!-- PROJECTS SECTION -->
                 <VBox spacing="16">
-                    <Label text="Projects"
-                           style="-fx-font-size: 20px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
+                    <HBox alignment="CENTER_LEFT" spacing="16">
+                        <Label text="Projects"
+                               style="-fx-font-size: 20px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
+                        <Button fx:id="createProjectBtn" text="+ Create Project"
+                                onAction="#handleCreateProject"
+                                style="-fx-background-color: #299D91; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: 600; -fx-padding: 10 20 10 20; -fx-background-radius: 8;"/>
+                    </HBox>
 
-                    <Button fx:id="createProjectBtn" text="+ Create Project"
-                            onAction="#handleCreateProject"
-                            style="-fx-background-color: #299D91; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: 600; -fx-padding: 10 20 10 20; -fx-background-radius: 8;"/>
+                    <!-- CREATE PROJECT FORM (hidden by default, shown by controller) -->
+                    <VBox fx:id="createProjectForm" spacing="12" managed="false" visible="false"
+                          style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 24; -fx-max-width: 480;">
+                        <Label text="New Project"
+                               style="-fx-font-size: 16px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
+                        <VBox spacing="6">
+                            <Label text="Project Name"
+                                   style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #191919;"/>
+                            <TextField fx:id="newProjectNameField" promptText="Enter project name"
+                                       style="-fx-font-size: 14px; -fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
+                        </VBox>
+                        <VBox spacing="6">
+                            <Label text="Allocated Amount"
+                                   style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #191919;"/>
+                            <TextField fx:id="newProjectAllocatedField" promptText="0"
+                                       style="-fx-font-size: 14px; -fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
+                        </VBox>
+                        <Label fx:id="createProjectErrorLabel" text=""
+                               style="-fx-text-fill: #e53935; -fx-font-size: 13px;"/>
+                        <HBox spacing="12">
+                            <Button text="Create" onAction="#handleConfirmCreateProject"
+                                    style="-fx-background-color: #299D91; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: 600; -fx-padding: 10 24 10 24; -fx-background-radius: 8;"/>
+                            <Button text="Cancel" onAction="#handleCancelCreateProject"
+                                    style="-fx-background-color: transparent; -fx-border-color: #cccccc; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 14px; -fx-padding: 10 24 10 24;"/>
+                        </HBox>
+                    </VBox>
 
                     <!-- PROJECT CARDS GRID -->
                     <FlowPane fx:id="projectsGrid" hgap="16" vgap="16" prefWrapLength="1060"/>
