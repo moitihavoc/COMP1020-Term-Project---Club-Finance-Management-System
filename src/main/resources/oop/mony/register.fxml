@@ -18,25 +18,33 @@
         <VBox spacing="16" style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 40;">
 
             <VBox spacing="6">
-                <Label text="Username" style="-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #191919;"/>
+                <Label text="Username"
+                       style="-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #191919;"/>
                 <TextField fx:id="usernameField" promptText="Enter username"
                            style="-fx-font-size: 14px; -fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
             </VBox>
 
             <VBox spacing="6">
-                <Label text="Password" style="-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #191919;"/>
+                <Label text="Password"
+                       style="-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #191919;"/>
                 <PasswordField fx:id="passwordField" promptText="Enter password"
                                style="-fx-font-size: 14px; -fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
             </VBox>
 
             <VBox spacing="6">
-                <Label text="Confirm Password" style="-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #191919;"/>
+                <Label text="Confirm Password"
+                       style="-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #191919;"/>
                 <PasswordField fx:id="confirmPasswordField" promptText="Confirm password"
                                style="-fx-font-size: 14px; -fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
             </VBox>
 
-            <Label fx:id="errorLabel" text=""
-                   style="-fx-text-fill: #e53935; -fx-font-size: 13px;"/>
+            <!-- Error / Success area with min height so layout doesn't shift -->
+            <VBox minHeight="20">
+                <Label fx:id="errorLabel" text=""
+                       style="-fx-text-fill: #e53935; -fx-font-size: 13px;"/>
+                <Label fx:id="successLabel" text=""
+                       style="-fx-text-fill: #299D91; -fx-font-size: 13px;"/>
+            </VBox>
 
             <Button fx:id="registerButton" text="Register"
                     onAction="#handleRegister"
