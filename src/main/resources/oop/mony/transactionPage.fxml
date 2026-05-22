@@ -2,7 +2,6 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
 <HBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
@@ -40,15 +39,24 @@
 
         <Region VBox.vgrow="ALWAYS"/>
 
+        <!-- VIEW PROFILE -->
         <HBox spacing="12" alignment="CENTER_LEFT"
               onMouseClicked="#handleViewProfile"
-              style="-fx-border-color: #333333; -fx-border-width: 1 0 0 0; -fx-padding: 20 0 0 0; -fx-cursor: hand;">
+              style="-fx-border-color: #333333; -fx-border-width: 1 0 0 0; -fx-padding: 20 0 12 0; -fx-cursor: hand;">
             <VBox spacing="2">
                 <Label fx:id="sidebarUsername" text="User"
                        style="-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: 600;"/>
                 <Label text="View profile"
                        style="-fx-text-fill: #666666; -fx-font-size: 12px;"/>
             </VBox>
+        </HBox>
+
+        <!-- LOGOUT -->
+        <HBox spacing="12" alignment="CENTER_LEFT"
+              onMouseClicked="#handleLogout"
+              style="-fx-padding: 12 0 0 0; -fx-cursor: hand;">
+            <Label fx:id="logoutButton" text="Logout"
+                   style="-fx-text-fill: #e53935; -fx-font-size: 14px; -fx-font-weight: 600;"/>
         </HBox>
     </VBox>
 
@@ -64,157 +72,138 @@
                 <Label fx:id="usernameLabel" text=""
                        style="-fx-font-size: 20px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
             </HBox>
-
             <Region HBox.hgrow="ALWAYS"/>
-
             <TextField fx:id="searchField"
-                       promptText="Search here"
-                       prefWidth="280"
+                       promptText="Search name, note, or paid by"
+                       prefWidth="300"
                        style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #eeeeee; -fx-border-radius: 12; -fx-padding: 10 16 10 16; -fx-font-size: 14px;"/>
         </HBox>
 
         <!-- CONTENT -->
-        <VBox spacing="20" style="-fx-padding: 32;">
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                    style="-fx-background: transparent; -fx-background-color: transparent;">
+            <VBox spacing="20" style="-fx-padding: 32;">
 
-            <!-- TITLE + BUTTON -->
-            <HBox alignment="CENTER_LEFT">
-                <VBox spacing="4">
-                    <Label fx:id="projectNameLabel" text="All Transactions"
-                           style="-fx-font-size: 26px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
-                    <Label text="Manage all income and expense records"
-                           style="-fx-font-size: 14px; -fx-text-fill: #878787;"/>
+                <!-- TITLE + BUTTON -->
+                <HBox alignment="CENTER_LEFT">
+                    <VBox spacing="4">
+                        <Label fx:id="projectNameLabel" text="All Transactions"
+                               style="-fx-font-size: 26px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
+                        <Label text="Manage all income and expense records"
+                               style="-fx-font-size: 14px; -fx-text-fill: #878787;"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="recordTransactionButton"
+                            text="+ Record Transaction"
+                            onAction="#handleRecordTransaction"
+                            style="-fx-background-color: #299D91; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: 700; -fx-padding: 10 20 10 20; -fx-background-radius: 8;"/>
+                </HBox>
+
+                <!-- FILTER BAR -->
+                <VBox spacing="12"
+                      style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20 24 20 24;">
+                    <HBox spacing="16" alignment="CENTER_LEFT">
+                        <VBox spacing="4">
+                            <Label text="Project"
+                                   style="-fx-font-size: 12px; -fx-font-weight: 600; -fx-text-fill: #888888;"/>
+                            <ComboBox fx:id="projectFilterComboBox"
+                                      promptText="All Projects"
+                                      prefWidth="180"
+                                      style="-fx-font-size: 13px; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
+                        </VBox>
+                        <VBox spacing="4">
+                            <Label text="From"
+                                   style="-fx-font-size: 12px; -fx-font-weight: 600; -fx-text-fill: #888888;"/>
+                            <DatePicker fx:id="startDatePicker"
+                                        promptText="Start date"
+                                        prefWidth="160"
+                                        style="-fx-font-size: 13px; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
+                        </VBox>
+                        <VBox spacing="4">
+                            <Label text="To"
+                                   style="-fx-font-size: 12px; -fx-font-weight: 600; -fx-text-fill: #888888;"/>
+                            <DatePicker fx:id="endDatePicker"
+                                        promptText="End date"
+                                        prefWidth="160"
+                                        style="-fx-font-size: 13px; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
+                        </VBox>
+                        <VBox spacing="4">
+                            <Label text="Min Amount"
+                                   style="-fx-font-size: 12px; -fx-font-weight: 600; -fx-text-fill: #888888;"/>
+                            <TextField fx:id="minAmountField" promptText="0"
+                                       prefWidth="120"
+                                       style="-fx-font-size: 13px; -fx-padding: 8 12 8 12; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
+                        </VBox>
+                        <VBox spacing="4">
+                            <Label text="Max Amount"
+                                   style="-fx-font-size: 12px; -fx-font-weight: 600; -fx-text-fill: #888888;"/>
+                            <TextField fx:id="maxAmountField" promptText="∞"
+                                       prefWidth="120"
+                                       style="-fx-font-size: 13px; -fx-padding: 8 12 8 12; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <VBox spacing="4">
+                            <Label text=" " style="-fx-font-size: 12px;"/>
+                            <Button fx:id="clearFiltersButton" text="Clear Filters"
+                                    onAction="#handleClearFilters"
+                                    style="-fx-background-color: transparent; -fx-border-color: #cccccc; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 13px; -fx-padding: 8 16 8 16; -fx-cursor: hand;"/>
+                        </VBox>
+                    </HBox>
                 </VBox>
 
-                <Region HBox.hgrow="ALWAYS"/>
+                <!-- TAB BUTTONS -->
+                <HBox spacing="20">
+                    <Button fx:id="allTabButton" text="All"
+                            onAction="#handleShowAllTransactions"
+                            style="-fx-background-color: transparent; -fx-text-fill: #299D91; -fx-font-size: 16px; -fx-font-weight: 700; -fx-border-color: #299D91; -fx-border-width: 0 0 2 0;"/>
+                    <Button fx:id="incomeTabButton" text="Income"
+                            onAction="#handleShowIncomeTransactions"
+                            style="-fx-background-color: transparent; -fx-text-fill: #525256; -fx-font-size: 16px; -fx-font-weight: 700;"/>
+                    <Button fx:id="expenseTabButton" text="Expenses"
+                            onAction="#handleShowExpenseTransactions"
+                            style="-fx-background-color: transparent; -fx-text-fill: #525256; -fx-font-size: 16px; -fx-font-weight: 700;"/>
+                </HBox>
 
-                <Button fx:id="recordTransactionButton"
-                        text="+ Record Transaction"
-                        onAction="#handleRecordTransaction"
-                        style="-fx-background-color: #299D91; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: 700; -fx-padding: 10 20 10 20; -fx-background-radius: 8;"/>
-            </HBox>
+                <!-- TABLE CARD -->
+                <VBox spacing="0"
+                      style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 24 28 28 28; -fx-effect: dropshadow(gaussian, rgba(76,103,100,0.10), 25, 0, 0, 8);">
 
-            <!-- FILTER TABS -->
-            <HBox spacing="20">
-                <Button fx:id="allTabButton"
-                        text="All"
-                        onAction="#handleShowAllTransactions"
-                        style="-fx-background-color: transparent; -fx-text-fill: #299D91; -fx-font-size: 16px; -fx-font-weight: 700; -fx-border-color: #299D91; -fx-border-width: 0 0 2 0;"/>
-
-                <Button fx:id="incomeTabButton"
-                        text="Income"
-                        onAction="#handleShowIncomeTransactions"
-                        style="-fx-background-color: transparent; -fx-text-fill: #525256; -fx-font-size: 16px; -fx-font-weight: 700;"/>
-
-                <Button fx:id="expenseTabButton"
-                        text="Expenses"
-                        onAction="#handleShowExpenseTransactions"
-                        style="-fx-background-color: transparent; -fx-text-fill: #525256; -fx-font-size: 16px; -fx-font-weight: 700;"/>
-            </HBox>
-
-            <!-- TABLE CARD -->
-            <VBox spacing="0"
-                  style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 24 28 28 28; -fx-effect: dropshadow(gaussian, rgba(76,103,100,0.10), 25, 0, 0, 8);">
-
-                <!-- TABLE HEADER -->
-                <GridPane hgap="16"
-                          style="-fx-padding: 0 0 14 0; -fx-border-color: #eeeeee; -fx-border-width: 0 0 1 0;">
-                    <columnConstraints>
-                        <ColumnConstraints percentWidth="6"/>
-                        <ColumnConstraints percentWidth="22"/>
-                        <ColumnConstraints percentWidth="15"/>
-                        <ColumnConstraints percentWidth="14"/>
-                        <ColumnConstraints percentWidth="16"/>
-                        <ColumnConstraints percentWidth="17"/>
-                        <ColumnConstraints percentWidth="10"/>
-                    </columnConstraints>
-
-                    <Label text="NO." GridPane.columnIndex="0"
-                           style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                    <Label text="Note" GridPane.columnIndex="1"
-                           style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                    <Label text="Project" GridPane.columnIndex="2"
-                           style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                    <Label text="Pot" GridPane.columnIndex="3"
-                           style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                    <Label text="Date" GridPane.columnIndex="4"
-                           style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                    <Label text="Payment Method" GridPane.columnIndex="5"
-                           style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                    <Label text="Amount" GridPane.columnIndex="6"
-                           style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                </GridPane>
-
-                <!-- DYNAMIC ROW CONTAINER -->
-                <VBox fx:id="transactionsTableBody" spacing="0">
-
-                    <!-- SAMPLE ROW 1 -->
-                    <GridPane hgap="16"
-                              style="-fx-padding: 16 0 16 0; -fx-border-color: #f0f0f0; -fx-border-width: 0 0 1 0;">
+                    <!-- TABLE HEADER -->
+                    <GridPane hgap="12"
+                              style="-fx-padding: 0 0 14 0; -fx-border-color: #eeeeee; -fx-border-width: 0 0 1 0;">
                         <columnConstraints>
-                            <ColumnConstraints percentWidth="6"/>
-                            <ColumnConstraints percentWidth="22"/>
-                            <ColumnConstraints percentWidth="15"/>
+                            <ColumnConstraints percentWidth="11"/>
+                            <ColumnConstraints percentWidth="18"/>
+                            <ColumnConstraints percentWidth="11"/>
+                            <ColumnConstraints percentWidth="10"/>
+                            <ColumnConstraints percentWidth="12"/>
                             <ColumnConstraints percentWidth="14"/>
-                            <ColumnConstraints percentWidth="16"/>
-                            <ColumnConstraints percentWidth="17"/>
+                            <ColumnConstraints percentWidth="14"/>
                             <ColumnConstraints percentWidth="10"/>
                         </columnConstraints>
-
-                        <Label text="1" GridPane.columnIndex="0" style="-fx-font-size: 14px; -fx-text-fill: #525256;"/>
-                        <Label text="Tea Break" GridPane.columnIndex="1" style="-fx-font-size: 14px; -fx-text-fill: #191919; -fx-font-weight: 600;"/>
-                        <Label text="Project 1" GridPane.columnIndex="2" style="-fx-font-size: 14px; -fx-text-fill: #525256;"/>
-                        <Label text="Event" GridPane.columnIndex="3" style="-fx-font-size: 14px; -fx-text-fill: #525256;"/>
-                        <Label text="January 10, 2026" GridPane.columnIndex="4" style="-fx-font-size: 14px; -fx-text-fill: #525256;"/>
-                        <Label text="Cash" GridPane.columnIndex="5" style="-fx-font-size: 14px; -fx-text-fill: #525256;"/>
-                        <Label text="-$500,000" GridPane.columnIndex="6" style="-fx-font-size: 14px; -fx-text-fill: #e73d1c; -fx-font-weight: 700;"/>
+                        <Label text="Date" GridPane.columnIndex="0"
+                               style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
+                        <Label text="Transaction Name" GridPane.columnIndex="1"
+                               style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
+                        <Label text="Project" GridPane.columnIndex="2"
+                               style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
+                        <Label text="Pot" GridPane.columnIndex="3"
+                               style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
+                        <Label text="Paid By" GridPane.columnIndex="4"
+                               style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
+                        <Label text="Amount" GridPane.columnIndex="5"
+                               style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
+                        <Label text="Note" GridPane.columnIndex="6"
+                               style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
+                        <Label text="Proof" GridPane.columnIndex="7"
+                               style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
                     </GridPane>
 
-                    <!-- SAMPLE ROW 2 -->
-                    <GridPane hgap="16"
-                              style="-fx-padding: 16 0 16 0; -fx-border-color: #f0f0f0; -fx-border-width: 0 0 1 0;">
-                        <columnConstraints>
-                            <ColumnConstraints percentWidth="6"/>
-                            <ColumnConstraints percentWidth="22"/>
-                            <ColumnConstraints percentWidth="15"/>
-                            <ColumnConstraints percentWidth="14"/>
-                            <ColumnConstraints percentWidth="16"/>
-                            <ColumnConstraints percentWidth="17"/>
-                            <ColumnConstraints percentWidth="10"/>
-                        </columnConstraints>
-
-                        <Label text="2" GridPane.columnIndex="0" style="-fx-font-size: 14px; -fx-text-fill: #525256;"/>
-                        <Label text="Facebook Ads" GridPane.columnIndex="1" style="-fx-font-size: 14px; -fx-text-fill: #191919; -fx-font-weight: 600;"/>
-                        <Label text="Project 1" GridPane.columnIndex="2" style="-fx-font-size: 14px; -fx-text-fill: #525256;"/>
-                        <Label text="Marketing" GridPane.columnIndex="3" style="-fx-font-size: 14px; -fx-text-fill: #525256;"/>
-                        <Label text="January 9, 2026" GridPane.columnIndex="4" style="-fx-font-size: 14px; -fx-text-fill: #525256;"/>
-                        <Label text="Online Transfer" GridPane.columnIndex="5" style="-fx-font-size: 14px; -fx-text-fill: #525256;"/>
-                        <Label text="-$670,000" GridPane.columnIndex="6" style="-fx-font-size: 14px; -fx-text-fill: #e73d1c; -fx-font-weight: 700;"/>
-                    </GridPane>
-
-                    <!-- SAMPLE ROW 3 -->
-                    <GridPane hgap="16"
-                              style="-fx-padding: 16 0 16 0;">
-                        <columnConstraints>
-                            <ColumnConstraints percentWidth="6"/>
-                            <ColumnConstraints percentWidth="22"/>
-                            <ColumnConstraints percentWidth="15"/>
-                            <ColumnConstraints percentWidth="14"/>
-                            <ColumnConstraints percentWidth="16"/>
-                            <ColumnConstraints percentWidth="17"/>
-                            <ColumnConstraints percentWidth="10"/>
-                        </columnConstraints>
-
-                        <Label text="3" GridPane.columnIndex="0" style="-fx-font-size: 14px; -fx-text-fill: #525256;"/>
-                        <Label text="Sponsor Income" GridPane.columnIndex="1" style="-fx-font-size: 14px; -fx-text-fill: #191919; -fx-font-weight: 600;"/>
-                        <Label text="Project 2" GridPane.columnIndex="2" style="-fx-font-size: 14px; -fx-text-fill: #525256;"/>
-                        <Label text="Funding" GridPane.columnIndex="3" style="-fx-font-size: 14px; -fx-text-fill: #525256;"/>
-                        <Label text="January 8, 2026" GridPane.columnIndex="4" style="-fx-font-size: 14px; -fx-text-fill: #525256;"/>
-                        <Label text="Bank Transfer" GridPane.columnIndex="5" style="-fx-font-size: 14px; -fx-text-fill: #525256;"/>
-                        <Label text="+$5,000,000" GridPane.columnIndex="6" style="-fx-font-size: 14px; -fx-text-fill: #4daf6e; -fx-font-weight: 700;"/>
-                    </GridPane>
-
+                    <!-- DYNAMIC ROW CONTAINER (controller populates this) -->
+                    <VBox fx:id="transactionsTableBody" spacing="0"/>
                 </VBox>
+
             </VBox>
-        </VBox>
+        </ScrollPane>
     </VBox>
 </HBox>
