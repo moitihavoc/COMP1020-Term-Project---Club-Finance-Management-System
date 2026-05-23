@@ -136,6 +136,18 @@ public final class ClubFinanceService {
         return ClubDAO.updateTotalBalance(club.getUserId(), totalBalance);
     }
 
+    public static Club updateProject(Club club, int projectId, String name, double allocatedAmount) throws SQLException {
+        if (club == null) return null;
+        Project project = club.findProjectById(projectId);
+        if (project == null) return club;
+        if (allocatedAmount < project.getTotalSpent()) {
+            return club; // Do not allow reducing allocation below already spent amount
+        }
+
+        ProjectDAO.updateProject(projectId, club.getUserId(), name, allocatedAmount);
+        return loadFullClubForUser(club.getUserId(), club.getClubName());
+    }
+
     private static Pot findPotById(Club club, int potId) {
         for (Project project : club.getProjects()) {
             Pot pot = project.findPotById(potId);

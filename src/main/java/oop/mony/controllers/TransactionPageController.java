@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -48,6 +49,7 @@ public class TransactionPageController {
             club = ClubFinanceService.loadFullClubForUser(currentUser.getUserId(), currentUser.getUsername());
             sidebarUsername.setText(currentUser.getUsername());
             refreshProjectFilter();
+            setupFilterListeners();
             refreshPage();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -59,6 +61,15 @@ public class TransactionPageController {
         projectFilterComboBox.getItems().add("All Projects");
         club.getProjects().forEach(p -> projectFilterComboBox.getItems().add(p.getProjectId() + "|" + p.getProjectName()));
         projectFilterComboBox.getSelectionModel().selectFirst();
+    }
+
+    private void setupFilterListeners() {
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> refreshPage());
+        startDatePicker.valueProperty().addListener((obs, oldVal, newVal) -> refreshPage());
+        endDatePicker.valueProperty().addListener((obs, oldVal, newVal) -> refreshPage());
+        minAmountField.textProperty().addListener((obs, oldVal, newVal) -> refreshPage());
+        maxAmountField.textProperty().addListener((obs, oldVal, newVal) -> refreshPage());
+        projectFilterComboBox.valueProperty().addListener((obs, oldVal, newVal) -> refreshPage());
     }
 
     private void refreshPage() {
@@ -80,13 +91,60 @@ public class TransactionPageController {
         for (TransactionRecord r : records) {
             GridPane row = new GridPane();
             row.setHgap(12);
-            row.add(new Label(r.getTransactionDate().toString()), 0, 0);
-            row.add(new Label(r.getTransactionName()), 1, 0);
-            row.add(new Label(r.getProjectName()), 2, 0);
-            row.add(new Label(r.getPotName()), 3, 0);
-            row.add(new Label(r.getPaidBy()), 4, 0);
-            row.add(new Label(String.format("$%.2f", r.getAmount())), 5, 0);
-            row.add(new Label(r.getShortNote(30)), 6, 0);
+            row.setStyle("-fx-padding: 14 20 14 20; -fx-border-color: #f0f0f0; -fx-border-width: 0 0 1 0;");
+            
+            ColumnConstraints col0 = new ColumnConstraints();
+            col0.setPercentWidth(12);
+            ColumnConstraints col1 = new ColumnConstraints();
+            col1.setPercentWidth(18);
+            ColumnConstraints col2 = new ColumnConstraints();
+            col2.setPercentWidth(16);
+            ColumnConstraints col3 = new ColumnConstraints();
+            col3.setPercentWidth(14);
+            ColumnConstraints col4 = new ColumnConstraints();
+            col4.setPercentWidth(14);
+            ColumnConstraints col5 = new ColumnConstraints();
+            col5.setPercentWidth(12);
+            ColumnConstraints col6 = new ColumnConstraints();
+            col6.setPercentWidth(14);
+            
+            row.getColumnConstraints().addAll(col0, col1, col2, col3, col4, col5, col6);
+            
+            Label dateLabel = new Label(formatDate(r.getTransactionDate()));
+            dateLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+            dateLabel.setWrapText(true);
+            
+            Label nameLabel = new Label(r.getTransactionName());
+            nameLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+            nameLabel.setWrapText(true);
+            
+            Label projectLabel = new Label(r.getProjectName());
+            projectLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+            projectLabel.setWrapText(true);
+            
+            Label potLabel = new Label(r.getPotName());
+            potLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+            potLabel.setWrapText(true);
+            
+            Label paidByLabel = new Label(r.getPaidBy());
+            paidByLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+            paidByLabel.setWrapText(true);
+            
+            Label amountLabel = new Label(String.format("$%.2f", r.getAmount()));
+            amountLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #191919;");
+            
+            Label noteLabel = new Label(r.getShortNote(30));
+            noteLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+            noteLabel.setWrapText(true);
+            
+            row.add(dateLabel, 0, 0);
+            row.add(nameLabel, 1, 0);
+            row.add(projectLabel, 2, 0);
+            row.add(potLabel, 3, 0);
+            row.add(paidByLabel, 4, 0);
+            row.add(amountLabel, 5, 0);
+            row.add(noteLabel, 6, 0);
+ 
             transactionsTableBody.getChildren().add(row);
         }
     }
@@ -172,6 +230,11 @@ public class TransactionPageController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private String formatDate(LocalDate date) {
+        if (date == null) return "-";
+        return date.toString();
     }
 }
  

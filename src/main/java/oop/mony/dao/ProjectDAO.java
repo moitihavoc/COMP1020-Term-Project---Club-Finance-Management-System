@@ -101,6 +101,22 @@ public class ProjectDAO {
         }
     }
 
+    public static void updateProject(int projectId, int userId, String name, double allocatedAmount) throws SQLException {
+        if (!projectBelongsToUser(projectId, userId)) {
+            return;
+        }
+
+        String sql = "UPDATE projects SET name = ?, allocated_amount = ? WHERE id = ? AND user_id = ?";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, name);
+            statement.setDouble(2, allocatedAmount);
+            statement.setInt(3, projectId);
+            statement.setInt(4, userId);
+            statement.executeUpdate();
+        }
+    }
+
     private static boolean projectBelongsToUser(int projectId, int userId) throws SQLException {
         String sql = "SELECT 1 FROM projects WHERE id = ? AND user_id = ?";
         try (Connection connection = Database.getConnection();
