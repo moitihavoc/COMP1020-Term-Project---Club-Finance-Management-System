@@ -62,7 +62,7 @@
                 <VBox spacing="8">
                     <Label text="Dashboard"
                            style="-fx-font-size: 26px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
-                    <Label text="Track club balance, allocations, and project spending"
+                    <Label text="View club finance and manage projects
                            style="-fx-font-size: 15px; -fx-text-fill: #878787;"/>
                 </VBox>
 

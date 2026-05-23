@@ -71,7 +71,7 @@
                     <VBox spacing="8">
                         <Label fx:id="projectNameLabel" text="Project"
                                style="-fx-font-size: 26px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
-                        <Label text="Track pots, spending, and remaining allocation"
+                        <Label text="View project finance and manage pots, transactions"
                                style="-fx-font-size: 15px; -fx-text-fill: #878787;"/>
                     </VBox>
                     <Region HBox.hgrow="ALWAYS"/>
