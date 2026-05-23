@@ -30,6 +30,7 @@ import java.time.LocalDate;
 
 public class ProjectPageController {
 
+    @FXML private VBox sidebar;
     @FXML private Label sidebarProjectNameLabel;
     @FXML private Label sidebarUsername;
     @FXML private Label logoutButton;
@@ -48,7 +49,7 @@ public class ProjectPageController {
 
     @FXML private VBox createTransactionForm;
     @FXML private TextField transactionNameField;
-    @FXML private ComboBox<String> potComboBox;
+    @FXML private ComboBox<PotOption> potComboBox;
     @FXML private TextField transactionAmountField;
     @FXML private TextField paidByField;
     @FXML private DatePicker transactionDatePicker;
@@ -61,6 +62,11 @@ public class ProjectPageController {
     private Club club;
     private Project selectedProject;
     private Path selectedProofImage;
+
+    @FXML
+    private void initialize() {
+        SidebarSizer.bindToWindow(sidebar);
+    }
 
     public void loadProjectFromSession(int projectId) {
         if (!Session.hasCurrentUser()) {
@@ -165,24 +171,27 @@ public class ProjectPageController {
             for (Transaction tx : pot.getTransactions()) {
                 GridPane row = new GridPane();
                 row.setHgap(12);
+                row.setAlignment(Pos.TOP_LEFT);
                 row.setStyle("-fx-padding: 14 20 14 20; -fx-border-color: #f0f0f0; -fx-border-width: 0 0 1 0;");
                 
                 ColumnConstraints col0 = new ColumnConstraints();
-                col0.setPercentWidth(16);
+                col0.setPercentWidth(11);
                 ColumnConstraints col1 = new ColumnConstraints();
-                col1.setPercentWidth(22);
+                col1.setPercentWidth(18);
                 ColumnConstraints col2 = new ColumnConstraints();
-                col2.setPercentWidth(14);
+                col2.setPercentWidth(11);
                 ColumnConstraints col3 = new ColumnConstraints();
-                col3.setPercentWidth(14);
+                col3.setPercentWidth(10);
                 ColumnConstraints col4 = new ColumnConstraints();
-                col4.setPercentWidth(14);
+                col4.setPercentWidth(12);
                 ColumnConstraints col5 = new ColumnConstraints();
-                col5.setPercentWidth(12);
+                col5.setPercentWidth(14);
                 ColumnConstraints col6 = new ColumnConstraints();
-                col6.setPercentWidth(8);
+                col6.setPercentWidth(14);
+                ColumnConstraints col7 = new ColumnConstraints();
+                col7.setPercentWidth(10);
                 
-                row.getColumnConstraints().addAll(col0, col1, col2, col3, col4, col5, col6);
+                row.getColumnConstraints().addAll(col0, col1, col2, col3, col4, col5, col6, col7);
                 
                 Label dateLabel = new Label(formatDate(tx.getTransactionDate()));
                 dateLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
@@ -191,6 +200,10 @@ public class ProjectPageController {
                 Label nameLabel = new Label(tx.getTransactionName());
                 nameLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
                 nameLabel.setWrapText(true);
+
+                Label projectLabel = new Label(selectedProject.getProjectName());
+                projectLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+                projectLabel.setWrapText(true);
                 
                 Label potNameLabel = new Label(pot.getPotName());
                 potNameLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
@@ -208,7 +221,7 @@ public class ProjectPageController {
                 amountLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #191919;");
                 
                 VBox proofBox = new VBox();
-                proofBox.setAlignment(Pos.CENTER_LEFT);
+                proofBox.setAlignment(Pos.TOP_LEFT);
                 if (tx.getProofPath() != null && !tx.getProofPath().isEmpty()) {
                     Button viewProofBtn = new Button("View");
                     viewProofBtn.setStyle("-fx-background-color: #299D91; -fx-text-fill: white; -fx-font-size: 11px; -fx-padding: 4 8 4 8; -fx-background-radius: 4; -fx-cursor: hand;");
@@ -222,11 +235,12 @@ public class ProjectPageController {
                 
                 row.add(dateLabel, 0, 0);
                 row.add(nameLabel, 1, 0);
-                row.add(potNameLabel, 2, 0);
-                row.add(paidByLabel, 3, 0);
-                row.add(noteLabel, 4, 0);
+                row.add(projectLabel, 2, 0);
+                row.add(potNameLabel, 3, 0);
+                row.add(paidByLabel, 4, 0);
                 row.add(amountLabel, 5, 0);
-                row.add(proofBox, 6, 0);
+                row.add(noteLabel, 6, 0);
+                row.add(proofBox, 7, 0);
                 
                 transactionsContainer.getChildren().add(row);
                 rowNumber++;
@@ -237,7 +251,7 @@ public class ProjectPageController {
     private void refreshPotComboBox() {
         potComboBox.getItems().clear();
         for (Pot pot : selectedProject.getPots()) {
-            potComboBox.getItems().add(pot.getPotId() + "|" + pot.getPotName());
+            potComboBox.getItems().add(new PotOption(pot.getPotId(), pot.getPotName()));
         }
     }
 
@@ -277,15 +291,8 @@ public class ProjectPageController {
 
     @FXML
     private void handleLogout() {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to log out?", ButtonType.YES, ButtonType.NO);
-        confirm.setTitle("Logout");
-
-        confirm.showAndWait().ifPresent(btn -> {
-            if (btn == ButtonType.YES) {
-                Session.clear();
-                navigateToLogin();
-            }
-        });
+        Session.clear();
+        navigateToLogin();
     }
 
     @FXML
@@ -422,12 +429,12 @@ public class ProjectPageController {
     private void handleConfirmCreateTransaction() {
         if (selectedProject == null) return;
         String name = transactionNameField.getText();
-        String potValue = potComboBox.getValue();
-        if (potValue == null || potValue.isEmpty()) {
+        PotOption selectedPot = potComboBox.getValue();
+        if (selectedPot == null) {
             createTransactionErrorLabel.setText("Select a pot.");
             return;
         }
-        int potId = Integer.parseInt(potValue.split("\\|")[0]);
+        int potId = selectedPot.potId();
         double amount;
         try {
             amount = Double.parseDouble(transactionAmountField.getText().trim());
@@ -569,6 +576,25 @@ public class ProjectPageController {
             stage.getScene().setRoot(root);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static final class PotOption {
+        private final int potId;
+        private final String label;
+
+        private PotOption(int potId, String label) {
+            this.potId = potId;
+            this.label = label;
+        }
+
+        private int potId() {
+            return potId;
+        }
+
+        @Override
+        public String toString() {
+            return label;
         }
     }
 }

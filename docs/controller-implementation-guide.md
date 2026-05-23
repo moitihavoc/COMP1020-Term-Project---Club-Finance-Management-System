@@ -355,7 +355,6 @@ sidebarUsername
 logoutButton
 searchField
 projectNameLabel
-recordTransactionButton
 projectFilterComboBox
 startDatePicker
 endDatePicker
@@ -371,7 +370,6 @@ Handlers needed:
 handleGoToProjects()
 handleViewProfile()
 handleLogout()
-handleRecordTransaction()
 handleClearFilters()
 ```
 
@@ -586,7 +584,7 @@ Do not let exceptions crash the UI.
 - Project cards open project detail page.
 - Project detail page loads real pots and transactions.
 - Create pot works.
-- Record transaction works.
+- Record transaction works from the project detail page.
 - Transaction page search/filter uses `ClubFinanceService.searchTransactions(...)`.
 - Change password page displays the password update form.
 - Logout clears `Session` and returns to login.

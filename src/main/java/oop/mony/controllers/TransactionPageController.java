@@ -2,8 +2,11 @@ package oop.mony.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -15,6 +18,7 @@ import oop.mony.models.TransactionRecord;
 import oop.mony.models.User;
 import oop.mony.services.ClubFinanceService;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -22,12 +26,12 @@ import java.util.ArrayList;
 
 public class TransactionPageController {
 
+    @FXML private VBox sidebar;
     @FXML private Label sidebarUsername;
     @FXML private Label logoutButton;
     @FXML private TextField searchField;
     @FXML private Label projectNameLabel;
-    @FXML private Button recordTransactionButton;
-    @FXML private ComboBox<String> projectFilterComboBox;
+    @FXML private ComboBox<ProjectFilterOption> projectFilterComboBox;
     @FXML private DatePicker startDatePicker;
     @FXML private DatePicker endDatePicker;
     @FXML private TextField minAmountField;
@@ -37,6 +41,11 @@ public class TransactionPageController {
 
     private User currentUser;
     private Club club;
+
+    @FXML
+    private void initialize() {
+        SidebarSizer.bindToWindow(sidebar);
+    }
 
     public void loadFromSession() {
         if (!Session.hasCurrentUser()) {
@@ -58,8 +67,10 @@ public class TransactionPageController {
 
     private void refreshProjectFilter() {
         projectFilterComboBox.getItems().clear();
-        projectFilterComboBox.getItems().add("All Projects");
-        club.getProjects().forEach(p -> projectFilterComboBox.getItems().add(p.getProjectId() + "|" + p.getProjectName()));
+        projectFilterComboBox.getItems().add(new ProjectFilterOption(null, "All Projects"));
+        club.getProjects().forEach(p -> projectFilterComboBox.getItems().add(
+                new ProjectFilterOption(p.getProjectId(), p.getProjectName())
+        ));
         projectFilterComboBox.getSelectionModel().selectFirst();
     }
 
@@ -91,24 +102,27 @@ public class TransactionPageController {
         for (TransactionRecord r : records) {
             GridPane row = new GridPane();
             row.setHgap(12);
+            row.setAlignment(Pos.TOP_LEFT);
             row.setStyle("-fx-padding: 14 20 14 20; -fx-border-color: #f0f0f0; -fx-border-width: 0 0 1 0;");
             
             ColumnConstraints col0 = new ColumnConstraints();
-            col0.setPercentWidth(12);
+            col0.setPercentWidth(11);
             ColumnConstraints col1 = new ColumnConstraints();
             col1.setPercentWidth(18);
             ColumnConstraints col2 = new ColumnConstraints();
-            col2.setPercentWidth(16);
+            col2.setPercentWidth(11);
             ColumnConstraints col3 = new ColumnConstraints();
-            col3.setPercentWidth(14);
+            col3.setPercentWidth(10);
             ColumnConstraints col4 = new ColumnConstraints();
-            col4.setPercentWidth(14);
+            col4.setPercentWidth(12);
             ColumnConstraints col5 = new ColumnConstraints();
-            col5.setPercentWidth(12);
+            col5.setPercentWidth(14);
             ColumnConstraints col6 = new ColumnConstraints();
             col6.setPercentWidth(14);
+            ColumnConstraints col7 = new ColumnConstraints();
+            col7.setPercentWidth(10);
             
-            row.getColumnConstraints().addAll(col0, col1, col2, col3, col4, col5, col6);
+            row.getColumnConstraints().addAll(col0, col1, col2, col3, col4, col5, col6, col7);
             
             Label dateLabel = new Label(formatDate(r.getTransactionDate()));
             dateLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
@@ -136,6 +150,19 @@ public class TransactionPageController {
             Label noteLabel = new Label(r.getShortNote(30));
             noteLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
             noteLabel.setWrapText(true);
+
+            VBox proofBox = new VBox();
+            proofBox.setAlignment(Pos.TOP_LEFT);
+            if (r.getProofPath() != null && !r.getProofPath().isEmpty()) {
+                Button viewProofBtn = new Button("View");
+                viewProofBtn.setStyle("-fx-background-color: #299D91; -fx-text-fill: white; -fx-font-size: 11px; -fx-padding: 4 8 4 8; -fx-background-radius: 4; -fx-cursor: hand;");
+                viewProofBtn.setOnAction(e -> handleViewProof(r.getProofPath()));
+                proofBox.getChildren().add(viewProofBtn);
+            } else {
+                Label noProofLabel = new Label("-");
+                noProofLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #aaaaaa;");
+                proofBox.getChildren().add(noProofLabel);
+            }
             
             row.add(dateLabel, 0, 0);
             row.add(nameLabel, 1, 0);
@@ -144,6 +171,7 @@ public class TransactionPageController {
             row.add(paidByLabel, 4, 0);
             row.add(amountLabel, 5, 0);
             row.add(noteLabel, 6, 0);
+            row.add(proofBox, 7, 0);
  
             transactionsTableBody.getChildren().add(row);
         }
@@ -161,13 +189,8 @@ public class TransactionPageController {
     }
 
     private Integer selectedProjectFilterId() {
-        String value = projectFilterComboBox.getValue();
-        if (value == null || value.equals("All Projects")) return null;
-        try {
-            return Integer.parseInt(value.split("\\|")[0]);
-        } catch (Exception e) {
-            return null;
-        }
+        ProjectFilterOption selected = projectFilterComboBox.getValue();
+        return selected == null ? null : selected.projectId();
     }
 
     @FXML
@@ -205,12 +228,6 @@ public class TransactionPageController {
     }
 
     @FXML
-    private void handleRecordTransaction() {
-        // placeholder: navigate to projects
-        handleGoToProjects();
-    }
-
-    @FXML
     private void handleClearFilters() {
         searchField.clear();
         startDatePicker.setValue(null);
@@ -235,6 +252,61 @@ public class TransactionPageController {
     private String formatDate(LocalDate date) {
         if (date == null) return "-";
         return date.toString();
+    }
+
+    private void handleViewProof(String proofPath) {
+        if (proofPath == null || proofPath.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "No proof image available.");
+            alert.showAndWait();
+            return;
+        }
+
+        try {
+            File file = new File(proofPath);
+            if (!file.exists()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Proof image file not found.");
+                alert.showAndWait();
+                return;
+            }
+
+            Stage proofStage = new Stage();
+            proofStage.setTitle("Proof Image");
+            Image image = new Image(file.toURI().toString());
+            ImageView imageView = new ImageView(image);
+            imageView.setPreserveRatio(true);
+            imageView.setFitWidth(600);
+            imageView.setFitHeight(600);
+
+            ScrollPane scrollPane = new ScrollPane(imageView);
+            scrollPane.setFitToWidth(true);
+            scrollPane.setFitToHeight(true);
+
+            proofStage.setScene(new javafx.scene.Scene(scrollPane, 700, 700));
+            proofStage.show();
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to open proof image.");
+            alert.showAndWait();
+            e.printStackTrace();
+        }
+    }
+
+    private static final class ProjectFilterOption {
+        private final Integer projectId;
+        private final String label;
+
+        private ProjectFilterOption(Integer projectId, String label) {
+            this.projectId = projectId;
+            this.label = label;
+        }
+
+        private Integer projectId() {
+            return projectId;
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }
  

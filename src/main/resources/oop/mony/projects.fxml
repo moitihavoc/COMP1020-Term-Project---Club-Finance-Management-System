@@ -7,8 +7,8 @@
       fx:controller="oop.mony.controllers.ProjectsController">
 
     <!-- SIDEBAR -->
-    <VBox prefWidth="280"
-          style="-fx-background-color: #191919; -fx-padding: 48 28 48 28; -fx-min-width: 280; -fx-max-width: 280;">
+    <VBox fx:id="sidebar"
+          style="-fx-background-color: #191919; -fx-padding: 48 28 48 28;">
 
         <Label text="Mony"
                style="-fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: 800;"/>
@@ -16,7 +16,7 @@
         <VBox spacing="4" style="-fx-padding: 40 0 0 0;">
             <HBox spacing="12" alignment="CENTER_LEFT"
                   style="-fx-background-color: #299D91; -fx-padding: 12 16 12 16; -fx-background-radius: 4;">
-                <Label text="Projects"
+                <Label text="Dashboard"
                        style="-fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: 600;"/>
             </HBox>
             <HBox spacing="12" alignment="CENTER_LEFT"

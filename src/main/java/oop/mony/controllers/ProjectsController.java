@@ -25,6 +25,7 @@ import oop.mony.services.ClubFinanceService;
 
 public class ProjectsController {
 
+    @FXML private VBox sidebar;
     @FXML private Label sidebarUsername;
     @FXML private Label totalBalanceLabel;
     @FXML private Label totalAllocatedLabel;
@@ -43,6 +44,7 @@ public class ProjectsController {
 
     @FXML
     private void initialize() {
+        SidebarSizer.bindToWindow(sidebar);
         if (projectSearchField != null) {
             projectSearchField.textProperty().addListener((obs, oldText, newText) -> renderProjects());
         }
@@ -232,15 +234,8 @@ public class ProjectsController {
 
     @FXML
     private void handleLogout() {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to log out?", ButtonType.YES, ButtonType.NO);
-        confirm.setTitle("Logout");
-
-        confirm.showAndWait().ifPresent(btn -> {
-            if (btn == ButtonType.YES) {
-                Session.clear();
-                navigateToLogin();
-            }
-        });
+        Session.clear();
+        navigateToLogin();
     }
 
     @FXML

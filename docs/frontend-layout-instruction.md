@@ -76,7 +76,7 @@ Keep the page focused on project overview. Do not add transaction details here e
 
 Sidebar should include:
 
-- Projects
+- Dashboard
 - Transactions
 - Change password
 - Logout
@@ -149,7 +149,7 @@ The top search field should have an `fx:id`, for example:
 
 Sidebar should include:
 
-- Projects
+- Dashboard
 - current project name as a sub-item
 - Transactions
 - Change password
@@ -169,7 +169,6 @@ Current page already has:
 
 - search field
 - title
-- record transaction button
 - table-like layout
 - `transactionsTableBody`
 - hardcoded sample rows
@@ -229,7 +228,7 @@ The hardcoded sample rows should be removed or treated as placeholders only. The
 
 Sidebar should include:
 
-- Projects
+- Dashboard
 - Transactions
 - Change password
 - Logout
@@ -254,7 +253,7 @@ Keep logout visible and easy to find.
 
 Sidebar should include:
 
-- Projects
+- Dashboard
 - Transactions
 - Change password
 - Logout

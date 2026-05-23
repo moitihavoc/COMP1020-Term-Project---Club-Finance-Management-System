@@ -8,8 +8,8 @@
       fx:controller="oop.mony.controllers.TransactionPageController">
 
     <!-- SIDEBAR -->
-    <VBox prefWidth="280"
-          style="-fx-background-color: #191919; -fx-padding: 48 28 48 28; -fx-min-width: 280; -fx-max-width: 280;">
+    <VBox fx:id="sidebar"
+          style="-fx-background-color: #191919; -fx-padding: 48 28 48 28;">
 
         <Label text="Mony"
                style="-fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: 800;"/>
@@ -18,7 +18,7 @@
             <HBox spacing="12" alignment="CENTER_LEFT"
                   onMouseClicked="#handleGoToProjects"
                   style="-fx-padding: 12 16 12 16; -fx-background-radius: 4; -fx-cursor: hand;">
-                <Label text="Projects"
+                <Label text="Dashboard"
                        style="-fx-text-fill: #aaaaaa; -fx-font-size: 15px;"/>
             </HBox>
 
@@ -69,15 +69,11 @@
                                style="-fx-font-size: 15px; -fx-text-fill: #878787;"/>
                     </VBox>
                     <Region HBox.hgrow="ALWAYS"/>
-                    <Button fx:id="recordTransactionButton"
-                            text="+ Record Transaction"
-                            onAction="#handleRecordTransaction"
-                            style="-fx-background-color: #299D91; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: 700; -fx-padding: 10 20 10 20; -fx-background-radius: 8;"/>
                 </HBox>
 
                 <!-- FILTER BAR -->
                 <VBox spacing="12"
-                      style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20 24 20 24;">
+                      style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 20 24 20 24; -fx-effect: dropshadow(gaussian, rgba(76,103,100,0.10), 25, 0, 0, 8);">
                     <TextField fx:id="searchField"
                                promptText="Search name, note, or paid by"
                                maxWidth="Infinity"
@@ -137,7 +133,7 @@
 
                     <!-- TABLE HEADER -->
                     <GridPane hgap="12"
-                              style="-fx-padding: 0 0 14 0; -fx-border-color: #eeeeee; -fx-border-width: 0 0 1 0;">
+                              style="-fx-padding: 0 20 14 20; -fx-border-color: #eeeeee; -fx-border-width: 0 0 1 0;">
                         <columnConstraints>
                             <ColumnConstraints percentWidth="11"/>
                             <ColumnConstraints percentWidth="18"/>
@@ -148,21 +144,22 @@
                             <ColumnConstraints percentWidth="14"/>
                             <ColumnConstraints percentWidth="10"/>
                         </columnConstraints>
-                        <Label text="Date" GridPane.columnIndex="0"
+                        <Label text="Date" GridPane.columnIndex="0" maxWidth="Infinity" alignment="CENTER"
                                style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
                         <Label text="Transaction Name" GridPane.columnIndex="1"
+                               maxWidth="Infinity" alignment="CENTER"
                                style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                        <Label text="Project" GridPane.columnIndex="2"
+                        <Label text="Project" GridPane.columnIndex="2" maxWidth="Infinity" alignment="CENTER"
                                style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                        <Label text="Pot" GridPane.columnIndex="3"
+                        <Label text="Pot" GridPane.columnIndex="3" maxWidth="Infinity" alignment="CENTER"
                                style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                        <Label text="Paid By" GridPane.columnIndex="4"
+                        <Label text="Paid By" GridPane.columnIndex="4" maxWidth="Infinity" alignment="CENTER"
                                style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                        <Label text="Amount" GridPane.columnIndex="5"
+                        <Label text="Amount" GridPane.columnIndex="5" maxWidth="Infinity" alignment="CENTER"
                                style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                        <Label text="Note" GridPane.columnIndex="6"
+                        <Label text="Note" GridPane.columnIndex="6" maxWidth="Infinity" alignment="CENTER"
                                style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                        <Label text="Proof" GridPane.columnIndex="7"
+                        <Label text="Proof" GridPane.columnIndex="7" maxWidth="Infinity" alignment="CENTER"
                                style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
                     </GridPane>
 
