@@ -419,7 +419,6 @@ Important fields:
 ```java
 sidebarUsername
 logoutButton
-profileUsernameLabel
 changePasswordForm
 currentPasswordField
 newPasswordField
@@ -454,11 +453,10 @@ Profile page flow:
 
 ```java
 sidebarUsername.setText(currentUser.getUsername());
-profileUsernameLabel.setText(currentUser.getUsername());
 ```
 
-3. `handleChangePassword()` shows `changePasswordForm`.
-4. `handleCancelChangePassword()` clears and hides the form.
+3. `changePasswordForm` is shown directly on the change password page.
+4. `handleCancelChangePassword()` clears the form.
 
 Important note about password update:
 
@@ -592,7 +590,7 @@ Do not let exceptions crash the UI.
 - Create pot works.
 - Record transaction works.
 - Transaction page search/filter uses `ClubFinanceService.searchTransactions(...)`.
-- Profile page displays current user info.
+- Change password page displays the password update form.
 - Logout clears `Session` and returns to login.
 - Empty controllers are no longer empty.
 - Every FXML `fx:id` has a matching `@FXML` field if the controller needs it.

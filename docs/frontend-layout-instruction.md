@@ -78,7 +78,7 @@ Sidebar should include:
 
 - Projects
 - Transactions
-- View profile
+- Change password
 - Logout
 
 Logout can be placed near the sidebar footer.
@@ -152,7 +152,7 @@ Sidebar should include:
 - Projects
 - current project name as a sub-item
 - Transactions
-- View profile
+- Change password
 - Logout
 
 ### 3. Transactions Page
@@ -231,10 +231,10 @@ Sidebar should include:
 
 - Projects
 - Transactions
-- View profile
+- Change password
 - Logout
 
-### 4. Profile Page
+### 4. Change Password Page
 
 FXML file:
 
@@ -263,7 +263,7 @@ Sidebar should include:
 
 - Projects
 - Transactions
-- View profile
+- Change password
 - Logout
 
 ### 5. Login Page
