@@ -55,22 +55,6 @@
     <!-- MAIN -->
     <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-background-color: #f8f8f6;">
 
-        <!-- TOP HEADER -->
-        <HBox alignment="CENTER_LEFT" prefHeight="70"
-              style="-fx-background-color: white; -fx-padding: 0 32 0 32; -fx-border-color: #eeeeee; -fx-border-width: 0 0 1 0;">
-            <HBox alignment="CENTER_LEFT" spacing="8">
-                <Label text="Hello,"
-                       style="-fx-font-size: 20px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
-                <Label fx:id="usernameLabel" text=""
-                       style="-fx-font-size: 20px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
-            </HBox>
-            <Region HBox.hgrow="ALWAYS"/>
-            <TextField fx:id="searchField"
-                       promptText="Search name, note, or paid by"
-                       prefWidth="300"
-                       style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #eeeeee; -fx-border-radius: 12; -fx-padding: 10 16 10 16; -fx-font-size: 14px;"/>
-        </HBox>
-
         <!-- CONTENT -->
         <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
                     style="-fx-background: transparent; -fx-background-color: transparent;">
@@ -79,10 +63,10 @@
                 <!-- TITLE + BUTTON -->
                 <HBox alignment="CENTER_LEFT">
                     <VBox spacing="4">
-                        <Label fx:id="projectNameLabel" text="All Transactions"
+                        <Label fx:id="projectNameLabel" text="Transactions"
                                style="-fx-font-size: 26px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
-                        <Label text="Manage all income and expense records"
-                               style="-fx-font-size: 14px; -fx-text-fill: #878787;"/>
+                        <Label text="View and search recorded transactions"
+                               style="-fx-font-size: 15px; -fx-text-fill: #878787;"/>
                     </VBox>
                     <Region HBox.hgrow="ALWAYS"/>
                     <Button fx:id="recordTransactionButton"
@@ -94,6 +78,10 @@
                 <!-- FILTER BAR -->
                 <VBox spacing="12"
                       style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20 24 20 24;">
+                    <TextField fx:id="searchField"
+                               promptText="Search name, note, or paid by"
+                               maxWidth="Infinity"
+                               style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #eeeeee; -fx-border-radius: 12; -fx-padding: 10 16 10 16; -fx-font-size: 14px;"/>
                     <HBox spacing="16" alignment="CENTER_LEFT">
                         <VBox spacing="4">
                             <Label text="Project"
@@ -142,19 +130,6 @@
                         </VBox>
                     </HBox>
                 </VBox>
-
-                <!-- TAB BUTTONS -->
-                <HBox spacing="20">
-                    <Button fx:id="allTabButton" text="All"
-                            onAction="#handleShowAllTransactions"
-                            style="-fx-background-color: transparent; -fx-text-fill: #299D91; -fx-font-size: 16px; -fx-font-weight: 700; -fx-border-color: #299D91; -fx-border-width: 0 0 2 0;"/>
-                    <Button fx:id="incomeTabButton" text="Income"
-                            onAction="#handleShowIncomeTransactions"
-                            style="-fx-background-color: transparent; -fx-text-fill: #525256; -fx-font-size: 16px; -fx-font-weight: 700;"/>
-                    <Button fx:id="expenseTabButton" text="Expenses"
-                            onAction="#handleShowExpenseTransactions"
-                            style="-fx-background-color: transparent; -fx-text-fill: #525256; -fx-font-size: 16px; -fx-font-weight: 700;"/>
-                </HBox>
 
                 <!-- TABLE CARD -->
                 <VBox spacing="0"

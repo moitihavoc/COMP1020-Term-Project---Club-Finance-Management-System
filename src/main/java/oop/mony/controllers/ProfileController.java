@@ -17,7 +17,6 @@ public class ProfileController {
 
 	@FXML private Label sidebarUsername;
 	@FXML private Label logoutButton;
-	@FXML private Label usernameLabel;
 	@FXML private Label profileUsernameLabel;
 	@FXML private VBox changePasswordForm;
 	@FXML private PasswordField currentPasswordField;
@@ -33,7 +32,6 @@ public class ProfileController {
 			return;
 		}
 		currentUser = Session.getCurrentUser();
-		usernameLabel.setText(currentUser.getUsername());
 		sidebarUsername.setText(currentUser.getUsername());
 		profileUsernameLabel.setText(currentUser.getUsername());
 	}
@@ -45,7 +43,7 @@ public class ProfileController {
 			HBox root = loader.load();
 			ProjectsController controller = loader.getController();
 			controller.loadFromSession();
-			Stage stage = (Stage) usernameLabel.getScene().getWindow();
+			Stage stage = (Stage) sidebarUsername.getScene().getWindow();
 			stage.getScene().setRoot(root);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -59,7 +57,7 @@ public class ProfileController {
 			HBox root = loader.load();
 			TransactionPageController controller = loader.getController();
 			controller.loadFromSession();
-			Stage stage = (Stage) usernameLabel.getScene().getWindow();
+			Stage stage = (Stage) sidebarUsername.getScene().getWindow();
 			stage.getScene().setRoot(root);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -129,7 +127,7 @@ public class ProfileController {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/login.fxml"));
 			HBox root = loader.load();
-			Stage stage = (Stage) usernameLabel.getScene().getWindow();
+			Stage stage = (Stage) sidebarUsername.getScene().getWindow();
 			stage.getScene().setRoot(root);
 		} catch (IOException e) {
 			e.printStackTrace();

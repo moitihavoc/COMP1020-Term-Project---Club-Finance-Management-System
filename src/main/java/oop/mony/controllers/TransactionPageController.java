@@ -23,7 +23,6 @@ public class TransactionPageController {
 
     @FXML private Label sidebarUsername;
     @FXML private Label logoutButton;
-    @FXML private Label usernameLabel;
     @FXML private TextField searchField;
     @FXML private Label projectNameLabel;
     @FXML private Button recordTransactionButton;
@@ -33,9 +32,6 @@ public class TransactionPageController {
     @FXML private TextField minAmountField;
     @FXML private TextField maxAmountField;
     @FXML private Button clearFiltersButton;
-    @FXML private Button allTabButton;
-    @FXML private Button incomeTabButton;
-    @FXML private Button expenseTabButton;
     @FXML private VBox transactionsTableBody;
 
     private User currentUser;
@@ -50,7 +46,6 @@ public class TransactionPageController {
         currentUser = Session.getCurrentUser();
         try {
             club = ClubFinanceService.loadFullClubForUser(currentUser.getUserId(), currentUser.getUsername());
-            usernameLabel.setText(currentUser.getUsername());
             sidebarUsername.setText(currentUser.getUsername());
             refreshProjectFilter();
             refreshPage();
@@ -166,26 +161,6 @@ public class TransactionPageController {
         maxAmountField.clear();
         projectFilterComboBox.getSelectionModel().selectFirst();
         refreshPage();
-    }
-
-    @FXML
-    private void handleShowAllTransactions() {
-        // placeholder
-        refreshPage();
-    }
-
-    @FXML
-    private void handleShowIncomeTransactions() {
-        // not supported by backend
-        transactionsTableBody.getChildren().clear();
-        transactionsTableBody.getChildren().add(new Label("Transaction type not available yet."));
-    }
-
-    @FXML
-    private void handleShowExpenseTransactions() {
-        // not supported by backend
-        transactionsTableBody.getChildren().clear();
-        transactionsTableBody.getChildren().add(new Label("Transaction type not available yet."));
     }
 
     private void navigateToLogin() {

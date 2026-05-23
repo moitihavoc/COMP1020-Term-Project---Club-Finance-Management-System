@@ -28,7 +28,6 @@ public class ProjectPageController {
     @FXML private Label sidebarProjectNameLabel;
     @FXML private Label sidebarUsername;
     @FXML private Label logoutButton;
-    @FXML private Label usernameLabel;
     @FXML private TextField projectPageSearchField;
     @FXML private Label allocatedAmountLabel;
     @FXML private Label totalSpentLabel;
@@ -81,7 +80,6 @@ public class ProjectPageController {
 
     private void refreshPage() {
         if (currentUser != null) {
-            usernameLabel.setText(currentUser.getUsername());
             sidebarUsername.setText(currentUser.getUsername());
         }
         if (selectedProject != null) {

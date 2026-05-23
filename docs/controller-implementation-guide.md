@@ -131,7 +131,6 @@ FXML file: `projects.fxml`
 Existing important fields:
 
 ```java
-usernameLabel
 sidebarUsername
 projectSearchField
 totalBalanceLabel
@@ -226,7 +225,6 @@ Important fields:
 sidebarProjectNameLabel
 sidebarUsername
 logoutButton
-usernameLabel
 projectPageSearchField
 allocatedAmountLabel
 totalSpentLabel
@@ -355,7 +353,6 @@ Important fields:
 ```java
 sidebarUsername
 logoutButton
-usernameLabel
 searchField
 projectNameLabel
 recordTransactionButton
@@ -365,9 +362,6 @@ endDatePicker
 minAmountField
 maxAmountField
 clearFiltersButton
-allTabButton
-incomeTabButton
-expenseTabButton
 transactionsTableBody
 ```
 
@@ -379,9 +373,6 @@ handleViewProfile()
 handleLogout()
 handleRecordTransaction()
 handleClearFilters()
-handleShowAllTransactions()
-handleShowIncomeTransactions()
-handleShowExpenseTransactions()
 ```
 
 Suggested methods:
@@ -419,15 +410,6 @@ ArrayList<TransactionRecord> results = ClubFinanceService.searchTransactions(
 4. Clear `transactionsTableBody`.
 5. Add one row per result.
 
-Important note about Income/Expense tabs:
-
-- The current backend model does not store transaction type.
-- Amount is always non-negative.
-- Therefore `Income` and `Expenses` tabs cannot be implemented correctly yet.
-- Recommended controller behavior for now:
-  - `All` shows all transactions.
-  - `Income` and `Expenses` either show a message like "Transaction type is not available yet" or behave as placeholders.
-
 ## ProfileController
 
 FXML file: `profilePage.fxml`
@@ -437,7 +419,6 @@ Important fields:
 ```java
 sidebarUsername
 logoutButton
-usernameLabel
 profileUsernameLabel
 changePasswordForm
 currentPasswordField
@@ -472,7 +453,6 @@ Profile page flow:
 2. Set:
 
 ```java
-usernameLabel.setText(currentUser.getUsername());
 sidebarUsername.setText(currentUser.getUsername());
 profileUsernameLabel.setText(currentUser.getUsername());
 ```

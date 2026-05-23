@@ -155,7 +155,7 @@ Sidebar should include:
 - View profile
 - Logout
 
-### 3. All Transactions Page
+### 3. Transactions Page
 
 FXML file:
 
@@ -163,14 +163,13 @@ FXML file:
 
 Purpose:
 
-This page shows all transactions across all projects and pots owned by the current user.
+This page shows transactions across all projects and pots owned by the current user.
 
 Current page already has:
 
 - search field
 - title
 - record transaction button
-- tab buttons
 - table-like layout
 - `transactionsTableBody`
 - hardcoded sample rows

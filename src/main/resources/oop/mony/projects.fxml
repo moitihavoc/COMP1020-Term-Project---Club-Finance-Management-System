@@ -53,22 +53,18 @@
     <!-- MAIN CONTENT -->
     <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-background-color: #f8f8f6;">
 
-        <!-- TOP BAR -->
-        <HBox alignment="CENTER_LEFT" prefHeight="70"
-              style="-fx-background-color: white; -fx-padding: 0 32 0 32; -fx-border-color: #eeeeee; -fx-border-width: 0 0 1 0;">
-            <HBox alignment="CENTER_LEFT" spacing="4">
-                <Label text="Hello,"
-                       style="-fx-font-size: 20px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
-                <Label fx:id="usernameLabel" text=""
-                       style="-fx-font-size: 20px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
-            </HBox>
-            <Region HBox.hgrow="ALWAYS"/>
-        </HBox>
-
         <!-- PAGE CONTENT -->
         <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
                     style="-fx-background: transparent; -fx-background-color: transparent;">
             <VBox spacing="24" style="-fx-padding: 32;">
+
+                <!-- PAGE HEADER -->
+                <VBox spacing="8">
+                    <Label text="Dashboard"
+                           style="-fx-font-size: 26px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
+                    <Label text="Track club balance, allocations, and project spending"
+                           style="-fx-font-size: 15px; -fx-text-fill: #878787;"/>
+                </VBox>
 
                 <!-- STATS ROW -->
                 <HBox spacing="16">

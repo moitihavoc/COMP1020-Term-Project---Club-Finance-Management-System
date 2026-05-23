@@ -25,7 +25,6 @@ import oop.mony.services.ClubFinanceService;
 
 public class ProjectsController {
 
-    @FXML private Label usernameLabel;
     @FXML private Label sidebarUsername;
     @FXML private Label totalBalanceLabel;
     @FXML private Label totalAllocatedLabel;
@@ -74,7 +73,6 @@ public class ProjectsController {
 
     private void refreshPage() {
         if (currentUser != null) {
-            usernameLabel.setText(currentUser.getUsername());
             sidebarUsername.setText(currentUser.getUsername());
         }
         if (club != null) {
@@ -164,7 +162,7 @@ public class ProjectsController {
             HBox root = loader.load();
             TransactionPageController controller = loader.getController();
             controller.loadFromSession();
-            Stage stage = (Stage) usernameLabel.getScene().getWindow();
+            Stage stage = (Stage) sidebarUsername.getScene().getWindow();
             stage.getScene().setRoot(root);
         } catch (IOException e) {
             showError("Unable to open transactions page.");
@@ -179,7 +177,7 @@ public class ProjectsController {
             HBox root = loader.load();
             ProfileController controller = loader.getController();
             controller.loadFromSession();
-            Stage stage = (Stage) usernameLabel.getScene().getWindow();
+            Stage stage = (Stage) sidebarUsername.getScene().getWindow();
             stage.getScene().setRoot(root);
         } catch (IOException e) {
             showError("Unable to open profile page.");
@@ -295,7 +293,7 @@ public class ProjectsController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/login.fxml"));
             Parent root = loader.load();
-            Stage stage = (Stage) usernameLabel.getScene().getWindow();
+            Stage stage = (Stage) sidebarUsername.getScene().getWindow();
             stage.getScene().setRoot(root);
         } catch (IOException e) {
             if (createProjectErrorLabel != null) {
