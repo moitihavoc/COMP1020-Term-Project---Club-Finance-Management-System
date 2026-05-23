@@ -10,6 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import oop.mony.Session;
 import oop.mony.models.User;
+import oop.mony.dao.UserDAO;
 
 import java.io.IOException;
 
@@ -110,10 +111,26 @@ public class ProfileController {
 
 		if (currentPasswordField.getText().equals(currentUser.getPassword())) {
 			// update the password
+			try {
+				boolean updated = UserDAO.updatePassword(currentUser.getUserId(), newPasswordField.getText());
+
+				if (updated) {
+					changePasswordErrorLabel.setText("Password updated successfully.");
+					clearChangePasswordForm();
+					changePasswordForm.setVisible(false);
+					changePasswordForm.setManaged(false);
+				}
+				else {
+					changePasswordErrorLabel.setText("Could not update password.");
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+        		changePasswordErrorLabel.setText("Database error while updating password.");
+			}
 			
+			changePasswordErrorLabel.setText("Password is updated successfully.");
 		}
 
-		changePasswordErrorLabel.setText("Password change is not implemented.");
 	}
 
 	private void clearChangePasswordForm() {

@@ -262,6 +262,7 @@ public class ProjectPageController {
 
     @FXML
     private void handleViewProfile() {
+        System.out.println("profile clicked");
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/profilePage.fxml"));
             HBox root = loader.load();
