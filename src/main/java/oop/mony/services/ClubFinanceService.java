@@ -1,4 +1,4 @@
-package oop.mony.core;
+package oop.mony.services;
 
 import oop.mony.dao.ClubDAO;
 import oop.mony.dao.PotDAO;
@@ -17,8 +17,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class ClubFinanceSystem {
-    private ClubFinanceSystem() {
+public final class ClubFinanceService {
+    private ClubFinanceService() {
     }
 
     public static Club loadFullClubForUser(int userId, String username) throws SQLException {

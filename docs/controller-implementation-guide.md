@@ -1,6 +1,6 @@
 # Controller Implementation Guide
 
-This guide is for the teammate implementing the JavaFX controllers. The frontend FXML and backend/core classes already exist; the missing work is connecting them.
+This guide is for the teammate implementing the JavaFX controllers. The frontend FXML and backend/service classes already exist; the missing work is connecting them.
 
 Recommended structure: keep this as one controller guide. Each controller needs to connect FXML fields, navigation, backend calls, and rendering, so one document is easier to follow than separate frontend/backend docs.
 
@@ -10,26 +10,26 @@ Controllers should stay thin:
 
 1. Read input from FXML fields.
 2. Validate simple user input.
-3. Call `ClubFinanceSystem`, model methods, or DAO/model login methods.
+3. Call `ClubFinanceService`, model methods, or DAO/model login methods.
 4. Update labels/containers.
 5. Navigate between FXML screens.
 
-Do not put finance calculations in controllers. Totals and search are already handled by model/core classes.
+Do not put finance calculations in controllers. Totals and search are already handled by model/service classes.
 
-## Important Backend/Core Classes
+## Important Backend/Service Classes
 
 Use these as the main controller API:
 
 ```java
-ClubFinanceSystem.loadFullClubForUser(userId, username)
-ClubFinanceSystem.createProject(club, name, allocatedAmount)
-ClubFinanceSystem.createPot(club, projectId, name, allocatedAmount)
-ClubFinanceSystem.createTransaction(club, potId, name, amount, paidBy, date, proofImage, note)
-ClubFinanceSystem.deleteProject(club, projectId)
-ClubFinanceSystem.deletePot(club, potId)
-ClubFinanceSystem.deleteTransaction(club, transactionId, potId)
-ClubFinanceSystem.searchTransactions(club, keyword, startDate, endDate, minAmount, maxAmount, projectId)
-ClubFinanceSystem.updateTotalBalance(club, totalBalance)
+ClubFinanceService.loadFullClubForUser(userId, username)
+ClubFinanceService.createProject(club, name, allocatedAmount)
+ClubFinanceService.createPot(club, projectId, name, allocatedAmount)
+ClubFinanceService.createTransaction(club, potId, name, amount, paidBy, date, proofImage, note)
+ClubFinanceService.deleteProject(club, projectId)
+ClubFinanceService.deletePot(club, potId)
+ClubFinanceService.deleteTransaction(club, transactionId, potId)
+ClubFinanceService.searchTransactions(club, keyword, startDate, endDate, minAmount, maxAmount, projectId)
+ClubFinanceService.updateTotalBalance(club, totalBalance)
 ```
 
 Important model methods:
@@ -70,7 +70,7 @@ Suggested login update:
 - After successful login, get the full `User` object with `UserDAO.findByUsernameAndPassword(username, password)`.
 - Store it with `Session.setCurrentUser(user)`.
 - Load `projects.fxml`.
-- In `ProjectsController`, load the full club from `ClubFinanceSystem.loadFullClubForUser(...)`.
+- In `ProjectsController`, load the full club from `ClubFinanceService.loadFullClubForUser(...)`.
 
 If `Session.hasCurrentUser()` is false on a protected page, navigate back to `login.fxml`.
 
@@ -115,7 +115,7 @@ public void loadFromSession()
 public void loadProjectFromSession(int projectId)
 ```
 
-Do not pass many unrelated values between controllers. Prefer loading `User` from `Session`, then loading `Club` through `ClubFinanceSystem`.
+Do not pass many unrelated values between controllers. Prefer loading `User` from `Session`, then loading `Club` through `ClubFinanceService`.
 
 ## ProjectsController
 
@@ -169,7 +169,7 @@ Controller flow:
 2. Load the full club:
 
 ```java
-club = ClubFinanceSystem.loadFullClubForUser(currentUser.getUserId(), currentUser.getUsername());
+club = ClubFinanceService.loadFullClubForUser(currentUser.getUserId(), currentUser.getUsername());
 ```
 
 3. Update username labels.
@@ -196,7 +196,7 @@ Create project flow:
 4. Call:
 
 ```java
-club = ClubFinanceSystem.createProject(club, name, allocatedAmount);
+club = ClubFinanceService.createProject(club, name, allocatedAmount);
 ```
 
 5. Clear/hide the form and refresh the page.
@@ -301,7 +301,7 @@ Create pot flow:
 3. Call:
 
 ```java
-club = ClubFinanceSystem.createPot(club, selectedProject.getProjectId(), name, allocatedAmount);
+club = ClubFinanceService.createPot(club, selectedProject.getProjectId(), name, allocatedAmount);
 selectedProject = club.findProjectById(selectedProject.getProjectId());
 ```
 
@@ -319,7 +319,7 @@ Create transaction flow:
 3. Call:
 
 ```java
-club = ClubFinanceSystem.createTransaction(
+club = ClubFinanceService.createTransaction(
         club,
         selectedPot.getPotId(),
         name,
@@ -392,14 +392,14 @@ private Integer selectedProjectFilterId()
 
 Search/filter flow:
 
-1. Load `club` through `ClubFinanceSystem.loadFullClubForUser(...)`.
+1. Load `club` through `ClubFinanceService.loadFullClubForUser(...)`.
 2. Populate `projectFilterComboBox` with:
    - "All Projects"
    - each project from `club.getProjects()`
 3. When search/filter values change, call:
 
 ```java
-ArrayList<TransactionRecord> results = ClubFinanceSystem.searchTransactions(
+ArrayList<TransactionRecord> results = ClubFinanceService.searchTransactions(
         club,
         searchField.getText(),
         startDatePicker.getValue(),
@@ -569,7 +569,7 @@ Use helper methods like `formatMoney(double amount)` and `formatDate(LocalDate d
 
 ## Error Handling
 
-For controller methods that call backend/core methods:
+For controller methods that call backend/service methods:
 
 ```java
 try {
@@ -604,10 +604,9 @@ Do not let exceptions crash the UI.
 - Project detail page loads real pots and transactions.
 - Create pot works.
 - Record transaction works.
-- Transaction page search/filter uses `ClubFinanceSystem.searchTransactions(...)`.
+- Transaction page search/filter uses `ClubFinanceService.searchTransactions(...)`.
 - Profile page displays current user info.
 - Logout clears `Session` and returns to login.
 - Empty controllers are no longer empty.
 - Every FXML `fx:id` has a matching `@FXML` field if the controller needs it.
 - Every FXML `onAction`/`onMouseClicked` handler exists in its controller.
-
