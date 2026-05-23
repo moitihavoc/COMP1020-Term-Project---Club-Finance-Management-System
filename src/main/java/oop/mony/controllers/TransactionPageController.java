@@ -2,6 +2,7 @@ package oop.mony.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -196,7 +197,7 @@ public class TransactionPageController {
     private void navigateToLogin() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/login.fxml"));
-            HBox root = loader.load();
+            Parent root = loader.load();
             Stage stage = (Stage) projectNameLabel.getScene().getWindow();
             stage.getScene().setRoot(root);
         } catch (IOException e) {

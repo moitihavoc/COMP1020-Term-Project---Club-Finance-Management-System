@@ -2,14 +2,17 @@ package oop.mony.controllers;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Optional;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -38,6 +41,13 @@ public class ProjectsController {
 
     private User currentUser;
     private Club club;
+
+    @FXML
+    private void initialize() {
+        if (projectSearchField != null) {
+            projectSearchField.textProperty().addListener((obs, oldText, newText) -> renderProjects());
+        }
+    }
 
     public void loadFromSession() {
         if (!Session.hasCurrentUser()) {
@@ -149,17 +159,72 @@ public class ProjectsController {
 
     @FXML
     private void handleGoToTransactions() {
-        // TODO: implement navigation to transactions page
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/transactionPage.fxml"));
+            HBox root = loader.load();
+            TransactionPageController controller = loader.getController();
+            controller.loadFromSession();
+            Stage stage = (Stage) usernameLabel.getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (IOException e) {
+            showError("Unable to open transactions page.");
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void handleViewProfile() {
-        // TODO: implement navigation to profile page
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/profilePage.fxml"));
+            HBox root = loader.load();
+            ProfileController controller = loader.getController();
+            controller.loadFromSession();
+            Stage stage = (Stage) usernameLabel.getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (IOException e) {
+            showError("Unable to open profile page.");
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void handleEditBalance() {
-        // stub: show edit balance UI (not implemented yet)
+        if (club == null) {
+            showError("Club data is not loaded.");
+            return;
+        }
+
+        TextInputDialog dialog = new TextInputDialog(String.valueOf(club.getTotalBalance()));
+        dialog.setTitle("Edit Total Balance");
+        dialog.setHeaderText("Update club total balance");
+        dialog.setContentText("New total balance:");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isEmpty()) {
+            return;
+        }
+
+        double newBalance;
+        try {
+            newBalance = Double.parseDouble(result.get().replace("$", "").trim());
+        } catch (NumberFormatException e) {
+            showError("Please enter a valid number.");
+            return;
+        }
+
+        try {
+            boolean updated = ClubFinanceService.updateTotalBalance(club, newBalance);
+            if (!updated) {
+                showError("New balance must be at least equal to allocated amount.");
+                return;
+            }
+            club = ClubFinanceService.loadFullClubForUser(club.getUserId(), club.getClubName());
+            refreshPage();
+            showInfo("Total balance updated.");
+        } catch (SQLException e) {
+            showError("Unable to update balance. Please try again.");
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -171,6 +236,7 @@ public class ProjectsController {
     private void handleLogout() {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to log out?", ButtonType.YES, ButtonType.NO);
         confirm.setTitle("Logout");
+
         confirm.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.YES) {
                 Session.clear();
@@ -228,7 +294,7 @@ public class ProjectsController {
     private void navigateToLogin() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/login.fxml"));
-            HBox root = loader.load();
+            Parent root = loader.load();
             Stage stage = (Stage) usernameLabel.getScene().getWindow();
             stage.getScene().setRoot(root);
         } catch (IOException e) {
@@ -237,5 +303,20 @@ public class ProjectsController {
             }
             e.printStackTrace();
         }
+    }
+
+    private void showError(String message) {
+        if (createProjectErrorLabel != null) {
+            createProjectErrorLabel.setText(message);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
+            alert.showAndWait();
+        }
+    }
+
+    private void showInfo(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
+        alert.setHeaderText(null);
+        alert.showAndWait();
     }
 }

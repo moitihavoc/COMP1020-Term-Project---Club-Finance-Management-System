@@ -2,6 +2,7 @@ package oop.mony.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -170,13 +171,20 @@ public class ProjectPageController {
 
     @FXML
     private void handleLogout() {
-        Session.clear();
-        navigateToLogin();
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to log out?", ButtonType.YES, ButtonType.NO);
+        confirm.setTitle("Logout");
+
+        confirm.showAndWait().ifPresent(btn -> {
+            if (btn == ButtonType.YES) {
+                Session.clear();
+                navigateToLogin();
+            }
+        });
     }
 
     @FXML
     private void handleEditMenu() {
-        // placeholder for edit menu
+        // Placeholder for editing project menu actions
     }
 
     @FXML
@@ -301,7 +309,7 @@ public class ProjectPageController {
     private void navigateToProjects() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/projects.fxml"));
-            HBox root = loader.load();
+            Parent root = loader.load();
             ProjectsController controller = loader.getController();
             controller.loadFromSession();
             Stage stage = (Stage) projectNameLabel.getScene().getWindow();
@@ -314,7 +322,7 @@ public class ProjectPageController {
     private void navigateToLogin() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/login.fxml"));
-            HBox root = loader.load();
+            Parent root = loader.load();
             Stage stage = (Stage) projectNameLabel.getScene().getWindow();
             stage.getScene().setRoot(root);
         } catch (IOException e) {

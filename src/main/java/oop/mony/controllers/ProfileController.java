@@ -2,6 +2,7 @@ package oop.mony.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.layout.HBox;
@@ -107,6 +108,11 @@ public class ProfileController {
 		if (!newPasswordField.getText().equals(confirmNewPasswordField.getText())) {
 			changePasswordErrorLabel.setText("New passwords do not match.");
 			return;
+		}
+
+		if (currentPasswordField.getText().equals(currentUser.getPassword())) {
+			// update the password
+			
 		}
 
 		changePasswordErrorLabel.setText("Password change is not implemented.");
