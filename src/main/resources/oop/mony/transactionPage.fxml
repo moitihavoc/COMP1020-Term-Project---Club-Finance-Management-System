@@ -38,7 +38,7 @@
             <VBox spacing="2">
                 <Label fx:id="sidebarUsername" text="User"
                        style="-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: 600;"/>
-                <Label text="Change password"
+                <Label text="View profile"
                        style="-fx-text-fill: #666666; -fx-font-size: 12px;"/>
             </VBox>
         </HBox>
