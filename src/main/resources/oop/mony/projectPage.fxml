@@ -3,11 +3,10 @@
 <?import javafx.scene.control.*?>
 
 <HBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="oop.mony.controllers.ProjectPageController"
-      prefWidth="1440" prefHeight="1024">
+      fx:controller="oop.mony.controllers.ProjectPageController">
 
     <!-- SIDEBAR -->
-    <VBox prefWidth="280" prefHeight="1024"
+    <VBox prefWidth="280"
           style="-fx-background-color: #191919; -fx-padding: 48 28 48 28; -fx-min-width: 280; -fx-max-width: 280;">
 
         <Label text="Mony"
@@ -60,7 +59,7 @@
     </VBox>
 
     <!-- MAIN CONTENT -->
-    <VBox prefWidth="1160" prefHeight="1024" style="-fx-background-color: #f8f8f6;">
+    <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-background-color: #f8f8f6;">
 
         <!-- TOP BAR -->
         <HBox alignment="CENTER_LEFT" prefHeight="70"
@@ -72,10 +71,6 @@
                        style="-fx-font-size: 20px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
             </HBox>
             <Region HBox.hgrow="ALWAYS"/>
-            <TextField fx:id="projectPageSearchField"
-                       promptText="Search here..."
-                       prefWidth="220" prefHeight="34"
-                       style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0; -fx-font-size: 13px; -fx-padding: 0 10 0 10;"/>
         </HBox>
 
         <!-- PAGE CONTENT -->

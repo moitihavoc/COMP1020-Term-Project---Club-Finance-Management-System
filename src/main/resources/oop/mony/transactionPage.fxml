@@ -5,11 +5,10 @@
 
 <HBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="oop.mony.controllers.TransactionPageController"
-      prefWidth="1440" prefHeight="1024">
+      fx:controller="oop.mony.controllers.TransactionPageController">
 
     <!-- SIDEBAR -->
-    <VBox prefWidth="280" prefHeight="1024"
+    <VBox prefWidth="280"
           style="-fx-background-color: #191919; -fx-padding: 48 28 48 28; -fx-min-width: 280; -fx-max-width: 280;">
 
         <Label text="Mony"
@@ -61,7 +60,7 @@
     </VBox>
 
     <!-- MAIN -->
-    <VBox prefWidth="1160" prefHeight="1024" style="-fx-background-color: #f8f8f6;">
+    <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-background-color: #f8f8f6;">
 
         <!-- TOP HEADER -->
         <HBox alignment="CENTER_LEFT" prefHeight="70"
