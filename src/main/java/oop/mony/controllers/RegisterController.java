@@ -18,6 +18,7 @@ public class RegisterController {
     @FXML private PasswordField confirmPasswordField;
     @FXML private Button registerButton;
     @FXML private Label errorLabel;
+    @FXML private Label successLabel;
 
     @FXML
     private void handleRegister() {
@@ -44,10 +45,14 @@ public class RegisterController {
         boolean created = user.createAccount();
 
         if (created) {
-            errorLabel.setText("Account created successfully.");
-            errorLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #299D91;");
+            if (errorLabel != null) errorLabel.setText("");
+            if (successLabel != null) {
+                successLabel.setText("Account created successfully.");
+                successLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #299D91;");
+            }
         } else {
-            errorLabel.setText("Username already exists.");
+            if (successLabel != null) successLabel.setText("");
+            if (errorLabel != null) errorLabel.setText("Username already exists.");
         }
     }
 
