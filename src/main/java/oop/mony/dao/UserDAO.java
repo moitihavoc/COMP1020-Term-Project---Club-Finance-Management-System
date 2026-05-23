@@ -30,6 +30,20 @@ public class UserDAO {
         return findByUsernameAndPassword(username, password) != null;
     }
 
+    public static boolean updatePassword(int userId, String newPassword) throws SQLException {
+        if (userId <= 0 || newPassword == null || newPassword.isEmpty()) {
+            return false;
+        }
+
+        String sql = "UPDATE users SET password = ? WHERE id = ?";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, newPassword);
+            statement.setInt(2, userId);
+            return statement.executeUpdate() == 1;
+        }
+    }
+
     public static User findByUsernameAndPassword(String username, String password) throws SQLException {
         if (!hasUserInput(username, password)) {
             return null;

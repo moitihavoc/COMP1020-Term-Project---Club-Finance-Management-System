@@ -32,6 +32,13 @@ ClubFinanceService.searchTransactions(club, keyword, startDate, endDate, minAmou
 ClubFinanceService.updateTotalBalance(club, totalBalance)
 ```
 
+Important DAO methods:
+
+```java
+UserDAO.findByUsernameAndPassword(username, password)
+UserDAO.updatePassword(userId, newPassword)
+```
+
 Important model methods:
 
 ```java
@@ -476,12 +483,13 @@ profileUsernameLabel.setText(currentUser.getUsername());
 
 Important note about password update:
 
-- There is currently no DAO method for updating a password.
-- Either leave change password as a placeholder, or add a small `UserDAO.updatePassword(userId, newPassword)` method.
-- If adding it, controller validation should check:
+- `UserDAO.updatePassword(userId, newPassword)` is available.
+- The method returns `false` when `userId` is invalid, `newPassword` is empty, or no matching user row is updated.
+- Controller validation should check:
   - current password matches `currentUser.getPassword()`
   - new password length at least 8
   - confirm password matches new password
+- After a successful update, refresh the stored `Session` user or force the user to log in again so the in-memory password does not stay stale.
 
 ## LoginController
 
@@ -593,7 +601,7 @@ Do not let exceptions crash the UI.
 4. Implement `ProjectPageController`.
 5. Implement `TransactionPageController`.
 6. Implement `ProfileController`.
-7. Add password update support only if the team decides change-password must be fully functional.
+7. Connect `ProfileController` change-password flow to `UserDAO.updatePassword(...)` if the team decides change-password must be fully functional.
 
 ## Acceptance Checklist
 
