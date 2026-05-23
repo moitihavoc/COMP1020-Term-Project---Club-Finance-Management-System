@@ -410,7 +410,7 @@ ArrayList<TransactionRecord> results = ClubFinanceService.searchTransactions(
 4. Clear `transactionsTableBody`.
 5. Add one row per result.
 
-## ProfileController
+## Change Password Controller
 
 FXML file: `profilePage.fxml`
 
@@ -446,7 +446,7 @@ private void showChangePasswordForm(boolean visible)
 private void clearChangePasswordForm()
 ```
 
-Profile page flow:
+Change password page flow:
 
 1. Get current user from `Session`.
 2. Set:
@@ -458,15 +458,13 @@ sidebarUsername.setText(currentUser.getUsername());
 3. `changePasswordForm` is shown directly on the change password page.
 4. `handleCancelChangePassword()` clears the form.
 
-Important note about password update:
-
 - `UserDAO.updatePassword(userId, newPassword)` is available.
 - The method returns `false` when `userId` is invalid, `newPassword` is empty, or no matching user row is updated.
-- Controller validation should check:
+- Controller validation checks:
   - current password matches `currentUser.getPassword()`
   - new password length at least 8
   - confirm password matches new password
-- After a successful update, refresh the stored `Session` user or force the user to log in again so the in-memory password does not stay stale.
+- After a successful update, refresh the stored `Session` user so the in-memory password does not stay stale.
 
 ## LoginController
 
@@ -578,7 +576,7 @@ Do not let exceptions crash the UI.
 4. Implement `ProjectPageController`.
 5. Implement `TransactionPageController`.
 6. Implement `ProfileController`.
-7. Connect `ProfileController` change-password flow to `UserDAO.updatePassword(...)` if the team decides change-password must be fully functional.
+7. Connect the change-password flow to `UserDAO.updatePassword(...)`.
 
 ## Acceptance Checklist
 

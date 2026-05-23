@@ -242,16 +242,9 @@ FXML file:
 
 Purpose:
 
-This page shows the user's account information and logout option.
+This page lets the user update their password.
 
-Current page already has:
-
-- username display
-- password placeholder
-- change password label
-- logout button
-
-Add or design a clear change password area. It should collect:
+The page should show a clear change password area. It should collect:
 
 - current password
 - new password

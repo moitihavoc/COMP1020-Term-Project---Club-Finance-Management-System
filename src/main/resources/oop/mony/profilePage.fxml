@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.shape.SVGPath?>
 
 <HBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="oop.mony.controllers.ProfileController">
@@ -29,14 +30,14 @@
 
         <Region VBox.vgrow="ALWAYS"/>
 
-        <!-- VIEW PROFILE (active) -->
+        <!-- CHANGE PASSWORD (active) -->
         <HBox spacing="12" alignment="CENTER_LEFT"
               onMouseClicked="#handleViewProfile"
               style="-fx-border-color: #333333; -fx-border-width: 1 0 0 0; -fx-padding: 20 0 12 0; -fx-cursor: hand;">
             <VBox spacing="2">
                 <Label fx:id="sidebarUsername" text="User"
                        style="-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: 600;"/>
-                <Label text="View profile"
+                <Label text="Change password"
                        style="-fx-text-fill: #299D91; -fx-font-size: 12px;"/>
             </VBox>
         </HBox>
@@ -60,62 +61,83 @@
 
                 <!-- PAGE HEADER -->
                 <VBox spacing="8">
-                    <Label text="Profile"
+                    <Label text="Change Password"
                            style="-fx-font-size: 26px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
-                    <Label text="Manage your account information"
-                           style="-fx-font-size: 15px; -fx-text-fill: #878787;"/>
                 </VBox>
 
-                <!-- PROFILE INFO CARD -->
-                <VBox spacing="20" prefWidth="480"
-                      style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 28 28 28 28;">
-
-                    <VBox spacing="4">
-                        <Label text="Username"
-                               style="-fx-font-size: 13px; -fx-text-fill: #888888;"/>
-                        <Label fx:id="profileUsernameLabel" text=""
-                               style="-fx-font-size: 16px; -fx-font-weight: 600; -fx-text-fill: #191919;"/>
-                    </VBox>
-
-                    <VBox spacing="4">
-                        <Label text="Password"
-                               style="-fx-font-size: 13px; -fx-text-fill: #888888;"/>
-                        <Label text="********"
-                               style="-fx-font-size: 16px; -fx-font-weight: 600; -fx-text-fill: #191919;"/>
-                    </VBox>
-
-                    <Label text="Change Password"
-                           onMouseClicked="#handleChangePassword"
-                           style="-fx-text-fill: #299D91; -fx-font-size: 14px; -fx-font-weight: 600; -fx-cursor: hand;"/>
-                </VBox>
-
-                <!-- CHANGE PASSWORD FORM (hidden by default) -->
+                <!-- CHANGE PASSWORD FORM -->
                 <VBox fx:id="changePasswordForm" spacing="16" prefWidth="480"
-                      managed="false" visible="false"
+                      managed="true" visible="true"
+                      maxWidth="520"
                       style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 28 28 28 28;">
-
-                    <Label text="Change Password"
-                           style="-fx-font-size: 18px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
 
                     <VBox spacing="6">
                         <Label text="Current Password"
                                style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #191919;"/>
-                        <PasswordField fx:id="currentPasswordField" promptText="Enter current password"
-                                       style="-fx-font-size: 14px; -fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <StackPane HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                                <PasswordField fx:id="currentPasswordField" promptText="Enter current password"
+                                               maxWidth="Infinity"
+                                               style="-fx-font-size: 14px; -fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
+                                <TextField fx:id="visibleCurrentPasswordField" promptText="Enter current password"
+                                           managed="false" visible="false" maxWidth="Infinity"
+                                           style="-fx-font-size: 14px; -fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
+                            </StackPane>
+                            <Button onAction="#handleToggleCurrentPasswordVisibility"
+                                    prefWidth="42" prefHeight="40"
+                                    focusTraversable="false"
+                                    style="-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand;">
+                                <graphic>
+                                    <SVGPath fx:id="currentPasswordVisibilityIcon" fill="#666666" content="M12 4.5 C7 4.5 2.73 7.61 1 12 C2.73 16.39 7 19.5 12 19.5 C17 19.5 21.27 16.39 23 12 C21.27 7.61 17 4.5 12 4.5 Z M12 16 C9.79 16 8 14.21 8 12 C8 9.79 9.79 8 12 8 C14.21 8 16 9.79 16 12 C16 14.21 14.21 16 12 16 Z M12 14 C13.1 14 14 13.1 14 12 C14 10.9 13.1 10 12 10 C10.9 10 10 10.9 10 12 C10 13.1 10.9 14 12 14 Z"/>
+                                </graphic>
+                            </Button>
+                        </HBox>
                     </VBox>
 
                     <VBox spacing="6">
                         <Label text="New Password"
                                style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #191919;"/>
-                        <PasswordField fx:id="newPasswordField" promptText="Enter new password"
-                                       style="-fx-font-size: 14px; -fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <StackPane HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                                <PasswordField fx:id="newPasswordField" promptText="Enter new password"
+                                               maxWidth="Infinity"
+                                               style="-fx-font-size: 14px; -fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
+                                <TextField fx:id="visibleNewPasswordField" promptText="Enter new password"
+                                           managed="false" visible="false" maxWidth="Infinity"
+                                           style="-fx-font-size: 14px; -fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
+                            </StackPane>
+                            <Button onAction="#handleToggleNewPasswordVisibility"
+                                    prefWidth="42" prefHeight="40"
+                                    focusTraversable="false"
+                                    style="-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand;">
+                                <graphic>
+                                    <SVGPath fx:id="newPasswordVisibilityIcon" fill="#666666" content="M12 4.5 C7 4.5 2.73 7.61 1 12 C2.73 16.39 7 19.5 12 19.5 C17 19.5 21.27 16.39 23 12 C21.27 7.61 17 4.5 12 4.5 Z M12 16 C9.79 16 8 14.21 8 12 C8 9.79 9.79 8 12 8 C14.21 8 16 9.79 16 12 C16 14.21 14.21 16 12 16 Z M12 14 C13.1 14 14 13.1 14 12 C14 10.9 13.1 10 12 10 C10.9 10 10 10.9 10 12 C10 13.1 10.9 14 12 14 Z"/>
+                                </graphic>
+                            </Button>
+                        </HBox>
                     </VBox>
 
                     <VBox spacing="6">
                         <Label text="Confirm New Password"
                                style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #191919;"/>
-                        <PasswordField fx:id="confirmNewPasswordField" promptText="Confirm new password"
-                                       style="-fx-font-size: 14px; -fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <StackPane HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                                <PasswordField fx:id="confirmNewPasswordField" promptText="Confirm new password"
+                                               maxWidth="Infinity"
+                                               style="-fx-font-size: 14px; -fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
+                                <TextField fx:id="visibleConfirmNewPasswordField" promptText="Confirm new password"
+                                           managed="false" visible="false" maxWidth="Infinity"
+                                           style="-fx-font-size: 14px; -fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
+                            </StackPane>
+                            <Button onAction="#handleToggleConfirmNewPasswordVisibility"
+                                    prefWidth="42" prefHeight="40"
+                                    focusTraversable="false"
+                                    style="-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand;">
+                                <graphic>
+                                    <SVGPath fx:id="confirmNewPasswordVisibilityIcon" fill="#666666" content="M12 4.5 C7 4.5 2.73 7.61 1 12 C2.73 16.39 7 19.5 12 19.5 C17 19.5 21.27 16.39 23 12 C21.27 7.61 17 4.5 12 4.5 Z M12 16 C9.79 16 8 14.21 8 12 C8 9.79 9.79 8 12 8 C14.21 8 16 9.79 16 12 C16 14.21 14.21 16 12 16 Z M12 14 C13.1 14 14 13.1 14 12 C14 10.9 13.1 10 12 10 C10.9 10 10 10.9 10 12 C10 13.1 10.9 14 12 14 Z"/>
+                                </graphic>
+                            </Button>
+                        </HBox>
                     </VBox>
 
                     <Label fx:id="changePasswordErrorLabel" text=""
@@ -124,8 +146,6 @@
                     <HBox spacing="12">
                         <Button text="Update Password" onAction="#handleConfirmChangePassword"
                                 style="-fx-background-color: #299D91; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: 600; -fx-padding: 10 24 10 24; -fx-background-radius: 8;"/>
-                        <Button text="Cancel" onAction="#handleCancelChangePassword"
-                                style="-fx-background-color: transparent; -fx-border-color: #cccccc; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 14px; -fx-padding: 10 24 10 24;"/>
                     </HBox>
                 </VBox>
 
