@@ -132,12 +132,6 @@ public class TransactionPageController {
     }
 
     @FXML
-    private void handleBackToProjectDetail() {
-        // placeholder: navigate back to projects for now
-        handleGoToProjects();
-    }
-
-    @FXML
     private void handleViewProfile() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/profilePage.fxml"));

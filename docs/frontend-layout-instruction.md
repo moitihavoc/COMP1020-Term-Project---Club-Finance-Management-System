@@ -232,7 +232,6 @@ Sidebar should include:
 
 - Projects
 - Transactions
-- Project Detail if the user came from a project context
 - View profile
 - Logout
 

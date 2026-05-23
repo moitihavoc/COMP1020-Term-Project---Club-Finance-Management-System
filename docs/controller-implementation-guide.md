@@ -375,7 +375,6 @@ Handlers needed:
 
 ```java
 handleGoToProjects()
-handleBackToProjectDetail()
 handleViewProfile()
 handleLogout()
 handleRecordTransaction()
