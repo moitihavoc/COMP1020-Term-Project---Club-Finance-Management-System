@@ -11,6 +11,8 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import oop.mony.Session;
+import oop.mony.dao.UserDAO;
 import oop.mony.models.User;
 
 public class LoginController {
@@ -42,29 +44,28 @@ public class LoginController {
             return;
         }
 
-        User user = new User(username, password);
+            try {
+                User savedUser = UserDAO.findByUsernameAndPassword(username, password);
+                if (savedUser != null) {
+                    Session.setCurrentUser(savedUser);
 
-        try {
-            if (user.login()) {
-                // change to project scene
-                FXMLLoader projectLoader = new FXMLLoader(getClass().getResource("/oop/mony/projects.fxml"));
-                HBox projectRoot = projectLoader.load();
-                ProjectsController controller = projectLoader.getController();
-                controller.setUsername(username);
-                
-                Stage stage = (Stage) loginButton.getScene().getWindow();
-                stage.getScene().setRoot(projectRoot);
-                
-            } 
-            else {
-                errorLabel.setText("Incorrect username or password.");
-                return;
-            }        
-        } catch (IOException e) {
-            // handle exception when projects.fxml file cant be loaded
-            errorLabel.setText("Failed to load scene, check console.");
-            e.printStackTrace();
-        }
+                    FXMLLoader projectLoader = new FXMLLoader(getClass().getResource("/oop/mony/projects.fxml"));
+                    HBox projectRoot = projectLoader.load();
+                    ProjectsController controller = projectLoader.getController();
+                    controller.loadFromSession();
+
+                    Stage stage = (Stage) loginButton.getScene().getWindow();
+                    stage.getScene().setRoot(projectRoot);
+                } else {
+                    errorLabel.setText("Incorrect username or password.");
+                }
+            } catch (IOException e) {
+                errorLabel.setText("Failed to load scene, check console.");
+                e.printStackTrace();
+            } catch (Exception e) {
+                errorLabel.setText("Login failed. Please try again.");
+                e.printStackTrace();
+            }
 
     }
 
