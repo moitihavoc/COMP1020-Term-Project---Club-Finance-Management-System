@@ -57,8 +57,8 @@
         <!-- TOP BAR -->
         <HBox alignment="CENTER_LEFT" prefHeight="70"
               style="-fx-background-color: white; -fx-padding: 0 32 0 32; -fx-border-color: #eeeeee; -fx-border-width: 0 0 1 0;">
-            <HBox alignment="CENTER_LEFT" spacing="8">
-                <Label text="Hello"
+            <HBox alignment="CENTER_LEFT" spacing="4">
+                <Label text="Hello,"
                        style="-fx-font-size: 20px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
                 <Label fx:id="usernameLabel" text=""
                        style="-fx-font-size: 20px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
