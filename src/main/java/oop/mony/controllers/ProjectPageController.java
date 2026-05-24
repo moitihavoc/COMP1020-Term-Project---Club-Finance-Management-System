@@ -117,25 +117,25 @@ public class ProjectPageController {
             VBox card = new VBox();
             card.setSpacing(12);
             card.setPrefWidth(320);
-            card.setStyle("-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 20; -fx-min-width: 320; -fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.08), 10, 0, 0, 4);");
+            card.getStyleClass().add("finance-card");
 
             Label name = new Label(pot.getPotName());
-            name.setStyle("-fx-font-size: 18px; -fx-font-weight: 700; -fx-text-fill: #191919;");
+            name.getStyleClass().add("finance-card-title");
 
             Label spentSummary = new Label("Spent " + formatMoney(pot.getTotalSpent())
                     + " of " + formatMoney(pot.getAllocatedAmount()));
-            spentSummary.setStyle("-fx-font-size: 13px; -fx-text-fill: #666666;");
+            spentSummary.getStyleClass().add("finance-card-summary");
 
             ProgressBar progressBar = new ProgressBar(calculateSpentProgress(pot));
             progressBar.getStyleClass().add("budget-progress");
             progressBar.setMaxWidth(Double.MAX_VALUE);
 
             Button editBtn = new Button("Edit");
-            editBtn.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-text-fill: #191919; -fx-font-size: 13px; -fx-font-weight: 600; -fx-padding: 8 14 8 14; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand;");
+            editBtn.getStyleClass().add("finance-secondary-button");
             editBtn.setOnAction(e -> handleEditPot(pot));
 
             Button deleteBtn = new Button("Delete");
-            deleteBtn.setStyle("-fx-background-color: #ffebee; -fx-text-fill: #e53935; -fx-font-size: 13px; -fx-font-weight: 600; -fx-padding: 8 14 8 14; -fx-background-radius: 8; -fx-cursor: hand;");
+            deleteBtn.getStyleClass().add("finance-danger-button");
             deleteBtn.setOnAction(e -> handleDeletePot(pot.getPotId()));
 
             HBox actionBox = new HBox(8, editBtn, deleteBtn);
@@ -160,7 +160,7 @@ public class ProjectPageController {
                 GridPane row = new GridPane();
                 row.setHgap(12);
                 row.setAlignment(Pos.TOP_LEFT);
-                row.setStyle("-fx-padding: 14 20 14 20; -fx-border-color: #f0f0f0; -fx-border-width: 0 0 1 0;");
+                row.getStyleClass().add("transaction-row");
                 
                 ColumnConstraints col0 = new ColumnConstraints();
                 col0.setPercentWidth(11);
@@ -182,42 +182,42 @@ public class ProjectPageController {
                 row.getColumnConstraints().addAll(col0, col1, col2, col3, col4, col5, col6, col7);
                 
                 Label dateLabel = new Label(formatDate(tx.getTransactionDate()));
-                dateLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+                dateLabel.getStyleClass().add("transaction-cell");
                 dateLabel.setWrapText(true);
                 
                 Label nameLabel = new Label(tx.getTransactionName());
-                nameLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+                nameLabel.getStyleClass().add("transaction-cell");
                 nameLabel.setWrapText(true);
 
                 Label projectLabel = new Label(selectedProject.getProjectName());
-                projectLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+                projectLabel.getStyleClass().add("transaction-cell");
                 projectLabel.setWrapText(true);
                 
                 Label potNameLabel = new Label(pot.getPotName());
-                potNameLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+                potNameLabel.getStyleClass().add("transaction-cell");
                 potNameLabel.setWrapText(true);
                 
                 Label paidByLabel = new Label(tx.getPaidBy());
-                paidByLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+                paidByLabel.getStyleClass().add("transaction-cell");
                 paidByLabel.setWrapText(true);
                 
                 Label noteLabel = new Label(tx.getNote() != null && !tx.getNote().isEmpty() ? tx.getNote() : "-");
-                noteLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+                noteLabel.getStyleClass().add("transaction-cell");
                 noteLabel.setWrapText(true);
                 
                 Label amountLabel = new Label(formatMoney(tx.getAmount()));
-                amountLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #191919;");
+                amountLabel.getStyleClass().add("transaction-amount");
                 
                 VBox proofBox = new VBox();
                 proofBox.setAlignment(Pos.TOP_LEFT);
                 if (tx.getProofPath() != null && !tx.getProofPath().isEmpty()) {
                     Button viewProofBtn = new Button("View");
-                    viewProofBtn.setStyle("-fx-background-color: #299D91; -fx-text-fill: white; -fx-font-size: 11px; -fx-padding: 4 8 4 8; -fx-background-radius: 4; -fx-cursor: hand;");
+                    viewProofBtn.getStyleClass().add("proof-button");
                     viewProofBtn.setOnAction(e -> handleViewProof(tx.getProofPath()));
                     proofBox.getChildren().add(viewProofBtn);
                 } else {
                     Label noProofLabel = new Label("-");
-                    noProofLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #aaaaaa;");
+                    noProofLabel.getStyleClass().add("muted-table-cell");
                     proofBox.getChildren().add(noProofLabel);
                 }
                 
@@ -305,7 +305,7 @@ public class ProjectPageController {
         grid.add(allocatedField, 1, 1);
 
         Label errorLabel = new Label("");
-        errorLabel.setStyle("-fx-text-fill: #e53935;");
+        errorLabel.getStyleClass().add("inline-error");
         grid.add(errorLabel, 0, 2, 2, 1);
 
         dialog.getDialogPane().setContent(grid);
@@ -558,7 +558,7 @@ public class ProjectPageController {
         TextField allocatedField = new TextField(MoneyInputFormatter.format(pot.getAllocatedAmount()));
         MoneyInputFormatter.attach(allocatedField);
         Label errorLabel = new Label("");
-        errorLabel.setStyle("-fx-text-fill: #e53935;");
+        errorLabel.getStyleClass().add("inline-error");
 
         grid.add(new Label("Pot name"), 0, 0);
         grid.add(nameField, 1, 0);

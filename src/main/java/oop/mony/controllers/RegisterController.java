@@ -94,7 +94,7 @@ public class RegisterController {
             if (errorLabel != null) errorLabel.setText("");
             if (successLabel != null) {
                 successLabel.setText("Account created successfully.");
-                successLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #299D91;");
+                successLabel.getStyleClass().setAll("inline-success");
             }
         } else {
             if (successLabel != null) successLabel.setText("");

@@ -221,14 +221,14 @@ public class ProfileController {
 
 	private void showPasswordError(String message) {
 		if (changePasswordErrorLabel != null) {
-			changePasswordErrorLabel.setStyle("-fx-text-fill: #e53935; -fx-font-size: 13px;");
+			changePasswordErrorLabel.getStyleClass().setAll("inline-error");
 			changePasswordErrorLabel.setText(message);
 		}
 	}
 
 	private void showPasswordSuccess(String message) {
 		if (changePasswordErrorLabel != null) {
-			changePasswordErrorLabel.setStyle("-fx-text-fill: #299D91; -fx-font-size: 13px;");
+			changePasswordErrorLabel.getStyleClass().setAll("inline-success");
 			changePasswordErrorLabel.setText(message);
 		}
 	}

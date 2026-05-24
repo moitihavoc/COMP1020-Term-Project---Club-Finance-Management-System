@@ -106,21 +106,21 @@ public class ProjectsController {
     private VBox createProjectCard(Project project) {
         VBox card = new VBox();
         card.setSpacing(12);
-        card.setStyle("-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 20; -fx-min-width: 320; -fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.08), 10, 0, 0, 4);");
+        card.getStyleClass().add("finance-card");
 
         Label nameLabel = new Label(project.getProjectName());
-        nameLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: 700; -fx-text-fill: #191919;");
+        nameLabel.getStyleClass().add("finance-card-title");
 
         Label spentSummaryLabel = new Label("Spent " + formatMoney(project.getTotalSpent())
                 + " of " + formatMoney(project.getAllocatedAmount()));
-        spentSummaryLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #666666;");
+        spentSummaryLabel.getStyleClass().add("finance-card-summary");
 
         ProgressBar progressBar = new ProgressBar(calculateSpentProgress(project));
         progressBar.getStyleClass().add("budget-progress");
         progressBar.setMaxWidth(Double.MAX_VALUE);
 
         Button openButton = new Button("View");
-        openButton.setStyle("-fx-background-color: #299D91; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: 600; -fx-padding: 8 14 8 14; -fx-background-radius: 8;");
+        openButton.getStyleClass().add("finance-primary-button");
         openButton.setOnAction(event -> {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/projectPage.fxml"));

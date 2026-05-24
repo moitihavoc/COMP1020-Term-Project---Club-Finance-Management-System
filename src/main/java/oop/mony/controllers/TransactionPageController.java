@@ -109,7 +109,7 @@ public class TransactionPageController {
             GridPane row = new GridPane();
             row.setHgap(12);
             row.setAlignment(Pos.TOP_LEFT);
-            row.setStyle("-fx-padding: 14 20 14 20; -fx-border-color: #f0f0f0; -fx-border-width: 0 0 1 0;");
+            row.getStyleClass().add("transaction-row");
             
             ColumnConstraints col0 = new ColumnConstraints();
             col0.setPercentWidth(11);
@@ -131,42 +131,42 @@ public class TransactionPageController {
             row.getColumnConstraints().addAll(col0, col1, col2, col3, col4, col5, col6, col7);
             
             Label dateLabel = new Label(formatDate(r.getTransactionDate()));
-            dateLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+            dateLabel.getStyleClass().add("transaction-cell");
             dateLabel.setWrapText(true);
             
             Label nameLabel = new Label(r.getTransactionName());
-            nameLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+            nameLabel.getStyleClass().add("transaction-cell");
             nameLabel.setWrapText(true);
             
             Label projectLabel = new Label(r.getProjectName());
-            projectLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+            projectLabel.getStyleClass().add("transaction-cell");
             projectLabel.setWrapText(true);
             
             Label potLabel = new Label(r.getPotName());
-            potLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+            potLabel.getStyleClass().add("transaction-cell");
             potLabel.setWrapText(true);
             
             Label paidByLabel = new Label(r.getPaidBy());
-            paidByLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+            paidByLabel.getStyleClass().add("transaction-cell");
             paidByLabel.setWrapText(true);
             
             Label amountLabel = new Label(MoneyFormatter.formatVnd(r.getAmount()));
-            amountLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #191919;");
+            amountLabel.getStyleClass().add("transaction-amount");
             
             Label noteLabel = new Label(r.getShortNote(30));
-            noteLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
+            noteLabel.getStyleClass().add("transaction-cell");
             noteLabel.setWrapText(true);
 
             VBox proofBox = new VBox();
             proofBox.setAlignment(Pos.TOP_LEFT);
             if (r.getProofPath() != null && !r.getProofPath().isEmpty()) {
                 Button viewProofBtn = new Button("View");
-                viewProofBtn.setStyle("-fx-background-color: #299D91; -fx-text-fill: white; -fx-font-size: 11px; -fx-padding: 4 8 4 8; -fx-background-radius: 4; -fx-cursor: hand;");
+                viewProofBtn.getStyleClass().add("proof-button");
                 viewProofBtn.setOnAction(e -> handleViewProof(r.getProofPath()));
                 proofBox.getChildren().add(viewProofBtn);
             } else {
                 Label noProofLabel = new Label("-");
-                noProofLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #aaaaaa;");
+                noProofLabel.getStyleClass().add("muted-table-cell");
                 proofBox.getChildren().add(noProofLabel);
             }
             

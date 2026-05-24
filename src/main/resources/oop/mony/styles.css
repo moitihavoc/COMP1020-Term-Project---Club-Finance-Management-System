@@ -77,6 +77,98 @@
     -fx-padding: 0.25em;
 }
 
+.finance-card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-padding: 20;
+    -fx-min-width: 320;
+    -fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.08), 10, 0, 0, 4);
+}
+
+.finance-card-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #191919;
+}
+
+.finance-card-summary {
+    -fx-font-size: 13px;
+    -fx-text-fill: #666666;
+}
+
+.finance-primary-button {
+    -fx-background-color: #299D91;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-padding: 8 14 8 14;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.finance-secondary-button {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-text-fill: #191919;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-padding: 8 14 8 14;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.finance-danger-button {
+    -fx-background-color: #ffebee;
+    -fx-text-fill: #e53935;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-padding: 8 14 8 14;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.transaction-row {
+    -fx-padding: 14 20 14 20;
+    -fx-border-color: #f0f0f0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.transaction-cell {
+    -fx-font-size: 13px;
+    -fx-text-fill: #191919;
+}
+
+.transaction-amount {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #191919;
+}
+
+.proof-button {
+    -fx-background-color: #299D91;
+    -fx-text-fill: white;
+    -fx-font-size: 11px;
+    -fx-padding: 4 8 4 8;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.muted-table-cell {
+    -fx-font-size: 13px;
+    -fx-text-fill: #aaaaaa;
+}
+
+.inline-error {
+    -fx-text-fill: #e53935;
+    -fx-font-size: 13px;
+}
+
+.inline-success {
+    -fx-text-fill: #299D91;
+    -fx-font-size: 13px;
+}
+
 .mony-dialog {
     -fx-background-color: white;
     -fx-background-radius: 16;
