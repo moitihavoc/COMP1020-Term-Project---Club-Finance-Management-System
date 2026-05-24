@@ -10,13 +10,11 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -48,6 +46,7 @@ public class ProjectsController {
     @FXML
     private void initialize() {
         SidebarSizer.bindToWindow(sidebar);
+        MoneyInputFormatter.attach(newProjectAllocatedField);
         if (projectSearchField != null) {
             projectSearchField.textProperty().addListener((obs, oldText, newText) -> renderProjects());
         }
@@ -113,9 +112,8 @@ public class ProjectsController {
         spentSummaryLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #666666;");
 
         ProgressBar progressBar = new ProgressBar(calculateSpentProgress(project));
+        progressBar.getStyleClass().add("budget-progress");
         progressBar.setMaxWidth(Double.MAX_VALUE);
-        progressBar.setPrefHeight(8);
-        progressBar.setStyle("-fx-accent: #299D91;");
 
         Button openButton = new Button("View");
         openButton.setStyle("-fx-background-color: #299D91; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: 600; -fx-padding: 8 14 8 14; -fx-background-radius: 8;");
@@ -135,17 +133,7 @@ public class ProjectsController {
             }
         });
 
-        Button editButton = new Button("Edit");
-        editButton.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-text-fill: #191919; -fx-font-size: 13px; -fx-font-weight: 600; -fx-padding: 8 14 8 14; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand;");
-        editButton.setOnAction(event -> handleEditProject(project));
-
-        Button deleteButton = new Button("Delete");
-        deleteButton.setStyle("-fx-background-color: #ffebee; -fx-text-fill: #e53935; -fx-font-size: 13px; -fx-font-weight: 600; -fx-padding: 8 14 8 14; -fx-background-radius: 8; -fx-cursor: hand;");
-        deleteButton.setOnAction(event -> handleDeleteProject(project));
-
-        HBox actions = new HBox(8, openButton, editButton, deleteButton);
-
-        card.getChildren().addAll(nameLabel, spentSummaryLabel, progressBar, actions);
+        card.getChildren().addAll(nameLabel, spentSummaryLabel, progressBar, openButton);
         return card;
     }
 
@@ -219,10 +207,12 @@ public class ProjectsController {
             return;
         }
 
-        TextInputDialog dialog = new TextInputDialog(String.valueOf(club.getTotalBalance()));
+        TextInputDialog dialog = new TextInputDialog(MoneyInputFormatter.format(club.getTotalBalance()));
         dialog.setTitle("Edit Total Balance");
         dialog.setHeaderText("Update club total balance");
         dialog.setContentText("New total balance:");
+        DialogUtils.style(dialog);
+        MoneyInputFormatter.attach(dialog.getEditor());
 
         Optional<String> result = dialog.showAndWait();
         if (result.isEmpty()) {
@@ -231,7 +221,7 @@ public class ProjectsController {
 
         double newBalance;
         try {
-            newBalance = Double.parseDouble(result.get().replace("$", "").trim());
+            newBalance = MoneyInputFormatter.parse(result.get());
         } catch (NumberFormatException e) {
             showError("Please enter a valid number.");
             return;
@@ -278,7 +268,7 @@ public class ProjectsController {
 
         double allocatedAmount;
         try {
-            allocatedAmount = Double.parseDouble(newProjectAllocatedField.getText().trim());
+            allocatedAmount = MoneyInputFormatter.parse(newProjectAllocatedField);
         } catch (NumberFormatException e) {
             createProjectErrorLabel.setText("Allocated amount must be a number.");
             return;
@@ -309,100 +299,6 @@ public class ProjectsController {
         showCreateProjectForm(false);
     }
 
-    private void handleDeleteProject(Project project) {
-        if (project == null || club == null) {
-            showError("Project data is not loaded.");
-            return;
-        }
-
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-                "Delete this project? All pots and transactions in this project will also be deleted.",
-                ButtonType.YES, ButtonType.NO);
-        confirm.setTitle("Delete Project");
-
-        confirm.showAndWait().ifPresent(button -> {
-            if (button != ButtonType.YES) {
-                return;
-            }
-
-            try {
-                club = ClubFinanceService.deleteProject(club, project.getProjectId());
-                refreshPage();
-            } catch (SQLException e) {
-                showError("Failed to delete project. Please try again.");
-                e.printStackTrace();
-            }
-        });
-    }
-
-    private void handleEditProject(Project project) {
-        if (project == null || club == null) {
-            showError("Project data is not loaded.");
-            return;
-        }
-
-        Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Edit Project");
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-
-        TextField nameField = new TextField(project.getProjectName());
-        TextField allocatedField = new TextField(String.valueOf(project.getAllocatedAmount()));
-        Label errorLabel = new Label("");
-        errorLabel.setStyle("-fx-text-fill: #e53935;");
-
-        grid.add(new Label("Project name"), 0, 0);
-        grid.add(nameField, 1, 0);
-        grid.add(new Label("Allocated budget"), 0, 1);
-        grid.add(allocatedField, 1, 1);
-        grid.add(errorLabel, 0, 2, 2, 1);
-
-        dialog.getDialogPane().setContent(grid);
-        dialog.setResultConverter(dialogButton -> dialogButton);
-
-        dialog.showAndWait().ifPresent(button -> {
-            if (button != ButtonType.OK) {
-                return;
-            }
-
-            String newName = nameField.getText();
-            if (newName == null || newName.trim().isEmpty()) {
-                showError("Project name is required.");
-                return;
-            }
-
-            double newAllocated;
-            try {
-                newAllocated = Double.parseDouble(allocatedField.getText().trim());
-            } catch (NumberFormatException e) {
-                showError("Allocated budget must be a number.");
-                return;
-            }
-
-            if (newAllocated < project.getTotalSpent()) {
-                showError("Allocated budget cannot be less than already spent: " + formatMoney(project.getTotalSpent()));
-                return;
-            }
-
-            double allocatedToOtherProjects = club.getTotalAllocated() - project.getAllocatedAmount();
-            if (allocatedToOtherProjects + Math.max(0.0, newAllocated) > club.getTotalBalance()) {
-                showError("Not enough club balance available for this project.");
-                return;
-            }
-
-            try {
-                club = ClubFinanceService.updateProject(club, project.getProjectId(), newName.trim(), newAllocated);
-                refreshPage();
-            } catch (SQLException e) {
-                showError("Failed to update project. Please try again.");
-                e.printStackTrace();
-            }
-        });
-    }
-
     private void navigateToLogin() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/login.fxml"));
@@ -422,6 +318,7 @@ public class ProjectsController {
             createProjectErrorLabel.setText(message);
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
+            DialogUtils.style(alert);
             alert.showAndWait();
         }
     }
@@ -429,6 +326,7 @@ public class ProjectsController {
     private void showInfo(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
         alert.setHeaderText(null);
+        DialogUtils.style(alert);
         alert.showAndWait();
     }
 }

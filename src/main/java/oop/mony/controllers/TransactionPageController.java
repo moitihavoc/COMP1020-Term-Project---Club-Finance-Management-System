@@ -45,6 +45,8 @@ public class TransactionPageController {
     @FXML
     private void initialize() {
         SidebarSizer.bindToWindow(sidebar);
+        MoneyInputFormatter.attach(minAmountField);
+        MoneyInputFormatter.attach(maxAmountField);
     }
 
     public void loadFromSession() {
@@ -182,7 +184,7 @@ public class TransactionPageController {
         String t = field.getText();
         if (t == null || t.trim().isEmpty()) return null;
         try {
-            return Double.parseDouble(t.trim());
+            return MoneyInputFormatter.parse(t);
         } catch (NumberFormatException e) {
             return null;
         }
@@ -257,6 +259,7 @@ public class TransactionPageController {
     private void handleViewProof(String proofPath) {
         if (proofPath == null || proofPath.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "No proof image available.");
+            DialogUtils.style(alert);
             alert.showAndWait();
             return;
         }
@@ -265,6 +268,7 @@ public class TransactionPageController {
             File file = new File(proofPath);
             if (!file.exists()) {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Proof image file not found.");
+                DialogUtils.style(alert);
                 alert.showAndWait();
                 return;
             }
@@ -285,6 +289,7 @@ public class TransactionPageController {
             proofStage.show();
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to open proof image.");
+            DialogUtils.style(alert);
             alert.showAndWait();
             e.printStackTrace();
         }

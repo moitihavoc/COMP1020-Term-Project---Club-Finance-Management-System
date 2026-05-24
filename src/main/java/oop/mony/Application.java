@@ -21,6 +21,7 @@ public class Application extends javafx.application.Application {
         double initialWidth = Math.min(INITIAL_WINDOW_WIDTH, screenBounds.getWidth() * 0.9);
         double initialHeight = Math.min(INITIAL_WINDOW_HEIGHT, screenBounds.getHeight() * 0.9);
         Scene scene = new Scene(loader.load(), initialWidth, initialHeight);
+        scene.getStylesheets().add(Application.class.getResource("styles.css").toExternalForm());
 
         stage.setTitle("Mony");
         stage.setMinWidth(MIN_WINDOW_WIDTH);

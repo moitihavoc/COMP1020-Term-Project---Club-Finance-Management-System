@@ -66,6 +66,8 @@ public class ProjectPageController {
     @FXML
     private void initialize() {
         SidebarSizer.bindToWindow(sidebar);
+        MoneyInputFormatter.attach(newPotAllocatedField);
+        MoneyInputFormatter.attach(transactionAmountField);
     }
 
     public void loadProjectFromSession(int projectId) {
@@ -121,9 +123,8 @@ public class ProjectPageController {
             spentSummary.setStyle("-fx-font-size: 13px; -fx-text-fill: #666666;");
 
             ProgressBar progressBar = new ProgressBar(calculateSpentProgress(pot));
+            progressBar.getStyleClass().add("budget-progress");
             progressBar.setMaxWidth(Double.MAX_VALUE);
-            progressBar.setPrefHeight(8);
-            progressBar.setStyle("-fx-accent: #299D91;");
 
             Button editBtn = new Button("Edit");
             editBtn.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-text-fill: #191919; -fx-font-size: 13px; -fx-font-weight: 600; -fx-padding: 8 14 8 14; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand;");
@@ -291,7 +292,8 @@ public class ProjectPageController {
         grid.setVgap(10);
 
         TextField nameField = new TextField(selectedProject.getProjectName());
-        TextField allocatedField = new TextField(String.valueOf(selectedProject.getAllocatedAmount()));
+        TextField allocatedField = new TextField(MoneyInputFormatter.format(selectedProject.getAllocatedAmount()));
+        MoneyInputFormatter.attach(allocatedField);
 
         grid.add(new Label("Project name"), 0, 0);
         grid.add(nameField, 1, 0);
@@ -305,12 +307,13 @@ public class ProjectPageController {
         dialog.getDialogPane().setContent(grid);
 
         dialog.setResultConverter(dialogButton -> dialogButton);
+        DialogUtils.style(dialog);
         dialog.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.OK) {
                 String newName = nameField.getText();
                 double newAllocated;
                 try {
-                    newAllocated = Double.parseDouble(allocatedField.getText().trim());
+                    newAllocated = MoneyInputFormatter.parse(allocatedField);
                 } catch (Exception e) {
                     errorLabel.setText("Allocated amount must be a number.");
                     return;
@@ -346,6 +349,7 @@ public class ProjectPageController {
                 "Delete this project? All pots and transactions in this project will also be deleted.",
                 ButtonType.YES, ButtonType.NO);
         confirm.setTitle("Delete Project");
+        DialogUtils.style(confirm);
 
         confirm.showAndWait().ifPresent(button -> {
             if (button != ButtonType.YES) {
@@ -379,7 +383,7 @@ public class ProjectPageController {
         String name = newPotNameField.getText();
         double amount;
         try {
-            amount = Double.parseDouble(newPotAllocatedField.getText().trim());
+            amount = MoneyInputFormatter.parse(newPotAllocatedField);
         } catch (Exception e) {
             createPotErrorLabel.setText("Allocated amount must be a number.");
             return;
@@ -448,7 +452,7 @@ public class ProjectPageController {
         int potId = selectedPot.potId();
         double amount;
         try {
-            amount = Double.parseDouble(transactionAmountField.getText().trim());
+            amount = MoneyInputFormatter.parse(transactionAmountField);
         } catch (Exception e) {
             createTransactionErrorLabel.setText("Amount must be a number.");
             return;
@@ -515,6 +519,7 @@ public class ProjectPageController {
     private void handleDeletePot(int potId) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this pot? All transactions in this pot will also be deleted.", ButtonType.YES, ButtonType.NO);
         confirm.setTitle("Delete Pot");
+        DialogUtils.style(confirm);
         confirm.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.YES) {
                 try {
@@ -523,6 +528,7 @@ public class ProjectPageController {
                     refreshPage();
                 } catch (SQLException e) {
                     Alert error = new Alert(Alert.AlertType.ERROR, "Failed to delete pot.");
+                    DialogUtils.style(error);
                     error.showAndWait();
                     e.printStackTrace();
                 }
@@ -545,7 +551,8 @@ public class ProjectPageController {
         grid.setVgap(10);
 
         TextField nameField = new TextField(pot.getPotName());
-        TextField allocatedField = new TextField(String.valueOf(pot.getAllocatedAmount()));
+        TextField allocatedField = new TextField(MoneyInputFormatter.format(pot.getAllocatedAmount()));
+        MoneyInputFormatter.attach(allocatedField);
         Label errorLabel = new Label("");
         errorLabel.setStyle("-fx-text-fill: #e53935;");
 
@@ -557,6 +564,7 @@ public class ProjectPageController {
 
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(dialogButton -> dialogButton);
+        DialogUtils.style(dialog);
 
         dialog.showAndWait().ifPresent(button -> {
             if (button != ButtonType.OK) {
@@ -571,7 +579,7 @@ public class ProjectPageController {
 
             double newAllocated;
             try {
-                newAllocated = Double.parseDouble(allocatedField.getText().trim());
+                newAllocated = MoneyInputFormatter.parse(allocatedField);
             } catch (NumberFormatException e) {
                 showPotError("Allocated amount must be a number.");
                 return;
@@ -604,6 +612,7 @@ public class ProjectPageController {
             createPotErrorLabel.setText(message);
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR, message);
+            DialogUtils.style(alert);
             alert.showAndWait();
         }
     }
@@ -611,6 +620,7 @@ public class ProjectPageController {
     private void handleViewProof(String proofPath) {
         if (proofPath == null || proofPath.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "No proof image available.");
+            DialogUtils.style(alert);
             alert.showAndWait();
             return;
         }
@@ -619,6 +629,7 @@ public class ProjectPageController {
             File file = new File(proofPath);
             if (!file.exists()) {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Proof image file not found.");
+                DialogUtils.style(alert);
                 alert.showAndWait();
                 return;
             }
@@ -639,6 +650,7 @@ public class ProjectPageController {
             proofStage.show();
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to open proof image.");
+            DialogUtils.style(alert);
             alert.showAndWait();
             e.printStackTrace();
         }
