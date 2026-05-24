@@ -1,4 +1,4 @@
-package oop.mony.controllers;
+package oop.mony.utils;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -9,7 +9,7 @@ import oop.mony.Application;
 
 import java.net.URL;
 
-final class DialogUtils {
+public final class DialogUtils {
     private static final String PRIMARY_BUTTON_STYLE = "-fx-background-color: #299D91; -fx-text-fill: white; "
             + "-fx-font-size: 13px; -fx-font-weight: 600; -fx-padding: 8 18 8 18; -fx-background-radius: 8;";
     private static final String DANGER_BUTTON_STYLE = "-fx-background-color: #ffebee; -fx-text-fill: #e53935; "
@@ -21,7 +21,7 @@ final class DialogUtils {
     private DialogUtils() {
     }
 
-    static void style(Dialog<?> dialog) {
+    public static void style(Dialog<?> dialog) {
         if (dialog == null) {
             return;
         }

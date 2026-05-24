@@ -1,18 +1,18 @@
-package oop.mony.controllers;
+package oop.mony.utils;
 
 import java.text.DecimalFormat;
 
-final class MoneyFormatter {
+public final class MoneyFormatter {
     private static final DecimalFormat VND_NUMBER = new DecimalFormat("#,##0");
 
     private MoneyFormatter() {
     }
 
-    static String formatVnd(double amount) {
+    public static String formatVnd(double amount) {
         return VND_NUMBER.format(Math.round(amount)) + " ₫";
     }
 
-    static String formatEditableNumber(double amount) {
+    public static String formatEditableNumber(double amount) {
         if (amount == Math.rint(amount)) {
             return String.valueOf((long) amount);
         }

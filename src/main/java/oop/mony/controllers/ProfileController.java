@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import oop.mony.Session;
 import oop.mony.dao.UserDAO;
 import oop.mony.models.User;
+import oop.mony.utils.SidebarSizer;
 
 import java.io.IOException;
 import java.sql.SQLException;

@@ -1,16 +1,16 @@
-package oop.mony.controllers;
+package oop.mony.utils;
 
 import javafx.scene.control.TextField;
 
 import java.text.DecimalFormat;
 
-final class MoneyInputFormatter {
+public final class MoneyInputFormatter {
     private static final DecimalFormat GROUPED_NUMBER = new DecimalFormat("#,##0");
 
     private MoneyInputFormatter() {
     }
 
-    static void attach(TextField field) {
+    public static void attach(TextField field) {
         if (field == null) {
             return;
         }
@@ -30,11 +30,11 @@ final class MoneyInputFormatter {
         field.setText(formatDigits(field.getText()));
     }
 
-    static double parse(TextField field) {
+    public static double parse(TextField field) {
         return parse(field == null ? "" : field.getText());
     }
 
-    static double parse(String text) {
+    public static double parse(String text) {
         String digits = digitsOnly(text);
         if (digits.isEmpty()) {
             throw new NumberFormatException("Amount is empty.");
@@ -42,7 +42,7 @@ final class MoneyInputFormatter {
         return Double.parseDouble(digits);
     }
 
-    static String format(double amount) {
+    public static String format(double amount) {
         return GROUPED_NUMBER.format(Math.round(amount));
     }
 

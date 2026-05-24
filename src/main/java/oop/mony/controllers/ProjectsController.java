@@ -18,11 +18,15 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import oop.mony.ClubFinanceService;
 import oop.mony.Session;
 import oop.mony.models.Club;
 import oop.mony.models.Project;
 import oop.mony.models.User;
-import oop.mony.services.ClubFinanceService;
+import oop.mony.utils.DialogUtils;
+import oop.mony.utils.MoneyFormatter;
+import oop.mony.utils.MoneyInputFormatter;
+import oop.mony.utils.SidebarSizer;
 
 public class ProjectsController {
 

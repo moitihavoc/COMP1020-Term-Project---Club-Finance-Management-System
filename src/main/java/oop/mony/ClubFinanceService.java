@@ -1,4 +1,4 @@
-package oop.mony.services;
+package oop.mony;
 
 import oop.mony.dao.ClubDAO;
 import oop.mony.dao.PotDAO;

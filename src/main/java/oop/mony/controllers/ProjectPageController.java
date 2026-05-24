@@ -14,13 +14,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import oop.mony.ClubFinanceService;
 import oop.mony.Session;
 import oop.mony.models.Club;
 import oop.mony.models.Pot;
 import oop.mony.models.Project;
 import oop.mony.models.Transaction;
 import oop.mony.models.User;
-import oop.mony.services.ClubFinanceService;
+import oop.mony.utils.DialogUtils;
+import oop.mony.utils.MoneyFormatter;
+import oop.mony.utils.MoneyInputFormatter;
+import oop.mony.utils.SidebarSizer;
 
 import java.io.File;
 import java.io.IOException;

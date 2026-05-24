@@ -1,9 +1,9 @@
-package oop.mony.controllers;
+package oop.mony.utils;
 
 import javafx.scene.layout.Region;
 import javafx.stage.Screen;
 
-final class SidebarSizer {
+public final class SidebarSizer {
     private static final double WIDTH_RATIO = 0.18;
     private static final double MIN_WIDTH = 200;
     private static final double MAX_WIDTH = 260;
@@ -11,7 +11,7 @@ final class SidebarSizer {
     private SidebarSizer() {
     }
 
-    static void bindToWindow(Region sidebar) {
+    public static void bindToWindow(Region sidebar) {
         if (sidebar == null) {
             return;
         }
