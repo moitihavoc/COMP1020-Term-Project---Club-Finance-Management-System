@@ -1,17 +1,13 @@
 package oop.mony.controllers;
 
-import java.io.IOException;
-
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.StackPane;
 import javafx.scene.shape.SVGPath;
-import javafx.stage.Stage;
 import oop.mony.models.User;
+import oop.mony.utils.NavigationUtils;
 
 public class RegisterController {
     private static final String OPEN_EYE_ICON = "M12 4.5 C7 4.5 2.73 7.61 1 12 C2.73 16.39 7 19.5 12 19.5 C17 19.5 21.27 16.39 23 12 C21.27 7.61 17 4.5 12 4.5 Z M12 16 C9.79 16 8 14.21 8 12 C8 9.79 9.79 8 12 8 C14.21 8 16 9.79 16 12 C16 14.21 14.21 16 12 16 Z M12 14 C13.1 14 14 13.1 14 12 C14 10.9 13.1 10 12 10 C10.9 10 10 10.9 10 12 C10 13.1 10.9 14 12 14 Z";
@@ -103,15 +99,7 @@ public class RegisterController {
     }
 
     @FXML
-    private void handleBackToLogin() throws IOException{
-        try {
-            FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("/oop/mony/login.fxml"));
-            StackPane loginRoot = loginLoader.load();
-
-            Stage stage = (Stage) registerButton.getScene().getWindow();
-            stage.getScene().setRoot(loginRoot);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void handleBackToLogin() {
+        NavigationUtils.goToLogin(registerButton);
     }
 }

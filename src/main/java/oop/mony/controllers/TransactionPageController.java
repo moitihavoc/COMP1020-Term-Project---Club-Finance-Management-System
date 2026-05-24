@@ -1,15 +1,12 @@
 package oop.mony.controllers;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import oop.mony.ClubFinanceService;
@@ -20,10 +17,10 @@ import oop.mony.models.User;
 import oop.mony.utils.DialogUtils;
 import oop.mony.utils.MoneyFormatter;
 import oop.mony.utils.MoneyInputFormatter;
+import oop.mony.utils.NavigationUtils;
 import oop.mony.utils.SidebarSizer;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -55,7 +52,7 @@ public class TransactionPageController {
 
     public void loadFromSession() {
         if (!Session.hasCurrentUser()) {
-            navigateToLogin();
+            NavigationUtils.goToLogin(projectNameLabel);
             return;
         }
 
@@ -201,36 +198,17 @@ public class TransactionPageController {
 
     @FXML
     private void handleGoToProjects() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/projects.fxml"));
-            HBox root = loader.load();
-            ProjectsController controller = loader.getController();
-            controller.loadFromSession();
-            Stage stage = (Stage) projectNameLabel.getScene().getWindow();
-            stage.getScene().setRoot(root);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        NavigationUtils.goToProjects(projectNameLabel);
     }
 
     @FXML
     private void handleViewProfile() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/profilePage.fxml"));
-            HBox root = loader.load();
-            ProfileController controller = loader.getController();
-            controller.loadFromSession();
-            Stage stage = (Stage) projectNameLabel.getScene().getWindow();
-            stage.getScene().setRoot(root);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        NavigationUtils.goToProfile(projectNameLabel);
     }
 
     @FXML
     private void handleLogout() {
-        Session.clear();
-        navigateToLogin();
+        NavigationUtils.logout(projectNameLabel);
     }
 
     @FXML
@@ -242,17 +220,6 @@ public class TransactionPageController {
         maxAmountField.clear();
         projectFilterComboBox.getSelectionModel().selectFirst();
         refreshPage();
-    }
-
-    private void navigateToLogin() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/login.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) projectNameLabel.getScene().getWindow();
-            stage.getScene().setRoot(root);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private String formatDate(LocalDate date) {

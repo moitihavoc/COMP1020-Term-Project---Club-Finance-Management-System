@@ -1,21 +1,17 @@
 package oop.mony.controllers;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
-import javafx.stage.Stage;
 import oop.mony.Session;
 import oop.mony.dao.UserDAO;
 import oop.mony.models.User;
+import oop.mony.utils.NavigationUtils;
 import oop.mony.utils.SidebarSizer;
 
-import java.io.IOException;
 import java.sql.SQLException;
 
 public class ProfileController {
@@ -55,7 +51,7 @@ public class ProfileController {
 
 	public void loadFromSession() {
 		if (!Session.hasCurrentUser()) {
-			navigateToLogin();
+			NavigationUtils.goToLogin(sidebarUsername);
 			return;
 		}
 		currentUser = Session.getCurrentUser();
@@ -65,30 +61,12 @@ public class ProfileController {
 
 	@FXML
 	private void handleGoToProjects() {
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/projects.fxml"));
-			HBox root = loader.load();
-			ProjectsController controller = loader.getController();
-			controller.loadFromSession();
-			Stage stage = (Stage) sidebarUsername.getScene().getWindow();
-			stage.getScene().setRoot(root);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		NavigationUtils.goToProjects(sidebarUsername);
 	}
 
 	@FXML
 	private void handleGoToTransactions() {
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/transactionPage.fxml"));
-			HBox root = loader.load();
-			TransactionPageController controller = loader.getController();
-			controller.loadFromSession();
-			Stage stage = (Stage) sidebarUsername.getScene().getWindow();
-			stage.getScene().setRoot(root);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		NavigationUtils.goToTransactions(sidebarUsername);
 	}
 
 	@FXML
@@ -98,8 +76,7 @@ public class ProfileController {
 
 	@FXML
 	private void handleLogout() {
-		Session.clear();
-		navigateToLogin();
+		NavigationUtils.logout(sidebarUsername);
 	}
 
 	@FXML
@@ -233,14 +210,4 @@ public class ProfileController {
 		}
 	}
 
-	private void navigateToLogin() {
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/login.fxml"));
-			Parent root = loader.load();
-			Stage stage = (Stage) sidebarUsername.getScene().getWindow();
-			stage.getScene().setRoot(root);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 }

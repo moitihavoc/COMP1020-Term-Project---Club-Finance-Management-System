@@ -1,9 +1,7 @@
 package oop.mony.controllers;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -24,10 +22,10 @@ import oop.mony.models.User;
 import oop.mony.utils.DialogUtils;
 import oop.mony.utils.MoneyFormatter;
 import oop.mony.utils.MoneyInputFormatter;
+import oop.mony.utils.NavigationUtils;
 import oop.mony.utils.SidebarSizer;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -76,7 +74,7 @@ public class ProjectPageController {
 
     public void loadProjectFromSession(int projectId) {
         if (!Session.hasCurrentUser()) {
-            navigateToLogin();
+            NavigationUtils.goToLogin(projectNameLabel);
             return;
         }
 
@@ -85,7 +83,7 @@ public class ProjectPageController {
             club = ClubFinanceService.loadFullClubForUser(currentUser.getUserId(), currentUser.getUsername());
             selectedProject = club.findProjectById(projectId);
             if (selectedProject == null) {
-                navigateToProjects();
+                NavigationUtils.goToProjects(projectNameLabel);
                 return;
             }
             refreshPage();
@@ -245,42 +243,22 @@ public class ProjectPageController {
 
     @FXML
     private void handleGoToProjects() {
-        navigateToProjects();
+        NavigationUtils.goToProjects(projectNameLabel);
     }
 
     @FXML
     private void handleGoToTransactions() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/transactionPage.fxml"));
-            HBox root = loader.load();
-            TransactionPageController controller = loader.getController();
-            controller.loadFromSession();
-            Stage stage = (Stage) projectNameLabel.getScene().getWindow();
-            stage.getScene().setRoot(root);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        NavigationUtils.goToTransactions(projectNameLabel);
     }
 
     @FXML
     private void handleViewProfile() {
-        System.out.println("profile clicked");
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/profilePage.fxml"));
-            HBox root = loader.load();
-            ProfileController controller = loader.getController();
-            controller.loadFromSession();
-            Stage stage = (Stage) projectNameLabel.getScene().getWindow();
-            stage.getScene().setRoot(root);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        NavigationUtils.goToProfile(projectNameLabel);
     }
 
     @FXML
     private void handleLogout() {
-        Session.clear();
-        navigateToLogin();
+        NavigationUtils.logout(projectNameLabel);
     }
 
     @FXML
@@ -362,7 +340,7 @@ public class ProjectPageController {
 
             try {
                 club = ClubFinanceService.deleteProject(club, selectedProject.getProjectId());
-                navigateToProjects();
+                NavigationUtils.goToProjects(projectNameLabel);
             } catch (SQLException e) {
                 if (createPotErrorLabel != null) {
                     createPotErrorLabel.setText("Failed to delete project.");
@@ -656,30 +634,6 @@ public class ProjectPageController {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to open proof image.");
             DialogUtils.style(alert);
             alert.showAndWait();
-            e.printStackTrace();
-        }
-    }
-
-    private void navigateToProjects() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/projects.fxml"));
-            Parent root = loader.load();
-            ProjectsController controller = loader.getController();
-            controller.loadFromSession();
-            Stage stage = (Stage) projectNameLabel.getScene().getWindow();
-            stage.getScene().setRoot(root);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void navigateToLogin() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/login.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) projectNameLabel.getScene().getWindow();
-            stage.getScene().setRoot(root);
-        } catch (IOException e) {
             e.printStackTrace();
         }
     }

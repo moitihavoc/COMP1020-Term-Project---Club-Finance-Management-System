@@ -1,12 +1,9 @@
 package oop.mony.controllers;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Optional;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -15,9 +12,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import oop.mony.ClubFinanceService;
 import oop.mony.Session;
 import oop.mony.models.Club;
@@ -26,6 +21,7 @@ import oop.mony.models.User;
 import oop.mony.utils.DialogUtils;
 import oop.mony.utils.MoneyFormatter;
 import oop.mony.utils.MoneyInputFormatter;
+import oop.mony.utils.NavigationUtils;
 import oop.mony.utils.SidebarSizer;
 
 public class ProjectsController {
@@ -58,13 +54,13 @@ public class ProjectsController {
 
     public void loadFromSession() {
         if (!Session.hasCurrentUser()) {
-            navigateToLogin();
+            NavigationUtils.goToLogin(sidebarUsername);
             return;
         }
 
         currentUser = Session.getCurrentUser();
         if (currentUser == null) {
-            navigateToLogin();
+            NavigationUtils.goToLogin(sidebarUsername);
             return;
         }
 
@@ -122,18 +118,10 @@ public class ProjectsController {
         Button openButton = new Button("View");
         openButton.getStyleClass().add("finance-primary-button");
         openButton.setOnAction(event -> {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/projectPage.fxml"));
-                HBox root = loader.load();
-                ProjectPageController controller = loader.getController();
-                controller.loadProjectFromSession(project.getProjectId());
-                Stage stage = (Stage) projectsGrid.getScene().getWindow();
-                stage.getScene().setRoot(root);
-            } catch (IOException e) {
+            if (!NavigationUtils.goToProjectPage(projectsGrid, project.getProjectId())) {
                 if (createProjectErrorLabel != null) {
                     createProjectErrorLabel.setText("Unable to open project page.");
                 }
-                e.printStackTrace();
             }
         });
 
@@ -176,31 +164,15 @@ public class ProjectsController {
 
     @FXML
     private void handleGoToTransactions() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/transactionPage.fxml"));
-            HBox root = loader.load();
-            TransactionPageController controller = loader.getController();
-            controller.loadFromSession();
-            Stage stage = (Stage) sidebarUsername.getScene().getWindow();
-            stage.getScene().setRoot(root);
-        } catch (IOException e) {
+        if (!NavigationUtils.goToTransactions(sidebarUsername)) {
             showError("Unable to open transactions page.");
-            e.printStackTrace();
         }
     }
 
     @FXML
     private void handleViewProfile() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/profilePage.fxml"));
-            HBox root = loader.load();
-            ProfileController controller = loader.getController();
-            controller.loadFromSession();
-            Stage stage = (Stage) sidebarUsername.getScene().getWindow();
-            stage.getScene().setRoot(root);
-        } catch (IOException e) {
+        if (!NavigationUtils.goToProfile(sidebarUsername)) {
             showError("Unable to open profile page.");
-            e.printStackTrace();
         }
     }
 
@@ -253,8 +225,9 @@ public class ProjectsController {
 
     @FXML
     private void handleLogout() {
-        Session.clear();
-        navigateToLogin();
+        if (!NavigationUtils.logout(sidebarUsername) && createProjectErrorLabel != null) {
+            createProjectErrorLabel.setText("Unable to navigate to login.");
+        }
     }
 
     @FXML
@@ -301,20 +274,6 @@ public class ProjectsController {
     @FXML
     private void handleCancelCreateProject() {
         showCreateProjectForm(false);
-    }
-
-    private void navigateToLogin() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/oop/mony/login.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) sidebarUsername.getScene().getWindow();
-            stage.getScene().setRoot(root);
-        } catch (IOException e) {
-            if (createProjectErrorLabel != null) {
-                createProjectErrorLabel.setText("Unable to navigate to login.");
-            }
-            e.printStackTrace();
-        }
     }
 
     private void showError(String message) {
