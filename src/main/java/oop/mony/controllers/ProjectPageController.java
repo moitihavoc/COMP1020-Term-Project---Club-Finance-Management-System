@@ -1,11 +1,9 @@
 package oop.mony.controllers;
 
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -17,13 +15,13 @@ import oop.mony.Session;
 import oop.mony.models.Club;
 import oop.mony.models.Pot;
 import oop.mony.models.Project;
-import oop.mony.models.Transaction;
 import oop.mony.models.User;
 import oop.mony.utils.DialogUtils;
 import oop.mony.utils.MoneyFormatter;
 import oop.mony.utils.MoneyInputFormatter;
 import oop.mony.utils.NavigationUtils;
 import oop.mony.utils.SidebarSizer;
+import oop.mony.utils.TransactionTableRenderer;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -151,87 +149,13 @@ public class ProjectPageController {
     }
 
     private void renderProjectTransactions() {
-        transactionsContainer.getChildren().clear();
-        int rowNumber = 0;
-        for (Pot pot : selectedProject.getPots()) {
-            for (Transaction tx : pot.getTransactions()) {
-                GridPane row = new GridPane();
-                row.setHgap(12);
-                row.setAlignment(Pos.TOP_LEFT);
-                row.getStyleClass().add("transaction-row");
-                
-                ColumnConstraints col0 = new ColumnConstraints();
-                col0.setPercentWidth(11);
-                ColumnConstraints col1 = new ColumnConstraints();
-                col1.setPercentWidth(18);
-                ColumnConstraints col2 = new ColumnConstraints();
-                col2.setPercentWidth(11);
-                ColumnConstraints col3 = new ColumnConstraints();
-                col3.setPercentWidth(10);
-                ColumnConstraints col4 = new ColumnConstraints();
-                col4.setPercentWidth(12);
-                ColumnConstraints col5 = new ColumnConstraints();
-                col5.setPercentWidth(14);
-                ColumnConstraints col6 = new ColumnConstraints();
-                col6.setPercentWidth(14);
-                ColumnConstraints col7 = new ColumnConstraints();
-                col7.setPercentWidth(10);
-                
-                row.getColumnConstraints().addAll(col0, col1, col2, col3, col4, col5, col6, col7);
-                
-                Label dateLabel = new Label(formatDate(tx.getTransactionDate()));
-                dateLabel.getStyleClass().add("transaction-cell");
-                dateLabel.setWrapText(true);
-                
-                Label nameLabel = new Label(tx.getTransactionName());
-                nameLabel.getStyleClass().add("transaction-cell");
-                nameLabel.setWrapText(true);
-
-                Label projectLabel = new Label(selectedProject.getProjectName());
-                projectLabel.getStyleClass().add("transaction-cell");
-                projectLabel.setWrapText(true);
-                
-                Label potNameLabel = new Label(pot.getPotName());
-                potNameLabel.getStyleClass().add("transaction-cell");
-                potNameLabel.setWrapText(true);
-                
-                Label paidByLabel = new Label(tx.getPaidBy());
-                paidByLabel.getStyleClass().add("transaction-cell");
-                paidByLabel.setWrapText(true);
-                
-                Label noteLabel = new Label(tx.getNote() != null && !tx.getNote().isEmpty() ? tx.getNote() : "-");
-                noteLabel.getStyleClass().add("transaction-cell");
-                noteLabel.setWrapText(true);
-                
-                Label amountLabel = new Label(formatMoney(tx.getAmount()));
-                amountLabel.getStyleClass().add("transaction-amount");
-                
-                VBox proofBox = new VBox();
-                proofBox.setAlignment(Pos.TOP_LEFT);
-                if (tx.getProofPath() != null && !tx.getProofPath().isEmpty()) {
-                    Button viewProofBtn = new Button("View");
-                    viewProofBtn.getStyleClass().add("proof-button");
-                    viewProofBtn.setOnAction(e -> handleViewProof(tx.getProofPath()));
-                    proofBox.getChildren().add(viewProofBtn);
-                } else {
-                    Label noProofLabel = new Label("-");
-                    noProofLabel.getStyleClass().add("muted-table-cell");
-                    proofBox.getChildren().add(noProofLabel);
-                }
-                
-                row.add(dateLabel, 0, 0);
-                row.add(nameLabel, 1, 0);
-                row.add(projectLabel, 2, 0);
-                row.add(potNameLabel, 3, 0);
-                row.add(paidByLabel, 4, 0);
-                row.add(amountLabel, 5, 0);
-                row.add(noteLabel, 6, 0);
-                row.add(proofBox, 7, 0);
-                
-                transactionsContainer.getChildren().add(row);
-                rowNumber++;
-            }
-        }
+        TransactionTableRenderer.renderProjectTransactions(
+                transactionsContainer,
+                selectedProject,
+                this::formatMoney,
+                this::formatDate,
+                this::handleViewProof
+        );
     }
 
     private void refreshPotComboBox() {

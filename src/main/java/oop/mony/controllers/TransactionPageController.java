@@ -1,12 +1,9 @@
 package oop.mony.controllers;
 
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import oop.mony.ClubFinanceService;
@@ -15,10 +12,10 @@ import oop.mony.models.Club;
 import oop.mony.models.TransactionRecord;
 import oop.mony.models.User;
 import oop.mony.utils.DialogUtils;
-import oop.mony.utils.MoneyFormatter;
 import oop.mony.utils.MoneyInputFormatter;
 import oop.mony.utils.NavigationUtils;
 import oop.mony.utils.SidebarSizer;
+import oop.mony.utils.TransactionTableRenderer;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -101,83 +98,12 @@ public class TransactionPageController {
     }
 
     private void renderTransactions(ArrayList<TransactionRecord> records) {
-        transactionsTableBody.getChildren().clear();
-        for (TransactionRecord r : records) {
-            GridPane row = new GridPane();
-            row.setHgap(12);
-            row.setAlignment(Pos.TOP_LEFT);
-            row.getStyleClass().add("transaction-row");
-            
-            ColumnConstraints col0 = new ColumnConstraints();
-            col0.setPercentWidth(11);
-            ColumnConstraints col1 = new ColumnConstraints();
-            col1.setPercentWidth(18);
-            ColumnConstraints col2 = new ColumnConstraints();
-            col2.setPercentWidth(11);
-            ColumnConstraints col3 = new ColumnConstraints();
-            col3.setPercentWidth(10);
-            ColumnConstraints col4 = new ColumnConstraints();
-            col4.setPercentWidth(12);
-            ColumnConstraints col5 = new ColumnConstraints();
-            col5.setPercentWidth(14);
-            ColumnConstraints col6 = new ColumnConstraints();
-            col6.setPercentWidth(14);
-            ColumnConstraints col7 = new ColumnConstraints();
-            col7.setPercentWidth(10);
-            
-            row.getColumnConstraints().addAll(col0, col1, col2, col3, col4, col5, col6, col7);
-            
-            Label dateLabel = new Label(formatDate(r.getTransactionDate()));
-            dateLabel.getStyleClass().add("transaction-cell");
-            dateLabel.setWrapText(true);
-            
-            Label nameLabel = new Label(r.getTransactionName());
-            nameLabel.getStyleClass().add("transaction-cell");
-            nameLabel.setWrapText(true);
-            
-            Label projectLabel = new Label(r.getProjectName());
-            projectLabel.getStyleClass().add("transaction-cell");
-            projectLabel.setWrapText(true);
-            
-            Label potLabel = new Label(r.getPotName());
-            potLabel.getStyleClass().add("transaction-cell");
-            potLabel.setWrapText(true);
-            
-            Label paidByLabel = new Label(r.getPaidBy());
-            paidByLabel.getStyleClass().add("transaction-cell");
-            paidByLabel.setWrapText(true);
-            
-            Label amountLabel = new Label(MoneyFormatter.formatVnd(r.getAmount()));
-            amountLabel.getStyleClass().add("transaction-amount");
-            
-            Label noteLabel = new Label(r.getShortNote(30));
-            noteLabel.getStyleClass().add("transaction-cell");
-            noteLabel.setWrapText(true);
-
-            VBox proofBox = new VBox();
-            proofBox.setAlignment(Pos.TOP_LEFT);
-            if (r.getProofPath() != null && !r.getProofPath().isEmpty()) {
-                Button viewProofBtn = new Button("View");
-                viewProofBtn.getStyleClass().add("proof-button");
-                viewProofBtn.setOnAction(e -> handleViewProof(r.getProofPath()));
-                proofBox.getChildren().add(viewProofBtn);
-            } else {
-                Label noProofLabel = new Label("-");
-                noProofLabel.getStyleClass().add("muted-table-cell");
-                proofBox.getChildren().add(noProofLabel);
-            }
-            
-            row.add(dateLabel, 0, 0);
-            row.add(nameLabel, 1, 0);
-            row.add(projectLabel, 2, 0);
-            row.add(potLabel, 3, 0);
-            row.add(paidByLabel, 4, 0);
-            row.add(amountLabel, 5, 0);
-            row.add(noteLabel, 6, 0);
-            row.add(proofBox, 7, 0);
- 
-            transactionsTableBody.getChildren().add(row);
-        }
+        TransactionTableRenderer.renderTransactionRecords(
+                transactionsTableBody,
+                records,
+                this::formatDate,
+                this::handleViewProof
+        );
     }
 
     private Double parseOptionalAmount(TextField field) {
