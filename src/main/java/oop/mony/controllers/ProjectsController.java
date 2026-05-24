@@ -211,7 +211,6 @@ public class ProjectsController {
             }
             club = ClubFinanceService.loadFullClubForUser(club.getUserId(), club.getClubName());
             refreshPage();
-            showInfo("Total balance updated.");
         } catch (SQLException e) {
             showError("Unable to update balance. Please try again.");
             e.printStackTrace();
@@ -286,10 +285,4 @@ public class ProjectsController {
         }
     }
 
-    private void showInfo(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
-        alert.setHeaderText(null);
-        DialogUtils.style(alert);
-        alert.showAndWait();
-    }
 }
