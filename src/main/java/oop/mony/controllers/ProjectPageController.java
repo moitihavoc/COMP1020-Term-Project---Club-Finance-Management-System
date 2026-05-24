@@ -109,59 +109,42 @@ public class ProjectPageController {
         potsGrid.getChildren().clear();
         for (Pot pot : selectedProject.getPots()) {
             VBox card = new VBox();
-            card.setSpacing(8);
+            card.setSpacing(12);
             card.setPrefWidth(320);
-            card.setMinHeight(160);
-            card.setStyle("-fx-background-color: white; -fx-padding: 16; -fx-background-radius: 12; -fx-border-color: #e0e0e0; -fx-border-width: 1;");
-            
-            HBox titleBox = new HBox();
-            titleBox.setAlignment(Pos.CENTER_LEFT);
-            titleBox.setSpacing(8);
+            card.setStyle("-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 20; -fx-min-width: 320; -fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.08), 10, 0, 0, 4);");
+
             Label name = new Label(pot.getPotName());
-            name.setStyle("-fx-font-size: 16px; -fx-font-weight: 700; -fx-text-fill: #191919;");
-            titleBox.getChildren().add(name);
-            
-            HBox dataBox = new HBox();
-            dataBox.setSpacing(12);
-            dataBox.setPrefWidth(300);
-            VBox col1 = new VBox();
-            col1.setSpacing(4);
-            Label allocLabel = new Label("Allocated");
-            allocLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #888888;");
-            Label allocValue = new Label(formatMoney(pot.getAllocatedAmount()));
-            allocValue.setStyle("-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #191919;");
-            col1.getChildren().addAll(allocLabel, allocValue);
-            
-            VBox col2 = new VBox();
-            col2.setSpacing(4);
-            Label spentLabel = new Label("Spent");
-            spentLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #888888;");
-            Label spentValue = new Label(formatMoney(pot.getTotalSpent()));
-            spentValue.setStyle("-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #191919;");
-            col2.getChildren().addAll(spentLabel, spentValue);
-            
-            VBox col3 = new VBox();
-            col3.setSpacing(4);
-            Label remainLabel = new Label("Remaining");
-            remainLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #888888;");
-            Label remainValue = new Label(formatMoney(pot.getRemainingAmount()));
-            remainValue.setStyle("-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #299D91;");
-            col3.getChildren().addAll(remainLabel, remainValue);
-            
-            dataBox.getChildren().addAll(col1, col2, col3);
-            
-            HBox actionBox = new HBox();
-            actionBox.setSpacing(8);
-            actionBox.setAlignment(Pos.BOTTOM_RIGHT);
-            actionBox.setPrefHeight(30);
+            name.setStyle("-fx-font-size: 18px; -fx-font-weight: 700; -fx-text-fill: #191919;");
+
+            Label spentSummary = new Label("Spent " + formatMoney(pot.getTotalSpent())
+                    + " of " + formatMoney(pot.getAllocatedAmount()));
+            spentSummary.setStyle("-fx-font-size: 13px; -fx-text-fill: #666666;");
+
+            ProgressBar progressBar = new ProgressBar(calculateSpentProgress(pot));
+            progressBar.setMaxWidth(Double.MAX_VALUE);
+            progressBar.setPrefHeight(8);
+            progressBar.setStyle("-fx-accent: #299D91;");
+
+            Button editBtn = new Button("Edit");
+            editBtn.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-text-fill: #191919; -fx-font-size: 13px; -fx-font-weight: 600; -fx-padding: 8 14 8 14; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand;");
+            editBtn.setOnAction(e -> handleEditPot(pot));
+
             Button deleteBtn = new Button("Delete");
-            deleteBtn.setStyle("-fx-background-color: #ffebee; -fx-text-fill: #e53935; -fx-font-size: 12px; -fx-padding: 6 12 6 12; -fx-background-radius: 6; -fx-cursor: hand;");
+            deleteBtn.setStyle("-fx-background-color: #ffebee; -fx-text-fill: #e53935; -fx-font-size: 13px; -fx-font-weight: 600; -fx-padding: 8 14 8 14; -fx-background-radius: 8; -fx-cursor: hand;");
             deleteBtn.setOnAction(e -> handleDeletePot(pot.getPotId()));
-            actionBox.getChildren().add(deleteBtn);
-            
-            card.getChildren().addAll(titleBox, dataBox, actionBox);
+
+            HBox actionBox = new HBox(8, editBtn, deleteBtn);
+
+            card.getChildren().addAll(name, spentSummary, progressBar, actionBox);
             potsGrid.getChildren().add(card);
         }
+    }
+
+    private double calculateSpentProgress(Pot pot) {
+        if (pot == null || pot.getAllocatedAmount() <= 0) {
+            return 0.0;
+        }
+        return Math.min(1.0, pot.getTotalSpent() / pot.getAllocatedAmount());
     }
 
     private void renderProjectTransactions() {
@@ -354,6 +337,34 @@ public class ProjectPageController {
     }
 
     @FXML
+    private void handleDeleteProject() {
+        if (club == null || selectedProject == null) {
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                "Delete this project? All pots and transactions in this project will also be deleted.",
+                ButtonType.YES, ButtonType.NO);
+        confirm.setTitle("Delete Project");
+
+        confirm.showAndWait().ifPresent(button -> {
+            if (button != ButtonType.YES) {
+                return;
+            }
+
+            try {
+                club = ClubFinanceService.deleteProject(club, selectedProject.getProjectId());
+                navigateToProjects();
+            } catch (SQLException e) {
+                if (createPotErrorLabel != null) {
+                    createPotErrorLabel.setText("Failed to delete project.");
+                }
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
     private void handleCreatePot() {
         clearPotForm();
         if (createPotForm != null) {
@@ -475,7 +486,7 @@ public class ProjectPageController {
     }
 
     private String formatMoney(double amount) {
-        return String.format("$%.2f", amount);
+        return MoneyFormatter.formatVnd(amount);
     }
 
     private String formatDate(LocalDate date) {
@@ -517,6 +528,84 @@ public class ProjectPageController {
                 }
             }
         });
+    }
+
+    private void handleEditPot(Pot pot) {
+        if (pot == null || selectedProject == null) {
+            showPotError("Pot data is not loaded.");
+            return;
+        }
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Edit Pot");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        TextField nameField = new TextField(pot.getPotName());
+        TextField allocatedField = new TextField(String.valueOf(pot.getAllocatedAmount()));
+        Label errorLabel = new Label("");
+        errorLabel.setStyle("-fx-text-fill: #e53935;");
+
+        grid.add(new Label("Pot name"), 0, 0);
+        grid.add(nameField, 1, 0);
+        grid.add(new Label("Allocated amount"), 0, 1);
+        grid.add(allocatedField, 1, 1);
+        grid.add(errorLabel, 0, 2, 2, 1);
+
+        dialog.getDialogPane().setContent(grid);
+        dialog.setResultConverter(dialogButton -> dialogButton);
+
+        dialog.showAndWait().ifPresent(button -> {
+            if (button != ButtonType.OK) {
+                return;
+            }
+
+            String newName = nameField.getText();
+            if (newName == null || newName.trim().isEmpty()) {
+                showPotError("Pot name is required.");
+                return;
+            }
+
+            double newAllocated;
+            try {
+                newAllocated = Double.parseDouble(allocatedField.getText().trim());
+            } catch (NumberFormatException e) {
+                showPotError("Allocated amount must be a number.");
+                return;
+            }
+
+            if (newAllocated < pot.getTotalSpent()) {
+                showPotError("Allocated cannot be less than already spent: " + formatMoney(pot.getTotalSpent()));
+                return;
+            }
+
+            double allocatedToOtherPots = selectedProject.getTotalAllocatedToPots() - pot.getAllocatedAmount();
+            if (allocatedToOtherPots + Math.max(0.0, newAllocated) > selectedProject.getAllocatedAmount()) {
+                showPotError("Not enough project allocation available for this pot.");
+                return;
+            }
+
+            try {
+                club = ClubFinanceService.updatePot(club, pot.getPotId(), newName.trim(), newAllocated);
+                selectedProject = club.findProjectById(selectedProject.getProjectId());
+                refreshPage();
+            } catch (SQLException e) {
+                showPotError("Failed to update pot.");
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void showPotError(String message) {
+        if (createPotErrorLabel != null) {
+            createPotErrorLabel.setText(message);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR, message);
+            alert.showAndWait();
+        }
     }
 
     private void handleViewProof(String proofPath) {

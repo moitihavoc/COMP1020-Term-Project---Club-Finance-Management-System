@@ -143,8 +143,35 @@ public final class ClubFinanceService {
         if (allocatedAmount < project.getTotalSpent()) {
             return club; // Do not allow reducing allocation below already spent amount
         }
+        double allocatedToOtherProjects = club.getTotalAllocated() - project.getAllocatedAmount();
+        if (allocatedToOtherProjects + Math.max(0.0, allocatedAmount) > club.getTotalBalance()) {
+            return club;
+        }
 
         ProjectDAO.updateProject(projectId, club.getUserId(), name, allocatedAmount);
+        return loadFullClubForUser(club.getUserId(), club.getClubName());
+    }
+
+    public static Club updatePot(Club club, int potId, String name, double allocatedAmount) throws SQLException {
+        if (club == null) return null;
+        Project project = findProjectForPot(club, potId);
+        if (project == null) return club;
+
+        Pot pot = project.findPotById(potId);
+        if (pot == null) return club;
+        if (name == null || name.trim().isEmpty()) {
+            return club;
+        }
+        if (allocatedAmount < pot.getTotalSpent()) {
+            return club;
+        }
+
+        double allocatedToOtherPots = project.getTotalAllocatedToPots() - pot.getAllocatedAmount();
+        if (allocatedToOtherPots + Math.max(0.0, allocatedAmount) > project.getAllocatedAmount()) {
+            return club;
+        }
+
+        PotDAO.updatePot(potId, project.getProjectId(), name.trim(), allocatedAmount);
         return loadFullClubForUser(club.getUserId(), club.getClubName());
     }
 

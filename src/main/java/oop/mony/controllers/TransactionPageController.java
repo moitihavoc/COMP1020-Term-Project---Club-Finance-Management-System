@@ -144,7 +144,7 @@ public class TransactionPageController {
             paidByLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #191919;");
             paidByLabel.setWrapText(true);
             
-            Label amountLabel = new Label(String.format("$%.2f", r.getAmount()));
+            Label amountLabel = new Label(MoneyFormatter.formatVnd(r.getAmount()));
             amountLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #191919;");
             
             Label noteLabel = new Label(r.getShortNote(30));

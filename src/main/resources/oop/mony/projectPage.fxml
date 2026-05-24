@@ -77,6 +77,8 @@
                     <Region HBox.hgrow="ALWAYS"/>
                     <Button fx:id="editMenuBtn" text="Edit" onAction="#handleEditMenu"
                             style="-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 13px; -fx-padding: 6 14 6 14; -fx-cursor: hand;"/>
+                    <Button text="Delete" onAction="#handleDeleteProject"
+                            style="-fx-background-color: #ffebee; -fx-text-fill: #e53935; -fx-background-radius: 8; -fx-font-size: 13px; -fx-font-weight: 600; -fx-padding: 6 14 6 14; -fx-cursor: hand;"/>
                     <Button text="Back to Projects" onAction="#handleGoToProjects"
                             style="-fx-background-color: transparent; -fx-border-color: #cccccc; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 13px; -fx-padding: 6 14 6 14; -fx-cursor: hand;"/>
                 </HBox>
@@ -223,7 +225,8 @@
                     </VBox>
 
                     <!-- TRANSACTION TABLE -->
-                    <VBox style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 0;">
+                    <VBox spacing="0"
+                          style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 24 28 28 28; -fx-effect: dropshadow(gaussian, rgba(76,103,100,0.10), 25, 0, 0, 8);">
 
                         <!-- TABLE HEADER -->
                         <GridPane hgap="12"

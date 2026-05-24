@@ -144,22 +144,22 @@
                             <ColumnConstraints percentWidth="14"/>
                             <ColumnConstraints percentWidth="10"/>
                         </columnConstraints>
-                        <Label text="Date" GridPane.columnIndex="0" maxWidth="Infinity" alignment="CENTER"
+                        <Label text="Date" GridPane.columnIndex="0" maxWidth="Infinity" alignment="CENTER_LEFT"
                                style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
                         <Label text="Transaction Name" GridPane.columnIndex="1"
-                               maxWidth="Infinity" alignment="CENTER"
+                               maxWidth="Infinity" alignment="CENTER_LEFT"
                                style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                        <Label text="Project" GridPane.columnIndex="2" maxWidth="Infinity" alignment="CENTER"
+                        <Label text="Project" GridPane.columnIndex="2" maxWidth="Infinity" alignment="CENTER_LEFT"
                                style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                        <Label text="Pot" GridPane.columnIndex="3" maxWidth="Infinity" alignment="CENTER"
+                        <Label text="Pot" GridPane.columnIndex="3" maxWidth="Infinity" alignment="CENTER_LEFT"
                                style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                        <Label text="Paid By" GridPane.columnIndex="4" maxWidth="Infinity" alignment="CENTER"
+                        <Label text="Paid By" GridPane.columnIndex="4" maxWidth="Infinity" alignment="CENTER_LEFT"
                                style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                        <Label text="Amount" GridPane.columnIndex="5" maxWidth="Infinity" alignment="CENTER"
+                        <Label text="Amount" GridPane.columnIndex="5" maxWidth="Infinity" alignment="CENTER_LEFT"
                                style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                        <Label text="Note" GridPane.columnIndex="6" maxWidth="Infinity" alignment="CENTER"
+                        <Label text="Note" GridPane.columnIndex="6" maxWidth="Infinity" alignment="CENTER_LEFT"
                                style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
-                        <Label text="Proof" GridPane.columnIndex="7" maxWidth="Infinity" alignment="CENTER"
+                        <Label text="Proof" GridPane.columnIndex="7" maxWidth="Infinity" alignment="CENTER_LEFT"
                                style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #9f9f9f;"/>
                     </GridPane>
 

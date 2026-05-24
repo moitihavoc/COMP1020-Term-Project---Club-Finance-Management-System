@@ -82,6 +82,27 @@ public class PotDAO {
         }
     }
 
+    public static void updatePot(int potId, int projectId, String name, double allocatedAmount) throws SQLException {
+        if (!potBelongsToProject(potId, projectId)) {
+            return;
+        }
+
+        Pot pot = new Pot(projectId, name, allocatedAmount);
+        if (!pot.hasName()) {
+            return;
+        }
+
+        String sql = "UPDATE pots SET name = ?, allocated_amount = ? WHERE id = ? AND project_id = ?";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, pot.getPotName());
+            statement.setDouble(2, pot.getAllocatedAmount());
+            statement.setInt(3, potId);
+            statement.setInt(4, projectId);
+            statement.executeUpdate();
+        }
+    }
+
     private static boolean potBelongsToProject(int potId, int projectId) throws SQLException {
         String sql = "SELECT 1 FROM pots WHERE id = ? AND project_id = ?";
         try (Connection connection = Database.getConnection();
