@@ -18,14 +18,6 @@ import java.io.File;
 import java.net.URL;
 
 public final class DialogUtils {
-    private static final String PRIMARY_BUTTON_STYLE = "-fx-background-color: #299D91; -fx-text-fill: white; "
-            + "-fx-font-size: 13px; -fx-font-weight: 600; -fx-padding: 8 18 8 18; -fx-background-radius: 8;";
-    private static final String DANGER_BUTTON_STYLE = "-fx-background-color: #ffebee; -fx-text-fill: #e53935; "
-            + "-fx-font-size: 13px; -fx-font-weight: 600; -fx-padding: 8 18 8 18; -fx-background-radius: 8;";
-    private static final String SECONDARY_BUTTON_STYLE = "-fx-background-color: white; -fx-text-fill: #191919; "
-            + "-fx-border-color: #d8d8d8; -fx-font-size: 13px; -fx-padding: 8 18 8 18; "
-            + "-fx-border-radius: 8; -fx-background-radius: 8;";
-
     private DialogUtils() {
     }
 
@@ -54,12 +46,13 @@ public final class DialogUtils {
             }
 
             ButtonBar.ButtonData buttonData = buttonType.getButtonData();
+            button.getStyleClass().removeAll("dialog-primary-button", "dialog-danger-button", "dialog-secondary-button");
             if (buttonData == ButtonBar.ButtonData.OK_DONE || buttonData == ButtonBar.ButtonData.YES) {
-                button.setStyle(dangerDialog && buttonData == ButtonBar.ButtonData.YES
-                        ? DANGER_BUTTON_STYLE
-                        : PRIMARY_BUTTON_STYLE);
+                button.getStyleClass().add(dangerDialog && buttonData == ButtonBar.ButtonData.YES
+                        ? "dialog-danger-button"
+                        : "dialog-primary-button");
             } else {
-                button.setStyle(SECONDARY_BUTTON_STYLE);
+                button.getStyleClass().add("dialog-secondary-button");
             }
         }
     }
