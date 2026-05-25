@@ -2,7 +2,6 @@ package oop.mony.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -29,7 +28,6 @@ public class ProjectController {
     @FXML private Label totalSpentLabel;
     @FXML private Label totalRemainingLabel;
     @FXML private Label projectNameLabel;
-    @FXML private Button editMenuBtn;
     @FXML private ProjectPotSectionController potsSectionController;
     @FXML private ProjectTransactionSectionController transactionsSectionController;
 
@@ -47,7 +45,6 @@ public class ProjectController {
             NavigationUtils.goToLogin(projectNameLabel);
             return;
         }
-
         currentUser = Session.getCurrentUser();
         try {
             club = ClubFinanceService.loadFullClubForUser(currentUser.getUserId(), currentUser.getUsername());
@@ -70,13 +67,11 @@ public class ProjectController {
         if (selectedProject == null) {
             return;
         }
-
         sidebarProjectNameLabel.setText(selectedProject.getProjectName());
         projectNameLabel.setText(selectedProject.getProjectName());
         allocatedAmountLabel.setText(formatMoney(selectedProject.getAllocatedAmount()));
         totalSpentLabel.setText(formatMoney(selectedProject.getTotalSpent()));
         totalRemainingLabel.setText(formatMoney(selectedProject.getRemainingAmount()));
-
         if (potsSectionController != null) {
             potsSectionController.setContext(club, selectedProject, this::handleClubUpdated);
         }
@@ -89,7 +84,6 @@ public class ProjectController {
         if (updatedClub == null || selectedProject == null) {
             return;
         }
-
         int projectId = selectedProject.getProjectId();
         club = updatedClub;
         selectedProject = club.findProjectById(projectId);
@@ -123,43 +117,34 @@ public class ProjectController {
     @FXML
     private void handleEditMenu() {
         if (selectedProject == null) return;
-
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Edit Project");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
-
         TextField nameField = new TextField(selectedProject.getProjectName());
         TextField allocatedField = new TextField(MoneyUtils.format(selectedProject.getAllocatedAmount()));
         MoneyUtils.attach(allocatedField);
-
         grid.add(new Label("Project name"), 0, 0);
         grid.add(nameField, 1, 0);
         grid.add(new Label("Allocated amount"), 0, 1);
         grid.add(allocatedField, 1, 1);
-
         Label errorLabel = new Label("");
         errorLabel.getStyleClass().add("inline-error");
         grid.add(errorLabel, 0, 2, 2, 1);
-
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(dialogButton -> dialogButton);
         DialogUtils.style(dialog);
-
         dialog.showAndWait().ifPresent(button -> {
             if (button != ButtonType.OK) {
                 return;
             }
-
             String newName = nameField.getText();
             if (newName == null || newName.trim().isEmpty()) {
                 errorLabel.setText("Project name is required.");
                 return;
             }
-
             double newAllocated;
             try {
                 newAllocated = MoneyUtils.parse(allocatedField);
@@ -167,13 +152,11 @@ public class ProjectController {
                 errorLabel.setText("Allocated amount must be a number.");
                 return;
             }
-
             if (newAllocated < selectedProject.getTotalSpent()) {
                 errorLabel.setText("Allocated cannot be less than already spent: "
                         + formatMoney(selectedProject.getTotalSpent()));
                 return;
             }
-
             try {
                 Club updatedClub = ClubFinanceService.updateProject(
                         club,
@@ -194,18 +177,15 @@ public class ProjectController {
         if (club == null || selectedProject == null) {
             return;
         }
-
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
                 "Delete this project? All pots and transactions in this project will also be deleted.",
                 ButtonType.YES, ButtonType.NO);
         confirm.setTitle("Delete Project");
         DialogUtils.style(confirm);
-
         confirm.showAndWait().ifPresent(button -> {
             if (button != ButtonType.YES) {
                 return;
             }
-
             try {
                 ClubFinanceService.deleteProject(club, selectedProject.getProjectId());
                 NavigationUtils.goToDashboard(projectNameLabel);

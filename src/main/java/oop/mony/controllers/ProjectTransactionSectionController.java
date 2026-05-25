@@ -1,19 +1,13 @@
 package oop.mony.controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import oop.mony.ClubFinanceService;
 import oop.mony.models.Club;
 import oop.mony.models.Pot;
@@ -73,7 +67,6 @@ public class ProjectTransactionSectionController {
         if (selectedProject == null) {
             return;
         }
-
         for (Pot pot : selectedProject.getPots()) {
             potComboBox.getItems().add(new PotOption(pot.getPotId(), pot.getPotName()));
         }
@@ -101,14 +94,12 @@ public class ProjectTransactionSectionController {
     @FXML
     private void handleConfirmCreateTransaction() {
         if (selectedProject == null) return;
-
         String name = transactionNameField.getText();
         PotOption selectedPot = potComboBox.getValue();
         if (selectedPot == null) {
             createTransactionErrorLabel.setText("Select a pot.");
             return;
         }
-
         double amount;
         try {
             amount = MoneyUtils.parse(transactionAmountField);
@@ -116,12 +107,10 @@ public class ProjectTransactionSectionController {
             createTransactionErrorLabel.setText("Amount must be a number.");
             return;
         }
-
         if (amount <= 0) {
             createTransactionErrorLabel.setText("Amount must be greater than 0.");
             return;
         }
-
         try {
             Club updatedClub = ClubFinanceService.createTransaction(
                     club,
@@ -149,42 +138,7 @@ public class ProjectTransactionSectionController {
     }
 
     private void handleViewProof(String proofPath) {
-        if (proofPath == null || proofPath.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "No proof image available.");
-            DialogUtils.style(alert);
-            alert.showAndWait();
-            return;
-        }
-
-        try {
-            File file = new File(proofPath);
-            if (!file.exists()) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Proof image file not found.");
-                DialogUtils.style(alert);
-                alert.showAndWait();
-                return;
-            }
-
-            Stage proofStage = new Stage();
-            proofStage.setTitle("Proof Image");
-            Image image = new Image(file.toURI().toString());
-            ImageView imageView = new ImageView(image);
-            imageView.setPreserveRatio(true);
-            imageView.setFitWidth(600);
-            imageView.setFitHeight(600);
-
-            ScrollPane scrollPane = new ScrollPane(imageView);
-            scrollPane.setFitToWidth(true);
-            scrollPane.setFitToHeight(true);
-
-            proofStage.setScene(new Scene(scrollPane, 700, 700));
-            proofStage.show();
-        } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to open proof image.");
-            DialogUtils.style(alert);
-            alert.showAndWait();
-            e.printStackTrace();
-        }
+        DialogUtils.showProofImage(proofPath);
     }
 
     private String formatDate(LocalDate date) {
@@ -229,7 +183,6 @@ public class ProjectTransactionSectionController {
         private int potId() {
             return potId;
         }
-
         @Override
         public String toString() {
             return label;

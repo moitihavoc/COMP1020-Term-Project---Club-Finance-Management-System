@@ -1,12 +1,19 @@
 package oop.mony.utils;
 
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 import oop.mony.Application;
 
+import java.io.File;
 import java.net.URL;
 
 public final class DialogUtils {
@@ -53,6 +60,41 @@ public final class DialogUtils {
             } else {
                 button.setStyle(SECONDARY_BUTTON_STYLE);
             }
+        }
+    }
+
+    public static void showProofImage(String proofPath) {
+        if (proofPath == null || proofPath.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "No proof image available.");
+            style(alert);
+            alert.showAndWait();
+            return;
+        }
+        try {
+            File file = new File(proofPath);
+            if (!file.exists()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Proof image file not found.");
+                style(alert);
+                alert.showAndWait();
+                return;
+            }
+            Stage proofStage = new Stage();
+            proofStage.setTitle("Proof Image");
+            Image image = new Image(file.toURI().toString());
+            ImageView imageView = new ImageView(image);
+            imageView.setPreserveRatio(true);
+            imageView.setFitWidth(600);
+            imageView.setFitHeight(600);
+            ScrollPane scrollPane = new ScrollPane(imageView);
+            scrollPane.setFitToWidth(true);
+            scrollPane.setFitToHeight(true);
+            proofStage.setScene(new Scene(scrollPane, 700, 700));
+            proofStage.show();
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to open proof image.");
+            style(alert);
+            alert.showAndWait();
+            e.printStackTrace();
         }
     }
 }

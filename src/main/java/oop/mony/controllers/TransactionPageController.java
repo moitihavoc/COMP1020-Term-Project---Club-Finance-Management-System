@@ -1,11 +1,11 @@
 package oop.mony.controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import oop.mony.ClubFinanceService;
 import oop.mony.Session;
 import oop.mony.models.Club;
@@ -16,7 +16,6 @@ import oop.mony.utils.MoneyUtils;
 import oop.mony.utils.NavigationUtils;
 import oop.mony.utils.TransactionTableRenderer;
 
-import java.io.File;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ public class TransactionPageController {
 
     @FXML private VBox sidebar;
     @FXML private Label sidebarUsername;
-    @FXML private Label logoutButton;
     @FXML private TextField searchField;
     @FXML private Label projectNameLabel;
     @FXML private ComboBox<ProjectFilterOption> projectFilterComboBox;
@@ -33,7 +31,6 @@ public class TransactionPageController {
     @FXML private DatePicker endDatePicker;
     @FXML private TextField minAmountField;
     @FXML private TextField maxAmountField;
-    @FXML private Button clearFiltersButton;
     @FXML private VBox transactionsTableBody;
 
     private User currentUser;
@@ -51,7 +48,6 @@ public class TransactionPageController {
             NavigationUtils.goToLogin(projectNameLabel);
             return;
         }
-
         currentUser = Session.getCurrentUser();
         try {
             club = ClubFinanceService.loadFullClubForUser(currentUser.getUserId(), currentUser.getUsername());
@@ -92,7 +88,6 @@ public class TransactionPageController {
                 parseOptionalAmount(maxAmountField),
                 selectedProjectFilterId()
         );
-
         renderTransactions(results);
     }
 
@@ -153,42 +148,7 @@ public class TransactionPageController {
     }
 
     private void handleViewProof(String proofPath) {
-        if (proofPath == null || proofPath.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "No proof image available.");
-            DialogUtils.style(alert);
-            alert.showAndWait();
-            return;
-        }
-
-        try {
-            File file = new File(proofPath);
-            if (!file.exists()) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Proof image file not found.");
-                DialogUtils.style(alert);
-                alert.showAndWait();
-                return;
-            }
-
-            Stage proofStage = new Stage();
-            proofStage.setTitle("Proof Image");
-            Image image = new Image(file.toURI().toString());
-            ImageView imageView = new ImageView(image);
-            imageView.setPreserveRatio(true);
-            imageView.setFitWidth(600);
-            imageView.setFitHeight(600);
-
-            ScrollPane scrollPane = new ScrollPane(imageView);
-            scrollPane.setFitToWidth(true);
-            scrollPane.setFitToHeight(true);
-
-            proofStage.setScene(new javafx.scene.Scene(scrollPane, 700, 700));
-            proofStage.show();
-        } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to open proof image.");
-            DialogUtils.style(alert);
-            alert.showAndWait();
-            e.printStackTrace();
-        }
+        DialogUtils.showProofImage(proofPath);
     }
 
     private static final class ProjectFilterOption {
@@ -203,11 +163,9 @@ public class TransactionPageController {
         private Integer projectId() {
             return projectId;
         }
-
         @Override
         public String toString() {
             return label;
         }
     }
 }
- 

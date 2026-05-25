@@ -31,7 +31,6 @@ public class DashboardController {
     @FXML private Label totalSpentLabel;
     @FXML private Label remainingBalanceLabel;
     @FXML private TextField projectSearchField;
-    @FXML private Button createProjectBtn;
     @FXML private VBox createProjectForm;
     @FXML private TextField newProjectNameField;
     @FXML private TextField newProjectAllocatedField;
@@ -55,13 +54,11 @@ public class DashboardController {
             NavigationUtils.goToLogin(sidebarUsername);
             return;
         }
-
         currentUser = Session.getCurrentUser();
         if (currentUser == null) {
             NavigationUtils.goToLogin(sidebarUsername);
             return;
         }
-
         try {
             club = ClubFinanceService.loadFullClubForUser(currentUser.getUserId(), currentUser.getUsername());
             refreshPage();
@@ -91,7 +88,6 @@ public class DashboardController {
         if (club == null) {
             return;
         }
-
         for (Project project : club.getProjects()) {
             projectsGrid.getChildren().add(createProjectCard(project));
         }
@@ -101,18 +97,14 @@ public class DashboardController {
         VBox card = new VBox();
         card.setSpacing(12);
         card.getStyleClass().add("finance-card");
-
         Label nameLabel = new Label(project.getProjectName());
         nameLabel.getStyleClass().add("finance-card-title");
-
         Label spentSummaryLabel = new Label("Spent " + formatMoney(project.getTotalSpent())
                 + " of " + formatMoney(project.getAllocatedAmount()));
         spentSummaryLabel.getStyleClass().add("finance-card-summary");
-
         ProgressBar progressBar = new ProgressBar(calculateSpentProgress(project));
         progressBar.getStyleClass().add("budget-progress");
         progressBar.setMaxWidth(Double.MAX_VALUE);
-
         Button openButton = new Button("View");
         openButton.getStyleClass().add("finance-primary-button");
         openButton.setOnAction(event -> {
@@ -122,7 +114,6 @@ public class DashboardController {
                 }
             }
         });
-
         card.getChildren().addAll(nameLabel, spentSummaryLabel, progressBar, openButton);
         return card;
     }
@@ -180,19 +171,16 @@ public class DashboardController {
             showError("Club data is not loaded.");
             return;
         }
-
         TextInputDialog dialog = new TextInputDialog(MoneyUtils.format(club.getTotalBalance()));
         dialog.setTitle("Edit Total Balance");
         dialog.setHeaderText("Update club total balance");
         dialog.setContentText("New total balance:");
         DialogUtils.style(dialog);
         MoneyUtils.attach(dialog.getEditor());
-
         Optional<String> result = dialog.showAndWait();
         if (result.isEmpty()) {
             return;
         }
-
         double newBalance;
         try {
             newBalance = MoneyUtils.parse(result.get());
@@ -200,7 +188,6 @@ public class DashboardController {
             showError("Please enter a valid number.");
             return;
         }
-
         try {
             boolean updated = ClubFinanceService.updateTotalBalance(club, newBalance);
             if (!updated) {
@@ -233,13 +220,11 @@ public class DashboardController {
             createProjectErrorLabel.setText("Unable to create project. Reload the page.");
             return;
         }
-
         String name = newProjectNameField.getText();
         if (name == null || name.trim().isEmpty()) {
             createProjectErrorLabel.setText("Project name is required.");
             return;
         }
-
         double allocatedAmount;
         try {
             allocatedAmount = MoneyUtils.parse(newProjectAllocatedField);
@@ -247,17 +232,14 @@ public class DashboardController {
             createProjectErrorLabel.setText("Allocated amount must be a number.");
             return;
         }
-
         if (allocatedAmount < 0) {
             createProjectErrorLabel.setText("Allocated amount cannot be negative.");
             return;
         }
-
         if (!club.canAddProject(allocatedAmount)) {
             createProjectErrorLabel.setText("Not enough available balance to allocate this project.");
             return;
         }
-
         try {
             club = ClubFinanceService.createProject(club, name.trim(), allocatedAmount);
             showCreateProjectForm(false);
@@ -282,5 +264,4 @@ public class DashboardController {
             alert.showAndWait();
         }
     }
-
 }

@@ -19,7 +19,6 @@ public class ChangePasswordController {
 
 	@FXML private VBox sidebar;
 	@FXML private Label sidebarUsername;
-	@FXML private Label logoutButton;
 	@FXML private VBox changePasswordForm;
 	@FXML private PasswordField currentPasswordField;
 	@FXML private TextField visibleCurrentPasswordField;
@@ -74,14 +73,6 @@ public class ChangePasswordController {
 	}
 
 	@FXML
-	private void handleChangePassword() {
-		if (changePasswordForm != null) {
-			changePasswordForm.setVisible(true);
-			changePasswordForm.setManaged(true);
-		}
-	}
-
-	@FXML
 	private void handleToggleCurrentPasswordVisibility() {
 		currentPasswordVisible = !currentPasswordVisible;
 		updateCurrentPasswordVisibility();
@@ -109,34 +100,28 @@ public class ChangePasswordController {
 		String currentPassword = currentPasswordField.getText();
 		String newPassword = newPasswordField.getText();
 		String confirmPassword = confirmNewPasswordField.getText();
-
 		if (currentPassword == null || currentPassword.isEmpty()) {
 			showPasswordError("Current password is required.");
 			return;
 		}
-
 		if (!currentPassword.equals(currentUser.getPassword())) {
 			showPasswordError("Current password is incorrect.");
 			return;
 		}
-
 		if (newPassword == null || newPassword.length() < 8) {
 			showPasswordError("New password must be at least 8 characters.");
 			return;
 		}
-
 		if (!newPassword.equals(confirmPassword)) {
 			showPasswordError("New passwords do not match.");
 			return;
 		}
-
 		try {
 			boolean updated = UserDAO.updatePassword(currentUser.getUserId(), newPassword);
 			if (!updated) {
 				showPasswordError("Could not update password.");
 				return;
 			}
-
 			currentUser = new User(currentUser.getUserId(), currentUser.getUsername(), newPassword);
 			Session.setCurrentUser(currentUser);
 			clearPasswordFields();
@@ -145,7 +130,6 @@ public class ChangePasswordController {
 			e.printStackTrace();
 			showPasswordError("Database error while updating password.");
 		}
-
 	}
 
 	private void clearChangePasswordForm() {
@@ -203,5 +187,4 @@ public class ChangePasswordController {
 			changePasswordErrorLabel.setText(message);
 		}
 	}
-
 }

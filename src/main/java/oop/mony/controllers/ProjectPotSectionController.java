@@ -51,32 +51,25 @@ public class ProjectPotSectionController {
         if (selectedProject == null) {
             return;
         }
-
         for (Pot pot : selectedProject.getPots()) {
             VBox card = new VBox();
             card.setSpacing(12);
             card.setPrefWidth(320);
             card.getStyleClass().add("finance-card");
-
             Label name = new Label(pot.getPotName());
             name.getStyleClass().add("finance-card-title");
-
             Label spentSummary = new Label("Spent " + formatMoney(pot.getTotalSpent())
                     + " of " + formatMoney(pot.getAllocatedAmount()));
             spentSummary.getStyleClass().add("finance-card-summary");
-
             ProgressBar progressBar = new ProgressBar(calculateSpentProgress(pot));
             progressBar.getStyleClass().add("budget-progress");
             progressBar.setMaxWidth(Double.MAX_VALUE);
-
             Button editBtn = new Button("Edit");
             editBtn.getStyleClass().add("finance-secondary-button");
             editBtn.setOnAction(e -> handleEditPot(pot));
-
             Button deleteBtn = new Button("Delete");
             deleteBtn.getStyleClass().add("finance-danger-button");
             deleteBtn.setOnAction(e -> handleDeletePot(pot.getPotId()));
-
             HBox actionBox = new HBox(8, editBtn, deleteBtn);
             card.getChildren().addAll(name, spentSummary, progressBar, actionBox);
             potsGrid.getChildren().add(card);
@@ -95,7 +88,6 @@ public class ProjectPotSectionController {
     @FXML
     private void handleConfirmCreatePot() {
         if (selectedProject == null) return;
-
         String name = newPotNameField.getText();
         double amount;
         try {
@@ -104,7 +96,6 @@ public class ProjectPotSectionController {
             createPotErrorLabel.setText("Allocated amount must be a number.");
             return;
         }
-
         if (name == null || name.trim().isEmpty()) {
             createPotErrorLabel.setText("Pot name is required.");
             return;
@@ -113,7 +104,6 @@ public class ProjectPotSectionController {
             createPotErrorLabel.setText("Not enough allocation available in project.");
             return;
         }
-
         try {
             Club updatedClub = ClubFinanceService.createPot(
                     club,
@@ -142,12 +132,10 @@ public class ProjectPotSectionController {
                 ButtonType.YES, ButtonType.NO);
         confirm.setTitle("Delete Pot");
         DialogUtils.style(confirm);
-
         confirm.showAndWait().ifPresent(button -> {
             if (button != ButtonType.YES) {
                 return;
             }
-
             try {
                 notifyClubChanged(ClubFinanceService.deletePot(club, potId));
             } catch (SQLException e) {
@@ -162,42 +150,34 @@ public class ProjectPotSectionController {
             showPotError("Pot data is not loaded.");
             return;
         }
-
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Edit Pot");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
-
         TextField nameField = new TextField(pot.getPotName());
         TextField allocatedField = new TextField(MoneyUtils.format(pot.getAllocatedAmount()));
         MoneyUtils.attach(allocatedField);
         Label errorLabel = new Label("");
         errorLabel.getStyleClass().add("inline-error");
-
         grid.add(new Label("Pot name"), 0, 0);
         grid.add(nameField, 1, 0);
         grid.add(new Label("Allocated amount"), 0, 1);
         grid.add(allocatedField, 1, 1);
         grid.add(errorLabel, 0, 2, 2, 1);
-
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(dialogButton -> dialogButton);
         DialogUtils.style(dialog);
-
         dialog.showAndWait().ifPresent(button -> {
             if (button != ButtonType.OK) {
                 return;
             }
-
             String newName = nameField.getText();
             if (newName == null || newName.trim().isEmpty()) {
                 showPotError("Pot name is required.");
                 return;
             }
-
             double newAllocated;
             try {
                 newAllocated = MoneyUtils.parse(allocatedField);
@@ -205,19 +185,16 @@ public class ProjectPotSectionController {
                 showPotError("Allocated amount must be a number.");
                 return;
             }
-
             if (newAllocated < pot.getTotalSpent()) {
                 showPotError("Allocated cannot be less than already spent: "
                         + formatMoney(pot.getTotalSpent()));
                 return;
             }
-
             double allocatedToOtherPots = selectedProject.getTotalAllocatedToPots() - pot.getAllocatedAmount();
             if (allocatedToOtherPots + Math.max(0.0, newAllocated) > selectedProject.getAllocatedAmount()) {
                 showPotError("Not enough project allocation available for this pot.");
                 return;
             }
-
             try {
                 notifyClubChanged(ClubFinanceService.updatePot(club, pot.getPotId(), newName.trim(), newAllocated));
             } catch (SQLException e) {
@@ -256,7 +233,6 @@ public class ProjectPotSectionController {
             createPotErrorLabel.setText(message);
             return;
         }
-
         Alert alert = new Alert(Alert.AlertType.ERROR, message);
         DialogUtils.style(alert);
         alert.showAndWait();
