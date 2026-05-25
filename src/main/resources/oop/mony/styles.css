@@ -196,6 +196,14 @@
     -fx-text-fill: #555555;
 }
 
+.mony-dialog .inline-error {
+    -fx-text-fill: #e53935;
+}
+
+.mony-dialog .inline-success {
+    -fx-text-fill: #299D91;
+}
+
 .mony-dialog .text-field {
     -fx-background-color: white;
     -fx-background-radius: 8;

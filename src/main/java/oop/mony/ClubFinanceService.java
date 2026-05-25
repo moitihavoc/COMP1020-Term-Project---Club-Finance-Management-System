@@ -76,6 +76,9 @@ public final class ClubFinanceService {
         if (pot == null) {
             return club;
         }
+        if (name == null || name.trim().isEmpty() || amount <= 0 || !pot.canAddTransaction(amount)) {
+            return club;
+        }
 
         TransactionDAO.createTransaction(potId, name, amount, paidBy, date, proofImage, note);
         return loadFullClubForUser(club.getUserId(), club.getClubName());

@@ -96,6 +96,10 @@ public class ProjectTransactionSectionController {
         if (selectedProject == null) return;
         String name = transactionNameField.getText();
         PotOption selectedPot = potComboBox.getValue();
+        if (name == null || name.trim().isEmpty()) {
+            createTransactionErrorLabel.setText("Transaction name is required.");
+            return;
+        }
         if (selectedPot == null) {
             createTransactionErrorLabel.setText("Select a pot.");
             return;
@@ -109,6 +113,11 @@ public class ProjectTransactionSectionController {
         }
         if (amount <= 0) {
             createTransactionErrorLabel.setText("Amount must be greater than 0.");
+            return;
+        }
+        Pot pot = selectedProject.findPotById(selectedPot.potId());
+        if (pot == null || !pot.canAddTransaction(amount)) {
+            createTransactionErrorLabel.setText("Not enough pot allocation available.");
             return;
         }
         try {

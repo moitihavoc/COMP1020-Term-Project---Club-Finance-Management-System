@@ -1,7 +1,9 @@
 package oop.mony.controllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -136,13 +138,12 @@ public class ProjectController {
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(dialogButton -> dialogButton);
         DialogUtils.style(dialog);
-        dialog.showAndWait().ifPresent(button -> {
-            if (button != ButtonType.OK) {
-                return;
-            }
+        Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.addEventFilter(ActionEvent.ACTION, event -> {
             String newName = nameField.getText();
             if (newName == null || newName.trim().isEmpty()) {
                 errorLabel.setText("Project name is required.");
+                event.consume();
                 return;
             }
             double newAllocated;
@@ -150,11 +151,23 @@ public class ProjectController {
                 newAllocated = MoneyUtils.parse(allocatedField);
             } catch (NumberFormatException e) {
                 errorLabel.setText("Allocated amount must be a number.");
+                event.consume();
+                return;
+            }
+            if (newAllocated < 0) {
+                errorLabel.setText("Allocated amount cannot be negative.");
+                event.consume();
                 return;
             }
             if (newAllocated < selectedProject.getTotalSpent()) {
-                errorLabel.setText("Allocated cannot be less than already spent: "
-                        + formatMoney(selectedProject.getTotalSpent()));
+                errorLabel.setText("Allocated cannot be less than already spent.");
+                event.consume();
+                return;
+            }
+            double allocatedToOtherProjects = club.getTotalAllocated() - selectedProject.getAllocatedAmount();
+            if (allocatedToOtherProjects + Math.max(0.0, newAllocated) > club.getTotalBalance()) {
+                errorLabel.setText("Not enough club balance available for this project.");
+                event.consume();
                 return;
             }
             try {
@@ -168,8 +181,10 @@ public class ProjectController {
             } catch (SQLException e) {
                 errorLabel.setText("Failed to update project.");
                 e.printStackTrace();
+                event.consume();
             }
         });
+        dialog.showAndWait();
     }
 
     @FXML

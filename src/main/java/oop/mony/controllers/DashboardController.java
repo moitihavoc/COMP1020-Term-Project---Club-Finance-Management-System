@@ -1,8 +1,8 @@
 package oop.mony.controllers;
 
 import java.sql.SQLException;
-import java.util.Optional;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -10,8 +10,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import oop.mony.ClubFinanceService;
 import oop.mony.Session;
@@ -30,7 +30,6 @@ public class DashboardController {
     @FXML private Label totalAllocatedLabel;
     @FXML private Label totalSpentLabel;
     @FXML private Label remainingBalanceLabel;
-    @FXML private TextField projectSearchField;
     @FXML private VBox createProjectForm;
     @FXML private TextField newProjectNameField;
     @FXML private TextField newProjectAllocatedField;
@@ -44,9 +43,6 @@ public class DashboardController {
     private void initialize() {
         NavigationUtils.sizeSidebar(sidebar);
         MoneyUtils.attach(newProjectAllocatedField);
-        if (projectSearchField != null) {
-            projectSearchField.textProperty().addListener((obs, oldText, newText) -> renderProjects());
-        }
     }
 
     public void loadFromSession() {
@@ -171,35 +167,48 @@ public class DashboardController {
             showError("Club data is not loaded.");
             return;
         }
-        TextInputDialog dialog = new TextInputDialog(MoneyUtils.format(club.getTotalBalance()));
+        javafx.scene.control.Dialog<ButtonType> dialog = new javafx.scene.control.Dialog<>();
         dialog.setTitle("Edit Total Balance");
         dialog.setHeaderText("Update club total balance");
-        dialog.setContentText("New total balance:");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        TextField balanceField = new TextField(MoneyUtils.format(club.getTotalBalance()));
+        MoneyUtils.attach(balanceField);
+        Label errorLabel = new Label("");
+        errorLabel.getStyleClass().add("inline-error");
+        grid.add(new Label("New total balance"), 0, 0);
+        grid.add(balanceField, 1, 0);
+        grid.add(errorLabel, 0, 1, 2, 1);
+        dialog.getDialogPane().setContent(grid);
         DialogUtils.style(dialog);
-        MoneyUtils.attach(dialog.getEditor());
-        Optional<String> result = dialog.showAndWait();
-        if (result.isEmpty()) {
-            return;
-        }
-        double newBalance;
-        try {
-            newBalance = MoneyUtils.parse(result.get());
-        } catch (NumberFormatException e) {
-            showError("Please enter a valid number.");
-            return;
-        }
-        try {
-            boolean updated = ClubFinanceService.updateTotalBalance(club, newBalance);
-            if (!updated) {
-                showError("New balance must be at least equal to allocated amount.");
+        Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.addEventFilter(ActionEvent.ACTION, event -> {
+            double newBalance;
+            try {
+                newBalance = MoneyUtils.parse(balanceField);
+            } catch (NumberFormatException e) {
+                errorLabel.setText("Please enter a valid number.");
+                event.consume();
                 return;
             }
-            club = ClubFinanceService.loadFullClubForUser(club.getUserId(), club.getClubName());
-            refreshPage();
-        } catch (SQLException e) {
-            showError("Unable to update balance. Please try again.");
-            e.printStackTrace();
-        }
+            try {
+                boolean updated = ClubFinanceService.updateTotalBalance(club, newBalance);
+                if (!updated) {
+                    errorLabel.setText("New balance must be at least allocated amount.");
+                    event.consume();
+                    return;
+                }
+                club = ClubFinanceService.loadFullClubForUser(club.getUserId(), club.getClubName());
+                refreshPage();
+            } catch (SQLException e) {
+                errorLabel.setText("Unable to update balance. Please try again.");
+                e.printStackTrace();
+                event.consume();
+            }
+        });
+        dialog.showAndWait();
     }
 
     @FXML

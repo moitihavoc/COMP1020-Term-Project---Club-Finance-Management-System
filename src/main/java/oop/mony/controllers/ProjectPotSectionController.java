@@ -1,5 +1,6 @@
 package oop.mony.controllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -169,39 +170,47 @@ public class ProjectPotSectionController {
         dialog.getDialogPane().setContent(grid);
         dialog.setResultConverter(dialogButton -> dialogButton);
         DialogUtils.style(dialog);
-        dialog.showAndWait().ifPresent(button -> {
-            if (button != ButtonType.OK) {
-                return;
-            }
+        Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.addEventFilter(ActionEvent.ACTION, event -> {
             String newName = nameField.getText();
             if (newName == null || newName.trim().isEmpty()) {
-                showPotError("Pot name is required.");
+                errorLabel.setText("Pot name is required.");
+                event.consume();
                 return;
             }
             double newAllocated;
             try {
                 newAllocated = MoneyUtils.parse(allocatedField);
             } catch (NumberFormatException e) {
-                showPotError("Allocated amount must be a number.");
+                errorLabel.setText("Allocated amount must be a number.");
+                event.consume();
+                return;
+            }
+            if (newAllocated < 0) {
+                errorLabel.setText("Allocated amount cannot be negative.");
+                event.consume();
                 return;
             }
             if (newAllocated < pot.getTotalSpent()) {
-                showPotError("Allocated cannot be less than already spent: "
-                        + formatMoney(pot.getTotalSpent()));
+                errorLabel.setText("Allocated cannot be less than already spent.");
+                event.consume();
                 return;
             }
             double allocatedToOtherPots = selectedProject.getTotalAllocatedToPots() - pot.getAllocatedAmount();
             if (allocatedToOtherPots + Math.max(0.0, newAllocated) > selectedProject.getAllocatedAmount()) {
-                showPotError("Not enough project allocation available for this pot.");
+                errorLabel.setText("Not enough project allocation available for this pot.");
+                event.consume();
                 return;
             }
             try {
                 notifyClubChanged(ClubFinanceService.updatePot(club, pot.getPotId(), newName.trim(), newAllocated));
             } catch (SQLException e) {
-                showPotError("Failed to update pot.");
+                errorLabel.setText("Failed to update pot.");
                 e.printStackTrace();
+                event.consume();
             }
         });
+        dialog.showAndWait();
     }
 
     private double calculateSpentProgress(Pot pot) {
