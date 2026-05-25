@@ -28,6 +28,7 @@ public class RegisterController {
 
     @FXML
     private void initialize() {
+        // same password visibility logic as in Login, but applied for all password related fields: current password, new password, confirm password
         visiblePasswordField.textProperty().bindBidirectional(passwordField.textProperty());
         visibleConfirmPasswordField.textProperty().bindBidirectional(confirmPasswordField.textProperty());
         updatePasswordVisibility();
@@ -64,6 +65,9 @@ public class RegisterController {
 
     @FXML
     private void handleRegister() {
+        /*
+        / if all conditions are met, create and add new user to the database with User create account method.
+        */ 
         if (usernameField.getText().isEmpty() || 
             passwordField.getText().isEmpty() || 
             confirmPasswordField.getText().isEmpty()) {

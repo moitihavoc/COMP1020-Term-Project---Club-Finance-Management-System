@@ -26,6 +26,10 @@ public class LoginController {
 
     @FXML
     private void initialize() {
+        /*
+        / Use password field to mask the visible password, bind them so they show same characters quantity
+        / initially, the boolean passwordVisible is set to `false`
+        */
         visiblePasswordField.textProperty().bindBidirectional(passwordField.textProperty());
         updatePasswordVisibility();
     }
@@ -47,7 +51,8 @@ public class LoginController {
     @FXML
     private void handleLogin() {
         /*
-        log in and change to project screen if user exists; else, throw error
+        / log in and change to project screen if input value meet all conditions; else, throw error
+        / login is processed by checking if the user exists in the database with UserDao method
         */
         String username =  usernameField.getText();
         String password =  passwordField.getText();
