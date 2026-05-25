@@ -75,20 +75,17 @@ public final class DialogUtils {
             Stage proofStage = new Stage();
             proofStage.setTitle("Proof Image");
             Image image = new Image(file.toURI().toString());
-            double maxWidth = Screen.getPrimary().getVisualBounds().getWidth() * 0.85;
-            double maxHeight = Screen.getPrimary().getVisualBounds().getHeight() * 0.85;
-            double sceneWidth = Math.min(maxWidth, Math.max(420, image.getWidth() + 24));
-            double sceneHeight = Math.min(maxHeight, Math.max(320, image.getHeight() + 24));
+            double sceneWidth = Screen.getPrimary().getVisualBounds().getWidth();
+            double sceneHeight = Screen.getPrimary().getVisualBounds().getHeight();
             ImageView imageView = new ImageView(image);
             imageView.setPreserveRatio(true);
-            imageView.setFitWidth(sceneWidth - 24);
-            imageView.setFitHeight(sceneHeight - 24);
+            imageView.setFitWidth(sceneWidth);
+            imageView.setFitHeight(sceneHeight);
             ScrollPane scrollPane = new ScrollPane(imageView);
             scrollPane.setFitToWidth(true);
             scrollPane.setFitToHeight(true);
-            proofStage.setMaxWidth(maxWidth);
-            proofStage.setMaxHeight(maxHeight);
             proofStage.setScene(new Scene(scrollPane, sceneWidth, sceneHeight));
+            proofStage.setMaximized(true);
             proofStage.show();
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to open proof image.");
