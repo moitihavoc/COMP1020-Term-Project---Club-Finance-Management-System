@@ -71,7 +71,7 @@ public class LoginController {
                 User savedUser = UserDAO.findByUsernameAndPassword(username, password);
                 if (savedUser != null) {
                     Session.setCurrentUser(savedUser);
-                    NavigationUtils.goToProjects(loginButton);
+                    NavigationUtils.goToDashboard(loginButton);
                 } else {
                     errorLabel.setText("Incorrect username or password.");
                 }

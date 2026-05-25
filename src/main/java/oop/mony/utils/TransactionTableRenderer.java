@@ -65,7 +65,7 @@ public final class TransactionTableRenderer {
                     record.getProjectName(),
                     record.getPotName(),
                     record.getPaidBy(),
-                    MoneyFormatter.formatVnd(record.getAmount()),
+                    MoneyUtils.formatVnd(record.getAmount()),
                     record.getShortNote(30),
                     record.getProofPath(),
                     proofViewer

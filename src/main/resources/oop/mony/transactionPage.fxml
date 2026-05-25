@@ -16,7 +16,7 @@
 
         <VBox spacing="4" style="-fx-padding: 40 0 0 0;">
             <HBox spacing="12" alignment="CENTER_LEFT"
-                  onMouseClicked="#handleGoToProjects"
+                  onMouseClicked="#handleGoToDashboard"
                   style="-fx-padding: 12 16 12 16; -fx-background-radius: 4; -fx-cursor: hand;">
                 <Label text="Dashboard"
                        style="-fx-text-fill: #aaaaaa; -fx-font-size: 15px;"/>
@@ -33,7 +33,7 @@
 
         <!-- ACCOUNT SETTINGS -->
         <HBox spacing="12" alignment="CENTER_LEFT"
-              onMouseClicked="#handleViewProfile"
+              onMouseClicked="#handleChangePassword"
               style="-fx-border-color: #333333; -fx-border-width: 1 0 0 0; -fx-padding: 20 0 12 0; -fx-cursor: hand;">
             <VBox spacing="2">
                 <Label fx:id="sidebarUsername" text="User"

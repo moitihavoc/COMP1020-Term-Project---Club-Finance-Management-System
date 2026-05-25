@@ -12,9 +12,8 @@ import oop.mony.models.Club;
 import oop.mony.models.TransactionRecord;
 import oop.mony.models.User;
 import oop.mony.utils.DialogUtils;
-import oop.mony.utils.MoneyInputFormatter;
+import oop.mony.utils.MoneyUtils;
 import oop.mony.utils.NavigationUtils;
-import oop.mony.utils.SidebarSizer;
 import oop.mony.utils.TransactionTableRenderer;
 
 import java.io.File;
@@ -42,9 +41,9 @@ public class TransactionPageController {
 
     @FXML
     private void initialize() {
-        SidebarSizer.bindToWindow(sidebar);
-        MoneyInputFormatter.attach(minAmountField);
-        MoneyInputFormatter.attach(maxAmountField);
+        NavigationUtils.sizeSidebar(sidebar);
+        MoneyUtils.attach(minAmountField);
+        MoneyUtils.attach(maxAmountField);
     }
 
     public void loadFromSession() {
@@ -111,7 +110,7 @@ public class TransactionPageController {
         String t = field.getText();
         if (t == null || t.trim().isEmpty()) return null;
         try {
-            return MoneyInputFormatter.parse(t);
+            return MoneyUtils.parse(t);
         } catch (NumberFormatException e) {
             return null;
         }
@@ -123,13 +122,13 @@ public class TransactionPageController {
     }
 
     @FXML
-    private void handleGoToProjects() {
-        NavigationUtils.goToProjects(projectNameLabel);
+    private void handleGoToDashboard() {
+        NavigationUtils.goToDashboard(projectNameLabel);
     }
 
     @FXML
-    private void handleViewProfile() {
-        NavigationUtils.goToProfile(projectNameLabel);
+    private void handleChangePassword() {
+        NavigationUtils.goToChangePassword(projectNameLabel);
     }
 
     @FXML

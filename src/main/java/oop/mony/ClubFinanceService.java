@@ -137,12 +137,19 @@ public final class ClubFinanceService {
     }
 
     public static Club updateProject(Club club, int projectId, String name, double allocatedAmount) throws SQLException {
-        if (club == null) return null;
-        Project project = club.findProjectById(projectId);
-        if (project == null) return club;
-        if (allocatedAmount < project.getTotalSpent()) {
-            return club; // Do not allow reducing allocation below already spent amount
+        if (club == null) {
+            return null;
         }
+
+        Project project = club.findProjectById(projectId);
+        if (project == null) {
+            return club;
+        }
+
+        if (allocatedAmount < project.getTotalSpent()) {
+            return club;
+        }
+
         double allocatedToOtherProjects = club.getTotalAllocated() - project.getAllocatedAmount();
         if (allocatedToOtherProjects + Math.max(0.0, allocatedAmount) > club.getTotalBalance()) {
             return club;
@@ -153,12 +160,20 @@ public final class ClubFinanceService {
     }
 
     public static Club updatePot(Club club, int potId, String name, double allocatedAmount) throws SQLException {
-        if (club == null) return null;
+        if (club == null) {
+            return null;
+        }
+
         Project project = findProjectForPot(club, potId);
-        if (project == null) return club;
+        if (project == null) {
+            return club;
+        }
 
         Pot pot = project.findPotById(potId);
-        if (pot == null) return club;
+        if (pot == null) {
+            return club;
+        }
+
         if (name == null || name.trim().isEmpty()) {
             return club;
         }

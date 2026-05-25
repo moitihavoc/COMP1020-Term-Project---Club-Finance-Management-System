@@ -19,12 +19,10 @@ import oop.mony.models.Club;
 import oop.mony.models.Project;
 import oop.mony.models.User;
 import oop.mony.utils.DialogUtils;
-import oop.mony.utils.MoneyFormatter;
-import oop.mony.utils.MoneyInputFormatter;
+import oop.mony.utils.MoneyUtils;
 import oop.mony.utils.NavigationUtils;
-import oop.mony.utils.SidebarSizer;
 
-public class ProjectsController {
+public class DashboardController {
 
     @FXML private VBox sidebar;
     @FXML private Label sidebarUsername;
@@ -45,8 +43,8 @@ public class ProjectsController {
 
     @FXML
     private void initialize() {
-        SidebarSizer.bindToWindow(sidebar);
-        MoneyInputFormatter.attach(newProjectAllocatedField);
+        NavigationUtils.sizeSidebar(sidebar);
+        MoneyUtils.attach(newProjectAllocatedField);
         if (projectSearchField != null) {
             projectSearchField.textProperty().addListener((obs, oldText, newText) -> renderProjects());
         }
@@ -137,7 +135,7 @@ public class ProjectsController {
     }
 
     private String formatMoney(double amount) {
-        return MoneyFormatter.formatVnd(amount);
+        return MoneyUtils.formatVnd(amount);
     }
 
     private void showCreateProjectForm(boolean visible) {
@@ -170,9 +168,9 @@ public class ProjectsController {
     }
 
     @FXML
-    private void handleViewProfile() {
-        if (!NavigationUtils.goToProfile(sidebarUsername)) {
-            showError("Unable to open profile page.");
+    private void handleChangePassword() {
+        if (!NavigationUtils.goToChangePassword(sidebarUsername)) {
+            showError("Unable to open change password page.");
         }
     }
 
@@ -183,12 +181,12 @@ public class ProjectsController {
             return;
         }
 
-        TextInputDialog dialog = new TextInputDialog(MoneyInputFormatter.format(club.getTotalBalance()));
+        TextInputDialog dialog = new TextInputDialog(MoneyUtils.format(club.getTotalBalance()));
         dialog.setTitle("Edit Total Balance");
         dialog.setHeaderText("Update club total balance");
         dialog.setContentText("New total balance:");
         DialogUtils.style(dialog);
-        MoneyInputFormatter.attach(dialog.getEditor());
+        MoneyUtils.attach(dialog.getEditor());
 
         Optional<String> result = dialog.showAndWait();
         if (result.isEmpty()) {
@@ -197,7 +195,7 @@ public class ProjectsController {
 
         double newBalance;
         try {
-            newBalance = MoneyInputFormatter.parse(result.get());
+            newBalance = MoneyUtils.parse(result.get());
         } catch (NumberFormatException e) {
             showError("Please enter a valid number.");
             return;
@@ -244,7 +242,7 @@ public class ProjectsController {
 
         double allocatedAmount;
         try {
-            allocatedAmount = MoneyInputFormatter.parse(newProjectAllocatedField);
+            allocatedAmount = MoneyUtils.parse(newProjectAllocatedField);
         } catch (NumberFormatException e) {
             createProjectErrorLabel.setText("Allocated amount must be a number.");
             return;

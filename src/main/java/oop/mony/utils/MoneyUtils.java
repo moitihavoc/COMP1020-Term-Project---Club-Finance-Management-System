@@ -4,10 +4,18 @@ import javafx.scene.control.TextField;
 
 import java.text.DecimalFormat;
 
-public final class MoneyInputFormatter {
+public final class MoneyUtils {
     private static final DecimalFormat GROUPED_NUMBER = new DecimalFormat("#,##0");
 
-    private MoneyInputFormatter() {
+    private MoneyUtils() {
+    }
+
+    public static String formatVnd(double amount) {
+        return GROUPED_NUMBER.format(Math.round(amount)) + " \u0111";
+    }
+
+    public static String format(double amount) {
+        return GROUPED_NUMBER.format(Math.round(amount));
     }
 
     public static void attach(TextField field) {
@@ -42,16 +50,12 @@ public final class MoneyInputFormatter {
         return Double.parseDouble(digits);
     }
 
-    public static String format(double amount) {
-        return GROUPED_NUMBER.format(Math.round(amount));
-    }
-
     private static String formatDigits(String text) {
         String digits = digitsOnly(text);
         if (digits.isEmpty()) {
             return "";
         }
-        return GROUPED_NUMBER.format(Double.parseDouble(digits));
+        return GROUPED_NUMBER.format(Long.parseLong(digits));
     }
 
     private static String digitsOnly(String text) {
@@ -59,9 +63,13 @@ public final class MoneyInputFormatter {
     }
 
     private static int countDigitsBefore(String text, int caretPosition) {
+        if (text == null || caretPosition <= 0) {
+            return 0;
+        }
+
         int count = 0;
-        int safeCaret = Math.min(Math.max(caretPosition, 0), text == null ? 0 : text.length());
-        for (int i = 0; i < safeCaret; i++) {
+        int limit = Math.min(caretPosition, text.length());
+        for (int i = 0; i < limit; i++) {
             if (Character.isDigit(text.charAt(i))) {
                 count++;
             }
@@ -74,11 +82,11 @@ public final class MoneyInputFormatter {
             return 0;
         }
 
-        int seen = 0;
+        int seenDigits = 0;
         for (int i = 0; i < text.length(); i++) {
             if (Character.isDigit(text.charAt(i))) {
-                seen++;
-                if (seen == digitCount) {
+                seenDigits++;
+                if (seenDigits == digitCount) {
                     return i + 1;
                 }
             }

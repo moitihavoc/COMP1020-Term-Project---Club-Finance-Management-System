@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="oop.mony.controllers.ProjectPotSectionController"
+      spacing="16">
+    <Label text="Pots"
+           style="-fx-font-size: 18px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
+    <Button text="+ Create Pot" onAction="#handleCreatePot"
+            style="-fx-background-color: #299D91; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: 600; -fx-padding: 8 16 8 16; -fx-background-radius: 8;"/>
+
+    <VBox fx:id="createPotForm" spacing="12" managed="false" visible="false"
+          style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 24; -fx-max-width: 480;">
+        <Label text="New Pot"
+               style="-fx-font-size: 16px; -fx-font-weight: 700; -fx-text-fill: #191919;"/>
+        <VBox spacing="6">
+            <Label text="Pot Name"
+                   style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #191919;"/>
+            <TextField fx:id="newPotNameField" promptText="e.g. Food, Operations"
+                       style="-fx-font-size: 14px; -fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
+        </VBox>
+        <VBox spacing="6">
+            <Label text="Allocated Amount"
+                   style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #191919;"/>
+            <TextField fx:id="newPotAllocatedField" promptText="0"
+                       style="-fx-font-size: 14px; -fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;"/>
+        </VBox>
+        <Label fx:id="createPotErrorLabel" text=""
+               style="-fx-text-fill: #e53935; -fx-font-size: 13px;"/>
+        <HBox spacing="12">
+            <Button text="Create" onAction="#handleConfirmCreatePot"
+                    style="-fx-background-color: #299D91; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: 600; -fx-padding: 10 24 10 24; -fx-background-radius: 8;"/>
+            <Button text="Cancel" onAction="#handleCancelCreatePot"
+                    style="-fx-background-color: transparent; -fx-border-color: #cccccc; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 14px; -fx-padding: 10 24 10 24;"/>
+        </HBox>
+    </VBox>
+
+    <FlowPane fx:id="potsGrid" hgap="16" vgap="16" prefWrapLength="1060"/>
+</VBox>
