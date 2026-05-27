@@ -1,0 +1,7 @@
+# This is a Java/Maven project, so dependencies are managed in pom.xml.
+# Use this file as a quick requirements summary for readers.
+
+Java JDK 25
+Maven 3.8.5 or compatible
+JavaFX 21.0.6
+SQLite JDBC 3.45.3.0
