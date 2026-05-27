@@ -287,11 +287,29 @@ club-scale dataset.
 
 ### Technical Difficulties
 
-Challenge: keeping project, pot, and transaction totals correct after every
-change.
+Challenge: at the interim stage, the team had completed login, dashboard, and
+basic project creation, but the main finance features were still unfinished:
+pots, transactions, proof attachments, and search.
 
-Solution: totals are calculated from the current object lists, and the app
-reloads updated club data after create/edit/delete operations.
+Solution: the team completed the finance workflow by adding pots under projects,
+transactions under pots, proof image support, and a transaction search page. The
+final app now supports the full treasurer flow: dashboard -> project -> pot ->
+transaction -> search.
+
+Challenge: keeping project, pot, and transaction totals correct after users add,
+edit, or delete records.
+
+Solution: the app calculates totals from the current object structure instead
+of manually storing separate totals. Club totals come from projects, project
+totals come from pots, and pot totals come from transactions. After each update,
+the app reloads the club data so the UI shows the latest spent and remaining
+amounts.
+
+Challenge: learning and combining the required technologies, especially JavaFX
+for the interface and SQLite for persistent storage.
+
+Solution: the team used self-study, examples, and repeated testing to connect
+the JavaFX screens with backend logic and local database storage.
 
 ### Design Or Architectural Issues
 
@@ -299,23 +317,51 @@ Challenge: deciding whether transactions should belong directly to a project or
 inside a pot.
 
 Solution: transactions are stored under pots because pots represent budget
-categories. This lets the app prevent spending more than the category's
-allocated amount.
+categories. This lets the app check the selected pot's remaining budget before
+accepting an expense. This design also makes the finance structure easier to
+explain: a club has projects, a project has pots, and a pot has transactions.
+
+Challenge: integrating the JavaFX frontend with the backend structure without
+making controllers too responsible for data and business rules.
+
+Solution: the app uses a layered structure. FXML files define the screens,
+controllers handle user actions, model classes represent finance objects, DAO
+classes handle database operations, and `ClubFinanceService` coordinates the
+main business logic.
+
+Challenge: making transaction search meaningful for the final demo and report.
+
+Solution: the team prepared a realistic basketball club dataset with many
+projects, pots, and transactions. This allows the search page to demonstrate
+real use cases, such as finding water expenses, referee fees, hotel payments, or
+transactions above a chosen amount.
 
 ### Team Collaboration And Task Coordination
 
-Write the team's real coordination method here. Example:
+Challenge: early team coordination was difficult because responsibilities and
+progress were not always clear.
 
-The team divided work by feature area: UI screens, model/service logic,
-database/DAO work, testing, and report/presentation preparation. Members
-reviewed the app together using the same basketball club scenario so the report,
-slides, and poster stayed consistent.
+Solution: the team clarified responsibilities in a shared document, held regular
+progress meetings, and divided work by feature area: UI screens, model/service
+logic, database/DAO work, testing, and report/presentation preparation. For the
+final stage, the team also used the same basketball club treasurer scenario
+across the report, slides, poster, and demo to keep the submission consistent.
+
+Challenge: the interim timeline underestimated the amount of work needed for
+core finance features.
+
+Solution: the team broke large tasks into smaller parts, such as pot creation,
+transaction creation, proof image support, search filters, and test data
+preparation. This made progress easier to track and helped the team complete the
+missing features before the final submission.
 
 ### Solutions Implemented And Lessons Learned
 
-- A layered structure made the app easier to maintain.
-- Budget checks should happen before saving a transaction.
-- A realistic dataset is necessary to demonstrate search clearly.
+- A layered structure makes the app easier to maintain and explain.
+- Budget checks should happen before saving a project, pot, or transaction.
+- Transactions should belong to pots because pots control spending categories.
+- Realistic test data is necessary to demonstrate search clearly.
+- Large tasks should be broken into smaller milestones earlier.
 - A concrete use case is easier to present than disconnected CRUD examples.
 
 ## 8. Conclusion And Limitations
