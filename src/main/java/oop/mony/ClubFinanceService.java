@@ -8,7 +8,6 @@ import oop.mony.models.Club;
 import oop.mony.models.Pot;
 import oop.mony.models.Project;
 import oop.mony.models.Transaction;
-import oop.mony.models.TransactionRecord;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -116,7 +115,7 @@ public final class ClubFinanceService {
         return loadFullClubForUser(club.getUserId(), club.getClubName());
     }
 
-    public static ArrayList<TransactionRecord> searchTransactions(
+    public static ArrayList<Transaction> searchTransactions(
             Club club,
             String keyword,
             LocalDate startDate,

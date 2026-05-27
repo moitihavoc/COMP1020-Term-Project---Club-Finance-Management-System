@@ -9,7 +9,7 @@ import javafx.scene.layout.VBox;
 import oop.mony.ClubFinanceService;
 import oop.mony.Session;
 import oop.mony.models.Club;
-import oop.mony.models.TransactionRecord;
+import oop.mony.models.Transaction;
 import oop.mony.models.User;
 import oop.mony.utils.DialogUtils;
 import oop.mony.utils.MoneyUtils;
@@ -79,7 +79,7 @@ public class TransactionPageController {
     }
 
     private void refreshPage() {
-        ArrayList<TransactionRecord> results = ClubFinanceService.searchTransactions(
+        ArrayList<Transaction> results = ClubFinanceService.searchTransactions(
                 club,
                 searchField.getText(),
                 startDatePicker.getValue(),
@@ -91,8 +91,8 @@ public class TransactionPageController {
         renderTransactions(results);
     }
 
-    private void renderTransactions(ArrayList<TransactionRecord> records) {
-        TransactionTableRenderer.renderTransactionRecords(
+    private void renderTransactions(ArrayList<Transaction> records) {
+        TransactionTableRenderer.renderTransactions(
                 transactionsTableBody,
                 records,
                 this::formatDate,

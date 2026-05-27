@@ -4,8 +4,11 @@ import java.time.LocalDate;
 
 public class Transaction {
     private final int transactionId;
+    private final int projectId;
     private final int potId;
     private final String transactionName;
+    private final String projectName;
+    private final String potName;
     private final double amount;
     private final String paidBy;
     private final LocalDate transactionDate;
@@ -21,9 +24,20 @@ public class Transaction {
     public Transaction(int transactionId, int potId, String transactionName, double amount,
                        String paidBy, LocalDate transactionDate,
                        String proofPath, String note) {
+        this(transactionId, 0, potId, transactionName, "", "", amount, paidBy,
+                transactionDate, proofPath, note);
+    }
+
+    public Transaction(int transactionId, int projectId, int potId,
+                       String transactionName, String projectName, String potName,
+                       double amount, String paidBy, LocalDate transactionDate,
+                       String proofPath, String note) {
         this.transactionId = transactionId;
+        this.projectId = projectId;
         this.potId = potId;
         this.transactionName = transactionName == null ? "" : transactionName.trim();
+        this.projectName = projectName == null ? "" : projectName.trim();
+        this.potName = potName == null ? "" : potName.trim();
         this.amount = Math.max(0.0, amount);
         this.paidBy = paidBy == null ? "" : paidBy.trim();
         this.transactionDate = transactionDate == null ? LocalDate.now() : transactionDate;
@@ -35,12 +49,24 @@ public class Transaction {
         return transactionId;
     }
 
+    public int getProjectId() {
+        return projectId;
+    }
+
     public int getPotId() {
         return potId;
     }
 
     public String getTransactionName() {
         return transactionName;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public String getPotName() {
+        return potName;
     }
 
     public double getAmount() {
@@ -65,5 +91,50 @@ public class Transaction {
 
     public boolean hasName() {
         return !transactionName.isEmpty();
+    }
+
+    public String getShortNote() {
+        return getShortNote(30);
+    }
+
+    public String getShortNote(int maxLength) {
+        if (note.length() <= maxLength) {
+            return note;
+        }
+
+        return note.substring(0, maxLength) + "...";
+    }
+
+    public boolean matchesKeyword(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return true;
+        }
+
+        String search = keyword.trim().toLowerCase();
+        return transactionName.toLowerCase().contains(search)
+                || projectName.toLowerCase().contains(search)
+                || potName.toLowerCase().contains(search)
+                || paidBy.toLowerCase().contains(search)
+                || note.toLowerCase().contains(search);
+    }
+
+    public boolean isAfterOrOn(LocalDate startDate) {
+        return startDate == null || !transactionDate.isBefore(startDate);
+    }
+
+    public boolean isBeforeOrOn(LocalDate endDate) {
+        return endDate == null || !transactionDate.isAfter(endDate);
+    }
+
+    public boolean isAtLeast(Double minAmount) {
+        return minAmount == null || amount >= Math.max(0.0, minAmount);
+    }
+
+    public boolean isAtMost(Double maxAmount) {
+        return maxAmount == null || amount <= Math.max(0.0, maxAmount);
+    }
+
+    public boolean belongsToProject(Integer selectedProjectId) {
+        return selectedProjectId == null || projectId == selectedProjectId;
     }
 }

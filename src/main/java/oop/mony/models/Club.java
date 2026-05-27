@@ -95,7 +95,7 @@ public class Club {
         return null;
     }
 
-    public ArrayList<TransactionRecord> searchTransactions(
+    public ArrayList<Transaction> searchTransactions(
             String keyword,
             LocalDate startDate,
             LocalDate endDate,
@@ -103,11 +103,11 @@ public class Club {
             Double maxAmount,
             Integer projectId) {
 
-        ArrayList<TransactionRecord> results = new ArrayList<>();
+        ArrayList<Transaction> results = new ArrayList<>();
         for (Project project : projects) {
             for (Pot pot : project.getPots()) {
                 for (Transaction transaction : pot.getTransactions()) {
-                    TransactionRecord record = new TransactionRecord(
+                    Transaction record = new Transaction(
                             transaction.getTransactionId(),
                             project.getProjectId(),
                             pot.getPotId(),

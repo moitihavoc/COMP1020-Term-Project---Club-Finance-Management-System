@@ -9,7 +9,6 @@ import javafx.scene.layout.VBox;
 import oop.mony.models.Pot;
 import oop.mony.models.Project;
 import oop.mony.models.Transaction;
-import oop.mony.models.TransactionRecord;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -51,14 +50,14 @@ public final class TransactionTableRenderer {
         }
     }
 
-    public static void renderTransactionRecords(
+    public static void renderTransactions(
             VBox container,
-            List<TransactionRecord> records,
+            List<Transaction> records,
             Function<LocalDate, String> dateFormatter,
             Consumer<String> proofViewer) {
 
         container.getChildren().clear();
-        for (TransactionRecord record : records) {
+        for (Transaction record : records) {
             container.getChildren().add(createRow(
                     dateFormatter.apply(record.getTransactionDate()),
                     record.getTransactionName(),
