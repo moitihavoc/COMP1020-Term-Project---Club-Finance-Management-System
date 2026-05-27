@@ -19,11 +19,6 @@ public class Club {
         this(0, userId, clubName, totalBalance);
     }
 
-    public Club(int clubId, int userId, String clubName, double totalBalance,
-                double totalAllocated, double totalSpent) {
-        this(clubId, userId, clubName, totalBalance);
-    }
-
     public Club(int clubId, int userId, String clubName, double totalBalance) {
         this.clubId = clubId;
         this.userId = userId;

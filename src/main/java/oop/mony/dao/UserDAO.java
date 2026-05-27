@@ -26,10 +26,6 @@ public class UserDAO {
         }
     }
 
-    public static boolean login(String username, String password) throws SQLException {
-        return findByUsernameAndPassword(username, password) != null;
-    }
-
     public static boolean updatePassword(int userId, String newPassword) throws SQLException {
         if (userId <= 0 || newPassword == null || newPassword.isEmpty()) {
             return false;

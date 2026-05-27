@@ -51,10 +51,6 @@ public class DashboardController {
             return;
         }
         currentUser = Session.getCurrentUser();
-        if (currentUser == null) {
-            NavigationUtils.goToLogin(sidebarUsername);
-            return;
-        }
         try {
             club = ClubFinanceService.loadFullClubForUser(currentUser.getUserId(), currentUser.getUsername());
             refreshPage();

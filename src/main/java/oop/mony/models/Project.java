@@ -11,19 +11,19 @@ public class Project {
     private final ArrayList<Pot> pots;
 
     public Project(String projectName) {
-        this(0, 0, projectName, 0.0, 0.0);
+        this(0, 0, projectName, 0.0);
     }
 
     public Project(int userId, String projectName) {
-        this(0, userId, projectName, 0.0, 0.0);
+        this(0, userId, projectName, 0.0);
     }
 
     public Project(int userId, String projectName, double allocatedAmount) {
-        this(0, userId, projectName, allocatedAmount, 0.0);
+        this(0, userId, projectName, allocatedAmount);
     }
 
     public Project(int projectId, int userId, String projectName,
-                   double allocatedAmount, double spentAmount) {
+                   double allocatedAmount) {
         this.projectId = projectId;
         this.userId = userId;
         this.projectName = projectName == null ? "" : projectName.trim();

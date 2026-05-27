@@ -40,22 +40,6 @@ public class ClubDAO {
         }
     }
 
-    public static double getTotalBalanceForUser(int userId) throws SQLException {
-        String sql = "SELECT total_balance FROM clubs WHERE user_id = ?";
-        try (Connection connection = Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, userId);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (!resultSet.next()) {
-                    return 0.0;
-                }
-
-                return resultSet.getDouble("total_balance");
-            }
-        }
-    }
-
     public static Club findByUserId(int userId) throws SQLException {
         String sql = "SELECT id, user_id, name, total_balance FROM clubs WHERE user_id = ?";
         try (Connection connection = Database.getConnection();

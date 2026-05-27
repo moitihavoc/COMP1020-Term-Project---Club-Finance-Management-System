@@ -27,7 +27,7 @@ public class PotDAO {
 
             try (ResultSet keys = statement.getGeneratedKeys()) {
                 if (keys.next()) {
-                    return new Pot(keys.getInt(1), projectId, pot.getPotName(), pot.getAllocatedAmount(), 0.0);
+                    return new Pot(keys.getInt(1), projectId, pot.getPotName(), pot.getAllocatedAmount());
                 }
             }
         }
@@ -49,8 +49,7 @@ public class PotDAO {
                             resultSet.getInt("id"),
                             resultSet.getInt("project_id"),
                             resultSet.getString("name"),
-                            resultSet.getDouble("allocated_amount"),
-                            0.0
+                            resultSet.getDouble("allocated_amount")
                     ));
                 }
             }

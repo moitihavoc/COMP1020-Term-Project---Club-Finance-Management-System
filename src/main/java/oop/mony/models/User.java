@@ -31,27 +31,11 @@ public class User {
         return password;
     }
 
-    public boolean login() {
-        try {
-            return UserDAO.login(username, password);
-        } catch (SQLException e) {
-            throw new IllegalStateException("Could not log in user.", e);
-        }
-    }
-
     public boolean createAccount() {
         try {
             return UserDAO.createAccount(this);
         } catch (SQLException e) {
             throw new IllegalStateException("Could not create user account.", e);
         }
-    }
-
-    public static boolean login(String username, String password) {
-        return new User(username, password).login();
-    }
-
-    public static boolean createAccount(String username, String password) {
-        return new User(username, password).createAccount();
     }
 }

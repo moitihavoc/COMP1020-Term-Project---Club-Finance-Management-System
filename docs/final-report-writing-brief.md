@@ -1,289 +1,393 @@
 # Final Report Writing Brief
 
-## Report Goal
+Use this file to write the final report. It follows the official sections 1-10
+from the final report guideline and answers the required bullet points directly.
 
-The final report should prove that Mony is a completed Java OOP and data
-structures project, not just a set of screens. It should explain the problem,
-the intended user, the object model, the data flow, the algorithms/search logic,
-the database-backed implementation, and the evidence that the app works.
+Keep the report centered on one concrete use case:
 
-The report has a maximum of 10 pages, excluding References and Appendix.
-Move long screenshots and full test cases into the Appendix.
+> A basketball club treasurer uses Mony to manage event budgets, split money
+> into spending categories, record transactions with proof, and search old
+> expenses when the club needs financial transparency.
 
-## Project Summary To Use
+The final report is limited to 10 pages. Put long test cases and extra
+screenshots in the Appendix.
 
-Mony is a club finance management system for a club treasurer. The application
-supports account login, club budget setup, project creation, pot allocation,
-transaction recording, proof image attachment, and transaction search/filtering.
-The main use case is a basketball club treasurer managing event and training
-expenses in VND.
+## 1. Introduction And Project Overview
 
-Recommended concrete scenario:
+### Problem Statement And Motivation
 
-> A basketball club treasurer receives a yearly or event budget, creates
-> projects such as a city tournament or training camp, divides each project into
-> spending pots such as referee fees, food, transport, hotel, equipment, and
-> medical support, records every transaction with payer/date/note/proof, then
-> searches past transactions when the club needs to check spending transparency.
+Small clubs often manage money through notebooks, spreadsheets, chat messages,
+or scattered receipts. This makes it difficult for the treasurer to answer
+simple finance questions later, such as which event spent the most money, which
+category a payment belonged to, or whether a transaction had proof. Mony solves
+this by giving the treasurer one structured place to manage budgets and
+transactions.
 
-## Required Sections And Suggested Content
+### Project Objectives And Scope
 
-### 1. Introduction And Project Overview
+The objective is to build a Java desktop application that helps a club treasurer
+manage club finances. The scope includes user login, club balance management,
+project budgets, pot/category budgets, transaction recording, proof image
+support, and transaction search. The app is designed for a treasurer or finance
+manager, not for every club member.
 
-Write:
+### Key Features And Functionalities
 
-- Problem: small clubs often track money manually, which makes it hard to check
-  allocations, spending limits, receipts, and old transactions.
-- User: the primary user is the club treasurer or finance manager.
-- Objective: build a desktop app that organizes club money into projects, pots,
-  and transactions.
-- Key features:
-  - Login and registration.
-  - Dashboard with total club balance and projects.
-  - Project budget allocation.
-  - Pot allocation inside a project.
-  - Transaction recording under a pot.
-  - Proof image upload/viewing.
-  - Transaction search by keyword, date range, amount range, and project.
-- Mention any changes since proposal/interim if applicable.
+- Register and log in to protect finance records.
+- View and update club balance.
+- Create, edit, and delete projects for events or activities.
+- Create, edit, and delete pots inside each project to divide the project
+  budget into categories.
+- Record transactions under a selected pot with amount, payer, date, note, and
+  optional proof image.
+- View project totals: allocated, spent, and remaining amount.
+- Search transactions by keyword, date range, amount range, and project.
+- Prevent invalid budget actions such as negative amounts and over-spending a
+  pot.
 
-### 2. System Requirements And Specifications
+### Modifications Since Proposal Or Interim Stage
 
-Functional requirements:
+Write this if it matches the team's progress:
 
-- A user can register and log in.
-- A user can view and update the club balance.
-- A user can create, edit, and delete projects.
-- A user can create, edit, and delete pots inside a project.
-- A user can record transactions under a selected pot.
-- A user can attach and view proof images for transactions.
-- A user can search/filter transactions.
-- The system prevents invalid budget operations, such as spending more than the
-  available pot allocation.
+The final version focuses more clearly on the treasurer use case. The project
+structure was refined into `Club -> Project -> Pot -> Transaction`, transaction
+search was strengthened with a seeded basketball-club dataset, and proof images
+were added to support transparency.
 
-Non-functional requirements:
+## 2. System Requirements And Specifications
 
-- Usability: should be usable by a non-technical treasurer on a normal office
-  computer.
-- Reliability: data is stored in SQLite so records persist between runs.
-- Transparency: proof images and notes support later checking.
-- Robustness: validation handles empty names, negative amounts, zero
-  transactions, and over-allocation.
-- Maintainability: code is organized into models, controllers, DAOs, utilities,
-  FXML resources, and a service layer.
+### Core Functionalities
 
-### 3. System Design And Architecture
+- Account management: register, log in, change password, and log out.
+- Dashboard: show the club balance and project overview.
+- Project management: create, edit, delete, and open projects.
+- Pot management: create, edit, delete, and track spending inside each project
+  pot.
+- Transaction management: add transactions to a pot and display them in a
+  transaction table.
+- Proof support: attach and view proof images for transactions.
+- Search and filtering: search across transaction name, project, pot, payer, and
+  note; filter by date, amount, and project.
 
-Describe the architecture as JavaFX MVC-style with persistence:
+### User Requirements And Expected Behaviors
 
-- View layer: FXML files and CSS in `src/main/resources/oop/mony/`.
-- Controller layer: JavaFX controllers in `src/main/java/oop/mony/controllers/`.
-- Service layer: `ClubFinanceService` coordinates business rules and reloads the
-  full club object graph after changes.
-- Model layer: `User`, `Club`, `Project`, `Pot`, and `Transaction`.
-- DAO layer: `UserDAO`, `ClubDAO`, `ProjectDAO`, `PotDAO`, and `TransactionDAO`
-  use SQLite.
-- Database setup: `Database` creates required tables in `app-data/mony.db`.
+The main user is a club treasurer with basic computer skills. The treasurer
+expects the app to show clear totals, prevent invalid spending, preserve records
+between app runs, and make old transactions easy to find. For example, the
+basketball club treasurer should be able to search for water expenses, referee
+fees, hotel payments, or transactions above a chosen amount.
 
-Important design explanation:
+### Performance, Usability, And Scalability Considerations
 
-- A `Transaction` belongs to a `Pot` because spending must be checked against a
-  specific allocated category. If transactions floated freely under a project,
-  the app could not enforce category-level limits or explain which budget bucket
-  the money came from.
-- A `Pot` belongs to a `Project` because each event or activity has its own
-  budget structure.
-- A `Project` belongs to a `Club`/user so each treasurer only sees their own
-  finance data.
+- Performance: the app is intended for club-scale data, such as dozens of
+  projects and hundreds of transactions. Search is fast enough for this scale.
+- Usability: the JavaFX interface uses forms, tables, progress bars, and clear
+  validation messages so a non-technical treasurer can use it.
+- Scalability: the current design uses local SQLite storage. This is suitable
+  for one treasurer on one computer, but a larger organization could later add
+  multi-user access, cloud sync, or SQL-level indexed search.
 
-Recommended diagrams:
+## 3. System Design And Architecture
+
+### High-Level Architecture And Module Organization
+
+Mony uses a layered JavaFX desktop architecture:
+
+- UI layer: FXML screens and CSS define the interface.
+- Controller layer: controllers handle user actions from each screen.
+- Service layer: `ClubFinanceService` applies business rules and coordinates
+  updates.
+- Model layer: `User`, `Club`, `Project`, `Pot`, and `Transaction` represent
+  the finance domain.
+- DAO layer: DAO classes read and write records.
+- Database layer: SQLite stores users, clubs, projects, pots, and transactions
+  in `app-data/mony.db`.
+
+### Diagrams To Include
+
+Include two diagrams:
 
 - Class diagram: show `User`, `Club`, `Project`, `Pot`, `Transaction`, service,
-  and DAOs.
-- Sequence diagram: show "record transaction" flow from UI controller to service
-  to model validation to DAO to SQLite, then reload UI.
-- Optional architecture diagram: JavaFX UI -> Controllers -> Service -> Models
-  and DAOs -> SQLite.
+  and DAO classes.
+- Sequence diagram: show the behavior flow for recording a club expense. Use
+  the guide in `docs/sequence-diagram-guide.md`.
 
-### 4. Data Structures And Algorithms
+### OOP Concepts, Main Classes, Responsibilities, And Interactions
 
-Data structures:
+- `User`: represents the logged-in account.
+- `Club`: represents the club budget and owns a list of projects.
+- `Project`: represents an event or activity and owns a list of pots.
+- `Pot`: represents a budget category and owns a list of transactions.
+- `Transaction`: represents one recorded expense with amount, payer, date, note,
+  and proof path.
+- `ClubFinanceService`: connects the UI with business rules and persistence.
+- DAO classes: separate database operations from UI and model logic.
 
-- `ArrayList<Project>` in `Club` stores projects.
-- `ArrayList<Pot>` in `Project` stores pots.
-- `ArrayList<Transaction>` in `Pot` stores transactions.
-- Lists are appropriate because the project is small to medium scale, and the
-  UI often needs ordered iteration for display.
+Main OOP ideas:
 
-Algorithms:
+- Encapsulation: fields are private and accessed through methods.
+- Composition: a club contains projects, a project contains pots, and a pot
+  contains transactions.
+- Abstraction: controllers do not directly manage database details; DAO and
+  service classes hide those details.
+- Separation of concerns: UI, business logic, model objects, and database access
+  are split into different packages.
 
-- Budget aggregation:
-  - `Club.getTotalAllocated()`
-  - `Club.getTotalSpent()`
-  - `Project.getTotalAllocatedToPots()`
-  - `Project.getTotalSpent()`
-  - `Pot.getTotalSpent()`
-- Validation:
-  - `Club.canAddProject(amount)`
-  - `Project.canAddPot(amount)`
-  - `Pot.canAddTransaction(amount)`
-- Search/filter:
-  - `Club.searchTransactions(...)` iterates through projects, pots, and
-    transactions, then applies keyword/date/amount/project filters.
-  - `Transaction.matchesKeyword(...)` checks transaction name, project name, pot
-    name, payer, and note.
+Important design point:
 
-Complexity:
+`Transaction` belongs to `Pot` because every expense must be checked against a
+specific budget category. If transactions were stored freely under a project,
+the app could not clearly enforce category-level spending limits.
 
-- Let P = number of projects, K = average pots per project, and T = average
-  transactions per pot.
-- Full transaction search is O(P * K * T), which is acceptable for the course
-  project and expected club-scale usage.
-- Space for the loaded object graph is also O(P + P*K + P*K*T).
+## 4. Data Structures And Algorithms
 
-Trade-off:
+### Selected Data Structures And Reasons
 
-- Loading the full object graph makes UI display and search simple, readable,
-  and strongly tied to the OOP model.
-- A larger production system could push more filtering into SQL or add indexes.
+- `ArrayList<Project>` inside `Club`: stores all projects for the club.
+- `ArrayList<Pot>` inside `Project`: stores the budget categories for one
+  project.
+- `ArrayList<Transaction>` inside `Pot`: stores transactions for one budget
+  category.
 
-### 5. Implementation Details
+These lists match the natural hierarchy of the app and are simple to iterate
+when displaying dashboards, project details, totals, and search results.
 
-Technologies:
+### Time And Space Complexity Considerations
 
-- Java 25 configured in Maven.
-- JavaFX 21.0.6 for desktop UI.
+For transaction search:
+
+- Let P = number of projects.
+- Let K = average number of pots per project.
+- Let T = average number of transactions per pot.
+- Search checks each transaction once, so time complexity is O(P * K * T).
+- The loaded object graph uses O(P + P*K + P*K*T) space.
+
+This is acceptable because the app is designed for a club treasurer, not a
+large banking system.
+
+### Algorithms Implemented And Their Roles
+
+- Budget total calculation:
+  - Club total allocated.
+  - Club total spent.
+  - Project total allocated to pots.
+  - Project total spent.
+  - Pot total spent.
+- Budget validation:
+  - A project cannot exceed the club balance.
+  - A pot cannot exceed the project allocation.
+  - A transaction cannot exceed the selected pot's remaining budget.
+- Transaction search:
+  - The app checks keyword, date range, amount range, and selected project.
+  - Keyword search covers transaction name, project name, pot name, payer, and
+    note.
+
+### Trade-Offs And Optimization Decisions
+
+The app loads the club's finance structure into objects because it makes the OOP
+design clear and keeps the UI easy to update. The trade-off is that search is
+performed by iterating through loaded objects. For the expected club-scale
+dataset, this is simple and efficient enough. If the app grew much larger,
+search could be optimized with SQL queries and database indexes.
+
+## 5. Implementation Details
+
+### Programming Language, Libraries, And Frameworks
+
+- Java 25.
+- JavaFX 21.0.6 for the desktop interface.
 - FXML for screen layout.
 - CSS for styling.
-- SQLite with `sqlite-jdbc` for local persistence.
-- Maven wrapper for repeatable build/run commands.
+- SQLite for local data storage.
+- `sqlite-jdbc` for Java-to-SQLite connection.
+- Maven for dependency management and running the app.
 
-Important files:
+### Important Implementation Details
 
-- `pom.xml`: dependencies and JavaFX Maven plugin.
-- `src/main/java/oop/mony/Application.java`: JavaFX application entry.
-- `src/main/java/oop/mony/Launcher.java`: launcher main class.
-- `src/main/java/oop/mony/ClubFinanceService.java`: business operations.
-- `src/main/java/oop/mony/models/`: OOP domain classes.
-- `src/main/java/oop/mony/dao/`: database access classes.
-- `src/main/java/oop/mony/controllers/`: JavaFX screen logic.
-- `src/main/resources/oop/mony/`: FXML and CSS.
-- `local-docs/seed_basketball_club_transactions.sql`: demo dataset.
+- The app creates and uses a local database file at `app-data/mony.db`.
+- The database tables are created automatically if they do not exist.
+- Controllers respond to JavaFX user actions.
+- `ClubFinanceService` checks budget rules before saving changes.
+- Money input is parsed/formatted through utility code so amounts display
+  consistently in VND.
+- The transaction page can search across the full project-pot-transaction
+  structure.
 
-Mention that the database file is created under `app-data/mony.db`.
+### File Structure And Package Organization
 
-### 6. Testing And Evaluation
+- `src/main/java/oop/mony/models/`: domain objects.
+- `src/main/java/oop/mony/controllers/`: JavaFX screen controllers.
+- `src/main/java/oop/mony/dao/`: database access objects.
+- `src/main/java/oop/mony/utils/`: helper classes for navigation, dialogs,
+  money formatting, and transaction table rendering.
+- `src/main/resources/oop/mony/`: FXML screens and stylesheet.
+- `pom.xml`: Maven configuration and dependencies.
+- `local-docs/seed_basketball_club_transactions.sql`: sample basketball club
+  data for testing and demonstration.
 
-Use the basketball club scenario as the main evaluation story.
+### External Tools Or APIs
 
-Main test scenario:
+The project does not depend on an external web API. It uses local JavaFX and a
+local SQLite database, so the app can run without an internet connection after
+dependencies are installed.
 
-1. Log in as the seeded basketball club treasurer.
-2. Confirm existing projects and pots are loaded.
-3. Open a project such as the Ho Chi Minh City basketball tournament.
-4. Review pot allocations and progress bars.
-5. Create a transaction under a pot.
-6. Try an invalid transaction amount that exceeds the pot allocation.
-7. Search transactions by keyword such as water, jersey, hotel, referee, or
-   Facebook ads.
-8. Filter by date range, amount range, and project.
-9. View proof image behavior where proof exists.
+## 6. Testing And Evaluation
 
-Testing evidence:
+### Test Cases And Testing Methodology
 
-- Login/register screenshots.
-- Dashboard screenshot.
-- Project page screenshot with pots.
-- Transaction creation form.
-- Validation error for invalid amount.
-- Transaction search page with meaningful seeded results.
-- Appendix table of test cases.
+Use scenario-based manual testing with the basketball club treasurer use case.
+The test data should include many projects, pots, and transactions so search
+can be evaluated meaningfully. The seed SQL creates a basketball club account
+with 10 projects, 25 pots, and 100 transactions.
 
-### 7. Challenges And Solutions
+Main tests to discuss:
 
-Potential points:
+- Register and log in.
+- Create a project for a club event.
+- Create pots inside that project.
+- Record a valid transaction under a pot.
+- Reject a negative or zero transaction amount.
+- Reject a transaction that exceeds the pot budget.
+- Search transactions by keyword, date range, amount range, and project.
+- Check that totals update after transactions are added.
+- View proof image behavior.
 
-- Challenge: deciding where transactions should belong.
-  - Solution: attach transactions to pots to enforce category-level budget
-    limits.
-- Challenge: keeping UI data synchronized after create/edit/delete operations.
-  - Solution: service methods reload the full club object graph after changes.
-- Challenge: validating budget operations at multiple levels.
-  - Solution: model methods calculate totals and service/controller checks block
-    invalid allocation/spending.
-- Challenge: making search meaningful.
-  - Solution: seeded dataset with many transactions and filters across keyword,
-    date, amount, and project.
-- Challenge: storing local data without a server.
-  - Solution: SQLite database in `app-data`.
+Put the full test-case table in the Appendix.
 
-### 8. Conclusion And Limitations
+### Screenshots Or Sample Outputs
 
-Achievements:
+Include only the most important screenshots in the main report:
 
-- Working JavaFX finance app.
-- Persistent database.
-- Clear OOP hierarchy.
-- Budget validation.
-- Searchable transaction history.
-- Proof-image support.
+- Login or dashboard screen.
+- Project page with pots and budget totals.
+- Transaction form.
+- Transaction search page with meaningful basketball club results.
+- Validation error for an invalid or over-budget transaction.
 
-Limitations:
+Put extra screenshots in the Appendix.
 
-- Passwords appear to be stored simply; production should hash passwords.
-- Single-user/local SQLite design, not multi-device or cloud synchronized.
-- Search is in-memory after loading the object graph; acceptable for club-scale
-  data but not optimized for very large datasets.
-- Proof image handling is local-file based.
-- Reporting/export features could be added later.
+### Performance Evaluation Or Benchmarking
 
-Future improvements:
+For this project, a simple evaluation is enough:
 
-- Password hashing.
-- Export to CSV/PDF.
-- More analytics charts.
-- Role-based access for president, treasurer, and auditor.
-- SQL-level indexed search for large datasets.
-- Backup/import features.
+The app was tested with seeded basketball club data containing 100 transactions.
+The transaction search and page updates remained responsive for the expected
+club-scale dataset.
 
-### 9. Team Contributions
+### Correctness, Robustness, And Usability
 
-Ask each member for concrete contribution bullets. Do not write generic lines.
-Use a table with:
+- Correctness: totals are calculated from actual projects, pots, and
+  transactions; transactions appear under the selected pot.
+- Robustness: the app handles empty names, invalid numbers, negative amounts,
+  zero amounts, and over-budget spending attempts.
+- Usability: the screens are organized around the treasurer's workflow:
+  dashboard -> project -> pot -> transaction -> search.
 
-- Member name.
-- Main responsibility.
-- Files/features contributed.
-- Testing/documentation contribution.
+## 7. Challenges And Solutions
 
-### 10. References
+### Technical Difficulties
 
-Possible references:
+Challenge: keeping project, pot, and transaction totals correct after every
+change.
 
-- Java documentation.
-- JavaFX documentation.
+Solution: totals are calculated from the current object lists, and the app
+reloads updated club data after create/edit/delete operations.
+
+### Design Or Architectural Issues
+
+Challenge: deciding whether transactions should belong directly to a project or
+inside a pot.
+
+Solution: transactions are stored under pots because pots represent budget
+categories. This lets the app prevent spending more than the category's
+allocated amount.
+
+### Team Collaboration And Task Coordination
+
+Write the team's real coordination method here. Example:
+
+The team divided work by feature area: UI screens, model/service logic,
+database/DAO work, testing, and report/presentation preparation. Members
+reviewed the app together using the same basketball club scenario so the report,
+slides, and poster stayed consistent.
+
+### Solutions Implemented And Lessons Learned
+
+- A layered structure made the app easier to maintain.
+- Budget checks should happen before saving a transaction.
+- A realistic dataset is necessary to demonstrate search clearly.
+- A concrete use case is easier to present than disconnected CRUD examples.
+
+## 8. Conclusion And Limitations
+
+### Overall Achievements And Completed Objectives
+
+Mony successfully implements a working JavaFX club finance management system.
+It supports login, project budgets, pot/category budgets, transaction recording,
+proof image support, persistent SQLite storage, and transaction search. The
+final version demonstrates OOP through the `Club -> Project -> Pot ->
+Transaction` structure.
+
+### Strengths Of The Developed System
+
+- Clear treasurer-focused workflow.
+- Strong budget hierarchy.
+- Transactions are tied to budget categories.
+- Search helps check old spending quickly.
+- Proof images support transparency.
+- SQLite persistence keeps data between app sessions.
+
+### Current Limitations Or Unresolved Issues
+
+- The app is local-device based and not designed for multiple simultaneous
+  users.
+- Password handling should be improved with hashing in a production version.
+- Search is suitable for club-scale data but not optimized for very large
+  databases.
+- Proof images depend on local file paths.
+- The app does not yet export finance reports to PDF or CSV.
+
+### Possible Future Improvements Or Extensions
+
+- Add password hashing and stronger account security.
+- Add export features for reports, CSV files, or receipts.
+- Add charts for monthly spending and category comparisons.
+- Add role-based access for treasurer, club president, and auditor.
+- Add cloud backup or multi-device synchronization.
+- Add SQL indexes or database-level search for larger datasets.
+
+## 9. Team Contributions
+
+Use a table. Replace the names and responsibilities with the real team details.
+
+| Member | Main Responsibility | Specific Contributions |
+| --- | --- | --- |
+| Member 1 | UI / JavaFX screens | Built or improved login, dashboard, project, or transaction screens. |
+| Member 2 | Models and business logic | Worked on `Club`, `Project`, `Pot`, `Transaction`, and budget validation. |
+| Member 3 | Database and DAO layer | Implemented SQLite tables and DAO operations. |
+| Member 4 | Testing and demo data | Prepared test cases, screenshots, and basketball club seed data. |
+| Member 5 | Report, poster, and presentation | Organized documentation, slides, poster, and final demo script. |
+
+Make the final version specific. Mention actual files, features, or test cases
+each person handled.
+
+## 10. References
+
+Use one consistent citation style. Include only sources actually used.
+
+Recommended references:
+
+- Official Java documentation.
+- Official JavaFX documentation.
 - SQLite documentation.
 - Maven documentation.
-- sqlite-jdbc documentation.
-- Course materials or assignment guidelines.
+- Xerial SQLite JDBC documentation.
+- COMP1020 course materials and final project guidelines.
 
-References do not count toward the 10-page limit.
+The References section does not count toward the 10-page limit.
 
-### 11. Appendix
+## Appendix Reminder
 
-Put long material here:
-
-- Full test case table.
-- Extra screenshots.
-- Full class diagram if too large.
-- Seed data description.
-- Known edge cases.
-
-Appendix does not count toward the 10-page limit.
-
-## Writing Priorities
-
-Use the concrete basketball club treasurer story throughout. Avoid describing
-the app as generic CRUD. The strongest report will connect every technical
-choice back to finance transparency, budget allocation, and transaction
-tracking.
+The Appendix is not section 1-10, but it is allowed by the guideline and does
+not count toward the 10-page limit. Put extended test cases, extra screenshots,
+and large diagrams there.

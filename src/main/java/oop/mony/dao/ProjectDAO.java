@@ -11,10 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectDAO {
-    public static Project createProject(int userId, String name) throws SQLException {
-        return createProject(userId, name, 0.0);
-    }
-
     public static Project createProject(int userId, String name, double allocatedAmount) throws SQLException {
         Project project = new Project(userId, name, allocatedAmount);
         if (!project.hasName()) {
@@ -35,8 +31,7 @@ public class ProjectDAO {
                             keys.getInt(1),
                             userId,
                             project.getProjectName(),
-                            project.getAllocatedAmount(),
-                            0.0
+                            project.getAllocatedAmount()
                     );
                 }
             }
@@ -59,8 +54,7 @@ public class ProjectDAO {
                             resultSet.getInt("id"),
                             resultSet.getInt("user_id"),
                             resultSet.getString("name"),
-                            resultSet.getDouble("allocated_amount"),
-                            0.0
+                            resultSet.getDouble("allocated_amount")
                     ));
                 }
             }
@@ -82,22 +76,6 @@ public class ProjectDAO {
             statement.setInt(1, projectId);
             statement.setInt(2, userId);
             statement.executeUpdate();
-        }
-    }
-
-    public static double getProjectAllocatedAmount(int projectId) throws SQLException {
-        String sql = "SELECT allocated_amount FROM projects WHERE id = ?";
-        try (Connection connection = Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, projectId);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (!resultSet.next()) {
-                    return 0.0;
-                }
-
-                return resultSet.getDouble("allocated_amount");
-            }
         }
     }
 

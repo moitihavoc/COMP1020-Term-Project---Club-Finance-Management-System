@@ -11,15 +11,15 @@ public class Pot {
     private final ArrayList<Transaction> transactions;
 
     public Pot(String potName) {
-        this(0, 0, potName, 0.0, 0.0);
+        this(0, 0, potName, 0.0);
     }
 
     public Pot(int projectId, String potName, double allocatedAmount) {
-        this(0, projectId, potName, allocatedAmount, 0.0);
+        this(0, projectId, potName, allocatedAmount);
     }
 
     public Pot(int potId, int projectId, String potName,
-               double allocatedAmount, double spentAmount) {
+               double allocatedAmount) {
         this.potId = potId;
         this.projectId = projectId;
         this.potName = potName == null ? "" : potName.trim();
