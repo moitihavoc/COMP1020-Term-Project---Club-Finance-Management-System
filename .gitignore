@@ -48,8 +48,6 @@ build/
 .vscode/
 
 # App runtime data
-app-data/*
-!app-data/.gitkeep
 local-docs/*
 
 # Local frontend instructions
