@@ -9,7 +9,6 @@ with clear budget categories and proof images.
 - Register, log in, log out, and change password.
 - View and update club balance.
 - Create, edit, delete, and open projects.
-- Create, edit, and delete pots inside projects.
 - Record transactions under pots with payer, date, note, amount, and proof image.
 - Search and filter transactions by keyword, project, date range, and amount.
 
